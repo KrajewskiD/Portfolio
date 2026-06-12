@@ -3,6 +3,7 @@ import { useState } from "react";
 import NavigationItem from "./navigation/NavigationItem";
 import NavigationLinks from "./navigation/NavigationLinks";
 import NavigationName from "./navigation/NavigationName";
+import MobileNavigation from "./navigation/MobileNavigation";
 import MenuToggle from "./navigation/MenuToggle";
 import type { NavigationLinkData } from "../types/link";
 import type { Language } from "../types/language";
@@ -43,12 +44,8 @@ function Header({ navigationItems, language }: HeaderProps) {
           </NavigationLinks>
         </nav>
 
-        {isMenuOpen && (
-          <nav
-            id="mobile-menu"
-            aria-label="Mobilna nawigacja"
-            className="absolute top-full left-1/2 mt-2 w-56 -translate-x-1/2 rounded-2xl border bg-white p-2 sm:hidden"
-          >
+       {isMenuOpen && (
+          <MobileNavigation>
             <NavigationLinks mobile>
               {navigationItems.map((item) => (
                 <NavigationItem
@@ -60,7 +57,7 @@ function Header({ navigationItems, language }: HeaderProps) {
                 />
               ))}
             </NavigationLinks>
-          </nav>
+          </MobileNavigation>
         )}
       </div>
     </header>
