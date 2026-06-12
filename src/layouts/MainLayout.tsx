@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 import Footer from "../components/Footer";
 import Header from "../components/Header";
-import SystemControls from "../components/language/SystemControls";
+import TopToolbar from "../components/toolbar/TopToolbar";
 import type { FooterData } from "../types/footer";
 import type { Language } from "../types/language";
 import type { NavigationLinkData } from "../types/link";
@@ -24,7 +24,7 @@ function MainLayout({
 }: MainLayoutProps) {
   return (
     <div className="flex min-h-screen flex-col">
-      <SystemControls
+      <TopToolbar
         language={language}
         onLanguageChange={onLanguageChange}
       />
