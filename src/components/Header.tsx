@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import NavigationItem from "./navigation/NavigationItem";
 import NavigationLinks from "./navigation/NavigationLinks";
+import NavigationName from "./navigation/NavigationName";
 import MenuToggle from "./navigation/MenuToggle";
 import type { NavigationLinkData } from "../types/link";
 import type { Language } from "../types/language";
@@ -29,9 +30,7 @@ function Header({ navigationItems, language }: HeaderProps) {
             onToggle={() => setIsMenuOpen((current) => !current)}
           />
 
-          <span className="px-3 py-2 font-semibold">
-            Krajewski
-          </span>
+          <NavigationName>Krajewski</NavigationName>
 
           <NavigationLinks>
             {navigationItems.map((item) => (
