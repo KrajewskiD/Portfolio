@@ -1,17 +1,21 @@
 type MenuToggleProps = {
   isOpen: boolean;
+  openLabel: string;
+  closeLabel: string;
   onToggle: () => void;
 };
 
 function MenuToggle({
   isOpen,
+  openLabel,
+  closeLabel,
   onToggle,
 }: MenuToggleProps) {
   return (
     <button
       type="button"
       className="flex h-11 w-11 items-center justify-center sm:hidden"
-      aria-label={isOpen ? "Zamknij menu" : "Otwórz menu"}
+      aria-label={isOpen ? closeLabel : openLabel}
       aria-expanded={isOpen}
       aria-controls="mobile-menu"
       onClick={onToggle}

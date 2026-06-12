@@ -21,18 +21,24 @@ function HomePage({ language }: HomePageProps) {
       <AboutSection
         profile={profileMock}
         label={translation.about.label}
+        noImage={translation.about.noImage}
+        language={language}
       />
 
       <ProjectsSection
         projects={projectsMock}
         label={translation.projects.label}
         title={translation.projects.title}
+        noImage={translation.projects.noImage}
+        language={language}
       />
 
       <SkillsSection
         skillGroups={skillGroupsMock}
         label={translation.skills.label}
         title={translation.skills.title}
+        language={language}
+        levelLabel={translation.skills.levelLabel}
       />
     </>
   );

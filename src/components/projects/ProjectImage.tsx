@@ -1,9 +1,10 @@
 type ProjectImageProps = {
   imageUrl?: string;
   alt: string;
+  fallbackLabel: string;
 };
 
-function ProjectImage({ imageUrl, alt }: ProjectImageProps) {
+function ProjectImage({ imageUrl, alt, fallbackLabel }: ProjectImageProps) {
   return (
     <div className="flex p-4 lg:border-r">
       <div className="flex min-h-64 w-full items-center justify-center overflow-hidden rounded-2xl border border-dashed">
@@ -14,7 +15,7 @@ function ProjectImage({ imageUrl, alt }: ProjectImageProps) {
             className="h-full w-full object-cover"
           />
         ) : (
-          <span>Brak zdjęcia projektu</span>
+          <p>{fallbackLabel}</p>
         )}
       </div>
     </div>

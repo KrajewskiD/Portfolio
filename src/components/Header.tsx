@@ -7,13 +7,15 @@ import MobileNavigation from "./navigation/MobileNavigation";
 import MenuToggle from "./navigation/MenuToggle";
 import type { NavigationLinkData } from "../types/link";
 import type { Language } from "../types/language";
+import type { Translations } from "../locales/translations";
 
 type HeaderProps = {
   navigationItems: NavigationLinkData[];
   language: Language;
+  navigationText: Translations["navigation"];
 };
 
-function Header({ navigationItems, language }: HeaderProps) {
+function Header({ navigationItems, language, navigationText }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const getLabel = (item: NavigationLinkData) =>
@@ -23,11 +25,13 @@ function Header({ navigationItems, language }: HeaderProps) {
     <header className="sticky top-4 z-50 px-4">
       <div className="relative mr-auto w-fit sm:mx-auto">
         <nav
-          aria-label="Główna nawigacja"
+          aria-label={navigationText.mainLabel}
           className="flex items-center gap-1 rounded-full border bg-white px-2 py-1"
         >
           <MenuToggle
             isOpen={isMenuOpen}
+            openLabel={navigationText.openMenu}
+            closeLabel={navigationText.closeMenu}
             onToggle={() => setIsMenuOpen((current) => !current)}
           />
 
@@ -44,8 +48,8 @@ function Header({ navigationItems, language }: HeaderProps) {
           </NavigationLinks>
         </nav>
 
-       {isMenuOpen && (
-          <MobileNavigation>
+        {isMenuOpen && (
+          <MobileNavigation label={navigationText.mobileLabel}>
             <NavigationLinks mobile>
               {navigationItems.map((item) => (
                 <NavigationItem

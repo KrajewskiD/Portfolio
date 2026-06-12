@@ -1,12 +1,14 @@
 export type Skill = {
   id: string;
   name: string;
-  description: string;
+  descriptionPl: string;
+  descriptionEn: string;
   level: number;
 };
 
 export type SkillGroupData = {
   id: string;
-  title: string;
+  titlePl: string;
+  titleEn: string;
   skills: Skill[];
 };

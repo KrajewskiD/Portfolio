@@ -18,10 +18,7 @@ function Clock() {
   }, []);
 
   return (
-    <time
-      className="hidden sm:block"
-      dateTime={currentTime.toISOString()}
-    >
+    <time className="hidden sm:block" dateTime={currentTime.toISOString()}>
       {formatTime(currentTime)}
     </time>
   );

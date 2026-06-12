@@ -6,85 +6,104 @@ import type { NavigationLinkData } from "../types/link";
 
 export const profileMock: Profile = {
   name: "Dawid Krajewski",
-  role: "XYZ",
-  description:
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-  imageUrl: "/images/profile.jpg",
-  imageAlt: "Dawid Krajewski",
+  rolePl: "Frontend Developer PL",
+  roleEn: "Frontend Developer ENG",
+  descriptionPl: "Lorem ipsum dolor sit amet. PL",
+  descriptionEn: "Lorem ipsum dolor sit amet. ENG",
+  imageUrl: undefined,
+  imageAltPl: "Zdjęcie Dawida Krajewskiego",
+  imageAltEn: "Photo of Dawid Krajewski",
 };
 
 export const projectsMock: Project[] = [
-    {
-        id: "project-01",
-        code: "PROJECT_01",
-        title: "Nazwa projektu",
-        imageAlt: "Podgląd projektu",
-        technologies: ["React", "TypeScript", "Supabase"],
-        topics: [
-            {
-            id: "overview",
-            label: "Opis projektu",
-            content: "Lorem ipsum dolor sit amet.",
-            },
-            {
-            id: "features",
-            label: "Główne funkcje",
-            content: "Lorem ipsum dolor sit amet.",
-            },
-            {
-            id: "technologies",
-            label: "Wykorzystane technologie",
-            content: "Lorem ipsum dolor sit amet.",
-            },
-            {
-            id: "architecture",
-            label: "Architektura",
-            content: "Lorem ipsum dolor sit amet.",
-            },
-        ],
-    }
+  {
+    id: "project-01",
+    code: "PROJECT_01",
+    titlePl: "Nazwa projektu",
+    titleEn: "Project name",
+    imageAltPl: "Podgląd projektu",
+    imageAltEn: "Project preview",
+    technologies: ["React", "TypeScript", "Supabase"],
+    topics: [
+      {
+        id: "overview",
+        labelPl: "Opis projektu",
+        labelEn: "Overview",
+        contentPl: "Lorem ipsum dolor sit amet. PL",
+        contentEn: "Lorem ipsum dolor sit amet. EN",
+      },
+      {
+        id: "features",
+        labelPl: "Główne funkcje",
+        labelEn: "Main features",
+        contentPl: "Lorem ipsum dolor sit amet. PL",
+        contentEn: "Lorem ipsum dolor sit amet. EN",
+      },
+      {
+        id: "technologies",
+        labelPl: "Wykorzystane technologie",
+        labelEn: "Technologies",
+        contentPl: "Lorem ipsum dolor sit amet. PL",
+        contentEn: "Lorem ipsum dolor sit amet. EN",
+      },
+      {
+        id: "architecture",
+        labelPl: "Architektura",
+        labelEn: "Architecture",
+        contentPl: "Lorem ipsum dolor sit amet. PL",
+        contentEn: "Lorem ipsum dolor sit amet. EN",
+      },
+    ],
+  },
 ];
 
 export const skillGroupsMock: SkillGroupData[] = [
   {
     id: "skill-frontend",
-    title: "Frontend",
+    titlePl: "Frontend",
+    titleEn: "Frontend",
     skills: [
       {
         id: "skill-01",
         name: "React",
         level: 4,
-        description: "Lorem ipsum dolor sit amet.",
+        descriptionPl: "Lorem ipsum dolor sit amet. PL",
+        descriptionEn: "Lorem ipsum dolor sit amet. EN",
       },
       {
         id: "skill-02",
         name: "TypeScript",
         level: 3,
-        description: "Lorem ipsum dolor sit amet.",
+        descriptionPl: "Lorem ipsum dolor sit amet. PL",
+        descriptionEn: "Lorem ipsum dolor sit amet. EN",
       },
       {
         id: "skill-03",
         name: "Tailwind CSS",
         level: 4,
-        description: "Lorem ipsum dolor sit amet.",
+        descriptionPl: "Lorem ipsum dolor sit amet. PL",
+        descriptionEn: "Lorem ipsum dolor sit amet. EN",
       },
     ],
   },
   {
     id: "skill-backend",
-    title: "Backend",
+    titlePl: "Backend",
+    titleEn: "Backend",
     skills: [
       {
         id: "skill-04",
         name: "REST API",
         level: 3,
-        description: "Lorem ipsum dolor sit amet.",
+        descriptionPl: "Lorem ipsum dolor sit amet. PL",
+        descriptionEn: "Lorem ipsum dolor sit amet. EN",
       },
       {
         id: "skill-05",
         name: "Supabase",
         level: 3,
-        description: "Lorem ipsum dolor sit amet.",
+        descriptionPl: "Lorem ipsum dolor sit amet. PL",
+        descriptionEn: "Lorem ipsum dolor sit amet. EN",
       },
     ],
   },

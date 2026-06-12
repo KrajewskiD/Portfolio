@@ -6,13 +6,10 @@ type SkillItemProps = {
   name: string;
   description: string;
   level: number;
+  levelLabel: string;
 };
 
-function SkillItem({
-  name,
-  description,
-  level,
-}: SkillItemProps) {
+function SkillItem({ name, description, level, levelLabel }: SkillItemProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -24,7 +21,7 @@ function SkillItem({
         onClick={() => setIsOpen((current) => !current)}
       >
         <span className="font-semibold">{name}</span>
-        <SkillLevel level={level} />
+        <SkillLevel level={level} levelLabel={levelLabel} />
       </button>
 
       <div
@@ -33,9 +30,7 @@ function SkillItem({
         }`}
       >
         <div className="overflow-hidden">
-          <p className="pb-4 text-sm leading-6">
-            {description}
-          </p>
+          <p className="pb-4 text-sm leading-6">{description}</p>
         </div>
       </div>
     </div>

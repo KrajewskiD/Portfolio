@@ -4,53 +4,62 @@ import ProjectImage from "../components/projects/ProjectImage";
 import ProjectTopicsGroup from "../components/projects/ProjectTopicsGroup";
 import TechnologyTag from "../components/projects/TechnologyTag";
 import SectionHeading from "../components/sections/SectionHeading";
+import type { Language } from "../types/language";
 import type { Project } from "../types/project";
 
 type ProjectsSectionProps = {
   projects: Project[];
   label: string;
   title: string;
+  language: Language;
+  noImage: string;
 };
 
 function ProjectsSection({
-    projects,
-    label,
-    title
+  projects,
+  label,
+  title,
+  noImage,
+  language,
 }: ProjectsSectionProps) {
   return (
     <section
       id="projects"
       className="scroll-mt-24 pt-16 pb-8 sm:pt-20 sm:pb-10"
     >
-      <SectionHeading
-        label={label}
-        title={title}
-      />
+      <SectionHeading label={label} title={title} />
 
-      {projects.map((project) => (
-        <ProjectCard key={project.id}>
-          <ProjectImage
-            imageUrl={project.imageUrl}
-            alt={project.imageAlt}
-          />
+      {projects.map((project) => {
+        const projectTitle =
+          language === "pl" ? project.titlePl : project.titleEn;
 
-          <ProjectDetails
-            code={project.code}
-            title={project.title}
-            technologies={project.technologies.map((technology) => (
-              <TechnologyTag
-                key={technology}
-                label={technology}
-              />
-            ))}
-            topics={
-              <ProjectTopicsGroup
-                topics={project.topics}
-              />
-            }
-          />
-        </ProjectCard>
-      ))}
+        const imageAlt =
+          language === "pl" ? project.imageAltPl : project.imageAltEn;
+
+        return (
+          <ProjectCard key={project.id}>
+            <ProjectImage
+              imageUrl={project.imageUrl}
+              alt={imageAlt}
+              fallbackLabel={noImage}
+            />
+
+            <ProjectDetails
+              code={project.code}
+              title={projectTitle}
+              technologies={project.technologies.map((technology) => (
+                <TechnologyTag key={technology} label={technology} />
+              ))}
+              topics={
+                <ProjectTopicsGroup
+                  topics={project.topics}
+                  language={language}
+                />
+              }
+            />
+          </ProjectCard>
+        );
+      })}
     </section>
   );
 }

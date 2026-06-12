@@ -1,11 +1,16 @@
 import { Link } from "react-router";
 
-function NotFoundPage() {
+type NotFoundPageProps = {
+  message: string;
+  backHome: string;
+};
+
+function NotFoundPage({ message, backHome }: NotFoundPageProps) {
   return (
     <section>
       <h1>404</h1>
-      <p>Nie znaleziono strony.</p>
-      <Link to="/">Wróć na stronę główną</Link>
+      <p>{message}</p>
+      <Link to="/">{backHome}</Link>
     </section>
   );
 }

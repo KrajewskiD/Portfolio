@@ -18,9 +18,7 @@ function ProjectDetails({
       <p className="font-mono text-sm">{code}</p>
       <h3 className="mt-3 text-3xl font-bold">{title}</h3>
 
-      <div className="mt-5 flex flex-wrap gap-2">
-        {technologies}
-      </div>
+      <div className="mt-5 flex flex-wrap gap-2">{technologies}</div>
 
       {topics}
     </div>

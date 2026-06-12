@@ -1,7 +1,10 @@
 export type Profile = {
   name: string;
-  role: string;
-  description: string;
+  rolePl: string;
+  roleEn: string;
+  descriptionPl: string;
+  descriptionEn: string;
   imageUrl?: string;
-  imageAlt: string;
+  imageAltPl: string;
+  imageAltEn: string;
 };

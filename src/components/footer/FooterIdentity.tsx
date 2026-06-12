@@ -3,10 +3,7 @@ type FooterIdentityProps = {
   description: string;
 };
 
-function FooterIdentity({
-  name,
-  description,
-}: FooterIdentityProps) {
+function FooterIdentity({ name, description }: FooterIdentityProps) {
   return (
     <div>
       <p className="font-semibold">{name}</p>

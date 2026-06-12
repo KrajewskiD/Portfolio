@@ -4,11 +4,7 @@ type ProjectTopicProps = {
   onSelect: () => void;
 };
 
-function ProjectTopic({
-  label,
-  active,
-  onSelect,
-}: ProjectTopicProps) {
+function ProjectTopic({ label, active, onSelect }: ProjectTopicProps) {
   return (
     <li>
       <button
