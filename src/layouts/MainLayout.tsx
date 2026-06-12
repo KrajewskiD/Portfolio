@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 type MainLayoutProps = {
   children: ReactNode;
@@ -6,10 +8,14 @@ type MainLayoutProps = {
 
 function MainLayout({ children }: MainLayoutProps) {
   return (
-    <div className="min-h-screen">
-      <header>Portfolio</header>
-      <main>{children}</main>
-      <footer>Stopka</footer>
+    <div className="flex min-h-screen flex-col">
+      <Header/>
+
+      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8">
+        {children}
+      </main>
+
+      <Footer />
     </div>
   );
 }

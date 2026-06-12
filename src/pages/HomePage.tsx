@@ -1,9 +1,16 @@
+import AboutSection from "../features/AboutSection";
+import ProjectsSection from "../features/ProjectsSection";
+import SkillsSection from "../features/SkillsSection";
+
 function HomePage() {
   return (
-    <main>
-      <p>Strona główna jest w budowie.</p>
-    </main>
-  );
+    <>
+        <AboutSection />
+        <ProjectsSection />
+        <SkillsSection />
+    </>
+  )
+
 }
 
 export default HomePage;
