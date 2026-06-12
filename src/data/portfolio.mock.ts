@@ -13,7 +13,8 @@ export const profileMock: Profile = {
   imageAlt: "Dawid Krajewski",
 };
 
-export const projectMock: Project[] = [{
+export const projectsMock: Project[] = [
+{
   code: "PROJECT_01",
   title: "Nazwa projektu",
   imageAlt: "Podgląd projektu",
@@ -40,9 +41,6 @@ export const projectMock: Project[] = [{
         content: "Lorem ipsum dolor sit amet.",
     },
   ],
-  descriptionLabel: "opis_projektu",
-  description:
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
 }];
 
 export const skillGroupsMock: SkillGroupData[] = [

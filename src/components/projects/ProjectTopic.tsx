@@ -1,19 +1,28 @@
 type ProjectTopicProps = {
   label: string;
-  active?: boolean;
+  active: boolean;
+  onSelect: () => void;
 };
 
-function ProjectTopic({ label, active = false }: ProjectTopicProps) {
+function ProjectTopic({
+  label,
+  active,
+  onSelect,
+}: ProjectTopicProps) {
   return (
-    <li
-      className={
-        active
-          ? "rounded-xl border px-4 py-3 font-semibold"
-          : "px-4 py-3"
-      }
-    >
-      <span className="mr-3">•</span>
-      {label}
+    <li>
+      <button
+        type="button"
+        onClick={onSelect}
+        className={
+          active
+            ? "w-full rounded-xl border px-4 py-3 text-left font-semibold"
+            : "w-full px-4 py-3 text-left"
+        }
+      >
+        <span className="mr-3">•</span>
+        {label}
+      </button>
     </li>
   );
 }

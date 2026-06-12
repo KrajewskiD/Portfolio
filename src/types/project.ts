@@ -11,6 +11,4 @@ export type Project = {
   imageAlt: string;
   technologies: string[];
   topics: ProjectTopicData[];
-  descriptionLabel: string;
-  description: string;
 };
