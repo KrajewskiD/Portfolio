@@ -1,11 +1,20 @@
+import { BrowserRouter, Route, Routes } from "react-router";
+
+import MainLayout from "./layouts/MainLayout";
+import HomePage from "./pages/HomePage";
+import NotFoundPage from "./pages/NotFoundPage";
+
 function App() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-950">
-      <h1 className="text-4xl font-bold text-cyan-400">
-        Tailwind CSS działa
-      </h1>
-    </main>
+    <BrowserRouter>
+      <MainLayout>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </MainLayout>
+    </BrowserRouter>
   );
-} 
+}
 
-export default App
+export default App;
