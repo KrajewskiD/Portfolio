@@ -23,10 +23,7 @@ function ProjectsSection({
   language,
 }: ProjectsSectionProps) {
   return (
-    <section
-      id="projects"
-      className="scroll-mt-0 pt-4 pb-8 sm:pt-6 sm:pb-10"
-    >
+    <section id="projects" className="scroll-mt-0 pt-4 pb-8 sm:pt-6 sm:pb-10">
       <SectionHeading label={label} title={title} />
 
       {projects.map((project) => {

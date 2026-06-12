@@ -22,9 +22,7 @@ function ProjectTopic({
       aria-controls={panelId}
       onClick={onSelect}
       className={`shrink-0 whitespace-nowrap border-b-2 px-4 py-3 ${
-        active
-          ? "border-black font-semibold"
-          : "border-transparent opacity-60"
+        active ? "border-black font-semibold" : "border-transparent opacity-60"
       }`}
     >
       {label}
