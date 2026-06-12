@@ -16,10 +16,10 @@ function SkillsSection({ skillGroups, }: SkillsSectionProps) {
 
       <div className="mt-6 grid items-start gap-6 lg:grid-cols-2">
         {skillGroups.map((group) => (
-          <SkillGroup key={group.title} title={group.title}>
+          <SkillGroup key={group.id} title={group.title}>
             {group.skills.map((skill) => (
               <SkillItem
-                key={skill.name}
+                key={skill.id}
                 name={skill.name}
                 description={skill.description}
                 level={skill.level}

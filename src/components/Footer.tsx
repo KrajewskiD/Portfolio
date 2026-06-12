@@ -19,7 +19,7 @@ function Footer({ footer }: FooterProps) {
         <FooterLinksGroup>
           {footer.links.map((link) => (
             <FooterLink
-              key={link.href}
+              key={link.id}
               label={link.label}
               href={link.href}
             />

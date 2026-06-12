@@ -1,7 +1,7 @@
-import type { LinkData } from "./link";
+import type { FooterLinkData } from "./link";
 
 export type FooterData = {
   name: string;
   description: string;
-  links: LinkData[];
+  links: FooterLinkData[];
 };

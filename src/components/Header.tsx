@@ -2,47 +2,55 @@ import { useState } from "react";
 
 import NavigationItem from "./navigation/NavigationItem";
 import NavigationLinks from "./navigation/NavigationLinks";
-import type { LinkData } from "../types/link";
+import type { NavigationLinkData } from "../types/link";
+import type { Language } from "../types/language";
 
 type HeaderProps = {
-  navigationItems: LinkData[];
+  navigationItems: NavigationLinkData[];
+  language: Language;
 };
 
-function Header({ navigationItems }: HeaderProps) {
+function Header({ navigationItems, language }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const closeMenu = () => setIsMenuOpen(false);
+  const getLabel = (item: NavigationLinkData) =>
+    language === "pl" ? item.labelPl : item.labelEn;
 
   return (
     <header className="sticky top-4 z-50 px-4">
-      <div className="relative mx-auto w-fit">
+      <div className="relative mr-auto w-fit sm:mx-auto">
         <nav
           aria-label="Główna nawigacja"
           className="flex items-center gap-1 rounded-full border bg-white px-2 py-1"
         >
-          <a href="/" className="px-3 py-2 font-semibold">
-            Portfolio
-          </a>
-
-          <NavigationLinks>
-            {navigationItems.map((item) => (
-              <NavigationItem
-                key={item.href}
-                label={item.label}
-                href={item.href}
-              />
-            ))}
-          </NavigationLinks>
-
           <button
             type="button"
-            className="min-h-11 px-3 sm:hidden"
+            className="flex h-11 w-11 items-center justify-center sm:hidden"
+            aria-label={isMenuOpen ? "Zamknij menu" : "Otwórz menu"}
             aria-expanded={isMenuOpen}
             aria-controls="mobile-menu"
             onClick={() => setIsMenuOpen((current) => !current)}
           >
-            Menu
+            <span className="flex w-5 flex-col gap-1.5">
+              <span className="h-0.5 w-full bg-current" />
+              <span className="h-0.5 w-full bg-current" />
+              <span className="h-0.5 w-full bg-current" />
+            </span>
           </button>
+
+          <span className="px-3 py-2 font-semibold">
+            Krajewski
+          </span>
+
+          <NavigationLinks>
+            {navigationItems.map((item) => (
+              <NavigationItem
+                key={item.id}
+                label={getLabel(item)}
+                href={item.href}
+              />
+            ))}
+          </NavigationLinks>
         </nav>
 
         {isMenuOpen && (
@@ -54,11 +62,11 @@ function Header({ navigationItems }: HeaderProps) {
             <NavigationLinks mobile>
               {navigationItems.map((item) => (
                 <NavigationItem
-                  key={item.href}
-                  label={item.label}
+                  key={item.id}
+                  label={getLabel(item)}
                   href={item.href}
                   mobile
-                  onNavigate={closeMenu}
+                  onNavigate={() => setIsMenuOpen(false)}
                 />
               ))}
             </NavigationLinks>

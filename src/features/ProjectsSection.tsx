@@ -24,7 +24,7 @@ function ProjectsSection({
       />
 
       {projects.map((project) => (
-        <ProjectCard key={project.code}>
+        <ProjectCard key={project.id}>
           <ProjectImage
             imageUrl={project.imageUrl}
             alt={project.imageAlt}

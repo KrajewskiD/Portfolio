@@ -5,6 +5,7 @@ export type ProjectTopicData = {
 };
 
 export type Project = {
+  id: string;
   code: string;
   title: string;
   imageUrl?: string;
