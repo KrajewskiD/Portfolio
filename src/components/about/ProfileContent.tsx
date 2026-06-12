@@ -3,17 +3,19 @@ import type { ReactNode } from "react";
 type ProfileContentProps = {
   name: string;
   role: string;
+  label: string;
   children: ReactNode;
 };
 
 function ProfileContent({
   name,
   role,
+  label,
   children,
 }: ProfileContentProps) {
   return (
     <div className="max-w-2xl">
-      <p className="mb-6 font-mono">// o_mnie</p>
+      <p className="mb-6 font-mono">{label}</p>
 
       <h1 className="text-4xl font-bold sm:text-5xl lg:text-6xl">
         {name}

@@ -1,15 +1,8 @@
-import type { Translations } from "./translations";
+import type { Language } from "../types/language";
+import { en } from "./en";
+import { pl } from "./pl";
 
-export const en: Translations = {
-  about: {
-    label: "about_me",
-  },
-  projects: {
-    label: "projects",
-    title: "Selected Work",
-  },
-  skills: {
-    label: "skills",
-    title: "Skills",
-  },
-};
+export const translations = {
+  pl,
+  en,
+} satisfies Record<Language, typeof pl>;

@@ -4,9 +4,10 @@ import type { Profile } from "../types/profile";
 
 type AboutSectionProps = {
   profile: Profile;
+  label: string;
 };
 
-function AboutSection({ profile }: AboutSectionProps) {
+function AboutSection({ profile, label }: AboutSectionProps) {
   return (
     <section
       id="about"

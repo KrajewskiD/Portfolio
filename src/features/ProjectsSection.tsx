@@ -8,10 +8,14 @@ import type { Project } from "../types/project";
 
 type ProjectsSectionProps = {
   projects: Project[];
+  label: string;
+  title: string;
 };
 
 function ProjectsSection({
-  projects,
+    projects,
+    label,
+    title
 }: ProjectsSectionProps) {
   return (
     <section
@@ -19,8 +23,8 @@ function ProjectsSection({
       className="scroll-mt-24 pt-16 pb-8 sm:pt-20 sm:pb-10"
     >
       <SectionHeading
-        label="projekty"
-        title="Wybrane projekty"
+        label={label}
+        title={title}
       />
 
       {projects.map((project) => (

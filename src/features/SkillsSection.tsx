@@ -5,13 +5,16 @@ import type { SkillGroupData } from "../types/skill";
 
 type SkillsSectionProps = {
   skillGroups: SkillGroupData[];
+  label: string;
+  title: string;
 };
-function SkillsSection({ skillGroups, }: SkillsSectionProps) {
+
+function SkillsSection({ skillGroups, label, title }: SkillsSectionProps) {
   return (
     <section id="skills" className="scroll-mt-24 py-8 sm:py-10">
       <SectionHeading
-        label="umiejętności"
-        title="Umiejętności"
+        label={label}
+        title={title}
       />
 
       <div className="mt-6 grid items-start gap-6 lg:grid-cols-2">

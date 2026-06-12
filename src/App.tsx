@@ -19,7 +19,7 @@ function App() {
         onLanguageChange={setLanguage}
       >
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<HomePage language={language}/>} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </MainLayout>
