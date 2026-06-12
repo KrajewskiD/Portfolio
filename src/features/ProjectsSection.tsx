@@ -25,7 +25,7 @@ function ProjectsSection({
   return (
     <section
       id="projects"
-      className="scroll-mt-24 pt-16 pb-8 sm:pt-20 sm:pb-10"
+      className="scroll-mt-0 pt-4 pb-8 sm:pt-6 sm:pb-10"
     >
       <SectionHeading label={label} title={title} />
 

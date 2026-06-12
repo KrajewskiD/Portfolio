@@ -1,25 +1,34 @@
 type ProjectTopicProps = {
+  id: string;
+  panelId: string;
   label: string;
   active: boolean;
   onSelect: () => void;
 };
 
-function ProjectTopic({ label, active, onSelect }: ProjectTopicProps) {
+function ProjectTopic({
+  id,
+  panelId,
+  label,
+  active,
+  onSelect,
+}: ProjectTopicProps) {
   return (
-    <li>
-      <button
-        type="button"
-        onClick={onSelect}
-        className={
-          active
-            ? "w-full rounded-xl border px-4 py-3 text-left font-semibold"
-            : "w-full px-4 py-3 text-left"
-        }
-      >
-        <span className="mr-3">•</span>
-        {label}
-      </button>
-    </li>
+    <button
+      id={id}
+      type="button"
+      role="tab"
+      aria-selected={active}
+      aria-controls={panelId}
+      onClick={onSelect}
+      className={`shrink-0 whitespace-nowrap border-b-2 px-4 py-3 ${
+        active
+          ? "border-black font-semibold"
+          : "border-transparent opacity-60"
+      }`}
+    >
+      {label}
+    </button>
   );
 }
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import type { Language } from "../../types/language";
 import type { ProjectTopicData } from "../../types/project";
@@ -9,7 +9,11 @@ type ProjectTopicsGroupProps = {
   language: Language;
 };
 
-function ProjectTopicsGroup({ topics, language }: ProjectTopicsGroupProps) {
+function ProjectTopicsGroup({
+  topics,
+  language,
+}: ProjectTopicsGroupProps) {
+  const groupId = useId();
   const [activeId, setActiveId] = useState(topics[0]?.id ?? "");
 
   const activeTopic =
@@ -19,26 +23,46 @@ function ProjectTopicsGroup({ topics, language }: ProjectTopicsGroupProps) {
     return null;
   }
 
+  const panelId = `${groupId}-panel`;
+
   return (
     <>
-      <ul className="mt-6 space-y-1">
+      <div
+        role="tablist"
+        className="mt-6 flex w-full overflow-x-auto border-b"
+      >
         {topics.map((topic) => (
           <ProjectTopic
             key={topic.id}
-            label={language === "pl" ? topic.labelPl : topic.labelEn}
+            id={`${groupId}-${topic.id}-tab`}
+            panelId={panelId}
+            label={
+              language === "pl"
+                ? topic.labelPl
+                : topic.labelEn
+            }
             active={topic.id === activeTopic.id}
             onSelect={() => setActiveId(topic.id)}
           />
         ))}
-      </ul>
+      </div>
 
-      <div className="mt-5 rounded-xl border-l-2 p-4">
+      <div
+        id={panelId}
+        role="tabpanel"
+        aria-labelledby={`${groupId}-${activeTopic.id}-tab`}
+        className="mt-5 rounded-xl border-l-2 p-4"
+      >
         <p className="font-mono text-sm">
-          {language === "pl" ? activeTopic.labelPl : activeTopic.labelEn}
+          {language === "pl"
+            ? activeTopic.labelPl
+            : activeTopic.labelEn}
         </p>
 
         <p className="mt-2 leading-7">
-          {language === "pl" ? activeTopic.contentPl : activeTopic.contentEn}
+          {language === "pl"
+            ? activeTopic.contentPl
+            : activeTopic.contentEn}
         </p>
       </div>
     </>
