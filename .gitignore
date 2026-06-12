@@ -30,6 +30,7 @@ dist-ssr
 
 # Local project documentation
 ArchitekturaProjektowa.md
+KontekstProjektowy.md
 
 # Environment variables
 .env
