@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import NavigationItem from "./navigation/NavigationItem";
 import NavigationLinks from "./navigation/NavigationLinks";
+import MenuToggle from "./navigation/MenuToggle";
 import type { NavigationLinkData } from "../types/link";
 import type { Language } from "../types/language";
 
@@ -23,20 +24,10 @@ function Header({ navigationItems, language }: HeaderProps) {
           aria-label="Główna nawigacja"
           className="flex items-center gap-1 rounded-full border bg-white px-2 py-1"
         >
-          <button
-            type="button"
-            className="flex h-11 w-11 items-center justify-center sm:hidden"
-            aria-label={isMenuOpen ? "Zamknij menu" : "Otwórz menu"}
-            aria-expanded={isMenuOpen}
-            aria-controls="mobile-menu"
-            onClick={() => setIsMenuOpen((current) => !current)}
-          >
-            <span className="flex w-5 flex-col gap-1.5">
-              <span className="h-0.5 w-full bg-current" />
-              <span className="h-0.5 w-full bg-current" />
-              <span className="h-0.5 w-full bg-current" />
-            </span>
-          </button>
+          <MenuToggle
+            isOpen={isMenuOpen}
+            onToggle={() => setIsMenuOpen((current) => !current)}
+          />
 
           <span className="px-3 py-2 font-semibold">
             Krajewski
