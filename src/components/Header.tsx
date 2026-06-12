@@ -1,6 +1,14 @@
 import { useState } from "react";
 
-function Header() {
+import NavigationItem from "./navigation/NavigationItem";
+import NavigationLinks from "./navigation/NavigationLinks";
+import type { LinkData } from "../types/link";
+
+type HeaderProps = {
+  navigationItems: LinkData[];
+};
+
+function Header({ navigationItems }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const closeMenu = () => setIsMenuOpen(false);
@@ -12,15 +20,19 @@ function Header() {
           aria-label="Główna nawigacja"
           className="flex items-center gap-1 rounded-full border bg-white px-2 py-1"
         >
-          <a className="px-3 py-2 font-semibold" href="/">
+          <a href="/" className="px-3 py-2 font-semibold">
             Portfolio
           </a>
 
-          <div className="hidden items-center gap-1 sm:flex">
-            <a className="px-3 py-2" href="#about">O mnie</a>
-            <a className="px-3 py-2" href="#projects">Projekty</a>
-            <a className="px-3 py-2" href="#skills">Umiejętności</a>
-          </div>
+          <NavigationLinks>
+            {navigationItems.map((item) => (
+              <NavigationItem
+                key={item.href}
+                label={item.label}
+                href={item.href}
+              />
+            ))}
+          </NavigationLinks>
 
           <button
             type="button"
@@ -37,17 +49,19 @@ function Header() {
           <nav
             id="mobile-menu"
             aria-label="Mobilna nawigacja"
-            className="absolute top-full left-1/2 mt-2 flex w-56 -translate-x-1/2 flex-col rounded-2xl border bg-white p-2 sm:hidden"
+            className="absolute top-full left-1/2 mt-2 w-56 -translate-x-1/2 rounded-2xl border bg-white p-2 sm:hidden"
           >
-            <a className="rounded-xl px-4 py-3" href="#about" onClick={closeMenu}>
-              O mnie
-            </a>
-            <a className="rounded-xl px-4 py-3" href="#projects" onClick={closeMenu}>
-              Projekty
-            </a>
-            <a className="rounded-xl px-4 py-3" href="#skills" onClick={closeMenu}>
-              Umiejętności
-            </a>
+            <NavigationLinks mobile>
+              {navigationItems.map((item) => (
+                <NavigationItem
+                  key={item.href}
+                  label={item.label}
+                  href={item.href}
+                  mobile
+                  onNavigate={closeMenu}
+                />
+              ))}
+            </NavigationLinks>
           </nav>
         )}
       </div>
