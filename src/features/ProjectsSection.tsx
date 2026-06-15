@@ -5,12 +5,13 @@ import ProjectTopicsGroup from "../components/projects/ProjectTopicsGroup";
 import TechnologyTag from "../components/projects/TechnologyTag";
 import SectionHeading from "../components/sections/SectionHeading";
 import type { Language } from "../types/language";
-import type { Project } from "../types/project";
+import type { Project, ProjectTopicId } from "../types/project";
 
 type ProjectsSectionProps = {
   projects: Project[];
   label: string;
   title: string;
+  topicLabels: Record<ProjectTopicId, string>;
   language: Language;
   noImage: string;
 };
@@ -19,11 +20,15 @@ function ProjectsSection({
   projects,
   label,
   title,
+  topicLabels,
   noImage,
   language,
 }: ProjectsSectionProps) {
   return (
-    <section id="projects" className="scroll-mt-0 pt-4 pb-8 sm:pt-6 sm:pb-10">
+    <section
+      id="projects"
+      className="scroll-mt-0 pt-4 pb-8 sm:pt-6 sm:pb-10"
+    >
       <SectionHeading label={label} title={title} />
 
       {projects.map((project) => {
@@ -50,6 +55,7 @@ function ProjectsSection({
               topics={
                 <ProjectTopicsGroup
                   topics={project.topics}
+                  topicLabels={topicLabels}
                   language={language}
                 />
               }

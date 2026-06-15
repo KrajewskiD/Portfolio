@@ -9,8 +9,13 @@ export const en: Translations = {
     label: "projects",
     title: "Selected Work",
     noImage: "No project image",
+    topics: {
+      overview: "Overview",
+      features: "Main features",
+      technologies: "Technologies",
+      architecture: "Architecture",
+    },
   },
-
   skills: {
     label: "skills",
     title: "Skills",

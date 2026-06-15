@@ -1,15 +1,16 @@
 import { useId, useState } from "react";
 
 import type { Language } from "../../types/language";
-import type { ProjectTopicData } from "../../types/project";
+import type { ProjectTopicContent, ProjectTopicId } from "../../types/project";
 import ProjectTopic from "./ProjectTopic";
 
 type ProjectTopicsGroupProps = {
-  topics: ProjectTopicData[];
+  topics: ProjectTopicContent[];
+  topicLabels: Record<ProjectTopicId, string>;
   language: Language;
 };
 
-function ProjectTopicsGroup({ topics, language }: ProjectTopicsGroupProps) {
+function ProjectTopicsGroup({ topics, topicLabels, language }: ProjectTopicsGroupProps) {
   const groupId = useId();
   const [activeId, setActiveId] = useState(topics[0]?.id ?? "");
 
@@ -30,7 +31,7 @@ function ProjectTopicsGroup({ topics, language }: ProjectTopicsGroupProps) {
             key={topic.id}
             id={`${groupId}-${topic.id}-tab`}
             panelId={panelId}
-            label={language === "pl" ? topic.labelPl : topic.labelEn}
+            label={topicLabels[topic.id]}
             active={topic.id === activeTopic.id}
             onSelect={() => setActiveId(topic.id)}
           />
@@ -44,7 +45,7 @@ function ProjectTopicsGroup({ topics, language }: ProjectTopicsGroupProps) {
         className="mt-5 rounded-xl border-l-2 p-4"
       >
         <p className="font-mono text-sm">
-          {language === "pl" ? activeTopic.labelPl : activeTopic.labelEn}
+          {topicLabels[activeTopic.id]}
         </p>
 
         <p className="mt-2 leading-7">
