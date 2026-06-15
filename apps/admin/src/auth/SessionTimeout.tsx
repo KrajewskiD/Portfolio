@@ -69,12 +69,14 @@ function SessionTimeout() {
 
       isSigningOut = true;
 
-      try {
-        await signOut();
-      } finally {
-        clearLastActivity();
-        window.location.replace(getAdminUrl(adminRoute.login));
-      }
+     try {
+  await signOut("local");
+  clearLastActivity();
+  window.location.replace(getAdminUrl(adminRoute.login));
+} catch {
+  isSigningOut = false;
+}
+
     }
 
     function handleVisibilityChange() {

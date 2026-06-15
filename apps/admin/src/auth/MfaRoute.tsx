@@ -1,19 +1,26 @@
-import { Navigate, Outlet } from "react-router";
+import { Navigate, Outlet, useLocation } from "react-router";
+import { adminRoute } from "@shared/config/routes";
 import { useAuth } from "./AuthProvider";
+import type { MfaStatus } from "../services/mfaService";
+
+const routeByMfaStatus: Record<MfaStatus, string> = {
+  unenrolled: adminRoute.mfaSetup,
+  unverified: adminRoute.mfaVerify,
+  verified: adminRoute.dashboard,
+};
 
 function MfaRoute() {
   const { mfaStatus, isLoading } = useAuth();
+  const location = useLocation();
 
   if (isLoading || !mfaStatus) {
     return <p>Sprawdzanie MFA...</p>;
   }
 
-  if (mfaStatus === "unenrolled") {
-    return <Navigate to="/mfa/setup" replace />;
-  }
+  const requiredRoute = routeByMfaStatus[mfaStatus];
 
-  if (mfaStatus === "unverified") {
-    return <Navigate to="/mfa/verify" replace />;
+  if (location.pathname !== requiredRoute) {
+    return <Navigate to={requiredRoute} replace />;
   }
 
   return <Outlet />;
