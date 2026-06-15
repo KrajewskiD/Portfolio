@@ -7,6 +7,12 @@ export type Translations = {
     label: string;
     title: string;
     noImage: string;
+    topics: {
+      overview: string;
+      features: string;
+      technologies: string;
+      architecture: string;
+    };
   };
   skills: {
     label: string;
