@@ -8,6 +8,8 @@ export type Translations = {
     label: string;
     title: string;
     noImage: string;
+    loadError: string;
+    emptyMessage: string;   
     topics: {
       overview: string;
       features: string;

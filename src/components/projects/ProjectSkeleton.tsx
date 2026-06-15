@@ -1,7 +1,7 @@
 function ProjectSkeleton() {
   return (
     <article
-      className="mt-8 grid w-full min-w-0 overflow-hidden rounded-3xl border lg:min-h-[75vh] lg:grid-cols-2"
+      className="mt-8 grid w-full min-w-0 overflow-hidden rounded-3xl border lg:min-h-[60vh] lg:grid-cols-2"
       aria-hidden="true"
     >
       <div className="flex p-4 lg:border-r">

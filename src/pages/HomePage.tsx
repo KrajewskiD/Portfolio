@@ -41,7 +41,8 @@ function HomePage({ language }: HomePageProps) {
         projects={projects}
         isLoading={areProjectsPending}
         isError={areProjectsError}
-        errorMessage="Nie udało się wczytać projektów."
+        errorMessage={translation.projects.loadError}
+        emptyMessage={translation.projects.emptyMessage}
         label={translation.projects.label}
         title={translation.projects.title}
         topicLabels={translation.projects.topics}

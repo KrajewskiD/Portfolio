@@ -10,6 +10,8 @@ export const en: Translations = {
     label: "projects",
     title: "Selected Work",
     noImage: "No project image",
+    loadError: "The projects could not be loaded.",
+    emptyMessage: "No projects available.",
     topics: {
       overview: "Overview",
       features: "Main features",

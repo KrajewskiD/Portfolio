@@ -20,6 +20,7 @@ type ProjectsSectionProps = {
   topicLabels: Record<ProjectTopicId, string>;
   language: Language;
   noImage: string;
+  emptyMessage: string;
 };
 
 function ProjectsSection({
@@ -31,6 +32,7 @@ function ProjectsSection({
   title,
   topicLabels,
   noImage,
+  emptyMessage,
   language,
 }: ProjectsSectionProps) {
   const [activeTopics, setActiveTopics] = useState<
@@ -52,7 +54,7 @@ function ProjectsSection({
         </div>
       ) : !projects?.length ? (
         <div className="mt-8 flex min-h-64 items-center justify-center rounded-3xl border text-center">
-          <p>Brak projektów.</p>
+          <p>{emptyMessage}</p>
         </div>
       ) : (
         projects.map((project) => {
