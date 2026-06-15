@@ -6,11 +6,11 @@ export const supabase = createClient(
   env.supabasePublishableKey,
   {
     auth: {
-        flowType: "pkce",
-        detectSessionInUrl: true,
-        persistSession: true,
-        autoRefreshToken: true,
-        storage: window.sessionStorage
-    }
-  }
+      flowType: "pkce",
+      detectSessionInUrl: true,
+      persistSession: true,
+      autoRefreshToken: true,
+      storage: window.sessionStorage,
+    },
+  },
 );

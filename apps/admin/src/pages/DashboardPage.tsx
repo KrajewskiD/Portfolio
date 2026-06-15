@@ -1,10 +1,8 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
-
 import { signOut } from "../services/authService";
+import { adminRoute, getAdminUrl } from "@shared/config/routes";
 
 function DashboardPage() {
-  const navigate = useNavigate();
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>();
 
@@ -14,7 +12,7 @@ function DashboardPage() {
 
     try {
       await signOut();
-      navigate("/login", { replace: true });
+      window.location.replace(getAdminUrl(adminRoute.login));
     } catch {
       setErrorMessage("Nie udało się wylogować. Spróbuj ponownie.");
       setIsSigningOut(false);
@@ -25,11 +23,7 @@ function DashboardPage() {
     <main>
       <h1>Panel administratora</h1>
 
-      <button
-        type="button"
-        onClick={handleSignOut}
-        disabled={isSigningOut}
-      >
+      <button type="button" onClick={handleSignOut} disabled={isSigningOut}>
         {isSigningOut ? "Wylogowywanie..." : "Wyloguj"}
       </button>
 

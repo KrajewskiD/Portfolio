@@ -5,6 +5,8 @@ import {
   verifyMfa,
   type MfaEnrollment,
 } from "../services/mfaService";
+import AuthLayout from "../layouts/AuthLayout";
+import MfaCodeInput from "../components/MfaCodeInput";
 
 function MfaSetupPage() {
   const [enrollment, setEnrollment] = useState<MfaEnrollment | null>(null);
@@ -42,47 +44,66 @@ function MfaSetupPage() {
   }
 
   return (
-    <main>
-      <h1>Konfiguracja MFA</h1>
-
+    <AuthLayout
+      label="mfa_setup"
+      title="Konfiguracja MFA"
+      description="Zeskanuj kod QR w aplikacji uwierzytelniającej, a potem wpisz 6-cyfrowy kod."
+    >
       {!enrollment ? (
-        <button type="button" onClick={handleEnroll} disabled={isLoading}>
+        <button
+          type="button"
+          onClick={handleEnroll}
+          disabled={isLoading}
+          className="rounded-full border border-white/30 px-5 py-3 font-bold transition hover:bg-white hover:text-black disabled:cursor-not-allowed disabled:opacity-40"
+        >
           {isLoading ? "Generowanie..." : "Skonfiguruj MFA"}
         </button>
       ) : (
         <>
-          <img
-            src={enrollment.qrCode}
-            alt="Kod QR do konfiguracji uwierzytelniania"
-          />
+          <div className="rounded-3xl border border-white/20 bg-white p-4">
+            <img
+              src={enrollment.qrCode}
+              alt="Kod QR do konfiguracji uwierzytelniania"
+              className="mx-auto size-56"
+            />
+          </div>
 
-          <p>
-            Kod ręczny: <code>{enrollment.secret}</code>
+          <p className="text-sm leading-6 text-white/70">
+            Kod ręczny:{" "}
+            <code className="break-all font-mono text-white">
+              {enrollment.secret}
+            </code>
           </p>
 
-          <label htmlFor="mfa-code">Kod z aplikacji</label>
-          <input
+          <label htmlFor="mfa-code" className="text-sm font-bold text-white/70">
+            Kod z aplikacji
+          </label>
+
+          <MfaCodeInput
             id="mfa-code"
-            type="text"
-            inputMode="numeric"
-            autoComplete="one-time-code"
-            maxLength={6}
             value={code}
-            onChange={(event) => setCode(event.target.value.replace(/\D/g, ""))}
+            onChange={setCode}
+            disabled={isLoading}
+            autoFocus
           />
 
           <button
             type="button"
             onClick={handleVerify}
             disabled={isLoading || code.length !== 6}
+            className="rounded-full border border-white/30 px-5 py-3 font-bold transition hover:bg-white hover:text-black disabled:cursor-not-allowed disabled:opacity-40"
           >
             {isLoading ? "Weryfikowanie..." : "Potwierdź"}
           </button>
         </>
       )}
 
-      {errorMessage && <p role="alert">{errorMessage}</p>}
-    </main>
+      {errorMessage && (
+        <p role="alert" className="text-sm text-red-300">
+          {errorMessage}
+        </p>
+      )}
+    </AuthLayout>
   );
 }
 

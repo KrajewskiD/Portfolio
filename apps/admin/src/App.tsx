@@ -12,36 +12,19 @@ function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
-      <Route
-        path="/unauthorized"
-        element={<UnauthorizedPage />}
-      />
+      <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
       <Route element={<ProtectedRoute />}>
         <Route element={<MfaRoute />}>
-          <Route
-            path="/mfa/setup"
-            element={<MfaSetupPage />}
-          />
-          <Route
-            path="/mfa/verify"
-            element={<MfaVerifyPage />}
-          />
-          <Route
-            path="/dashboard"
-            element={<DashboardPage />}
-          />
+          <Route path="/mfa/setup" element={<MfaSetupPage />} />
+          <Route path="/mfa/verify" element={<MfaVerifyPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
         </Route>
       </Route>
 
-      <Route
-        path="/"
-        element={<Navigate to="/dashboard" replace />}
-      />
-      <Route
-        path="*"
-        element={<Navigate to="/dashboard" replace />}
-      />
+      <Route path="/" element={<Navigate to="/login" replace />} />
+
+      <Route path="*" element={<Navigate to="/unauthorized" replace />} />
     </Routes>
   );
 }

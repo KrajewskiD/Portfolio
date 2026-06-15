@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { adminRoute, getAdminUrl } from "@shared/config/routes";
 import { verifyExistingMfa } from "../services/mfaService";
+import AuthLayout from "../layouts/AuthLayout";
+import MfaCodeInput from "../components/MfaCodeInput";
 
 function MfaVerifyPage() {
   const [code, setCode] = useState("");
@@ -24,31 +26,38 @@ function MfaVerifyPage() {
   }
 
   return (
-    <main>
-      <h1>Weryfikacja MFA</h1>
+    <AuthLayout
+      label="mfa_verify"
+      title="Weryfikacja MFA"
+      description="Podaj 6-cyfrowy kod z aplikacji uwierzytelniającej."
+    >
+      <label htmlFor="mfa-code" className="text-sm font-bold text-white/70">
+        Kod z aplikacji
+      </label>
 
-      <label htmlFor="mfa-code">Kod z aplikacji</label>
-      <input
+      <MfaCodeInput
         id="mfa-code"
-        type="text"
-        inputMode="numeric"
-        autoComplete="one-time-code"
-        maxLength={6}
-        autoFocus
         value={code}
-        onChange={(event) => setCode(event.target.value.replace(/\D/g, ""))}
+        onChange={setCode}
+        disabled={isLoading}
+        autoFocus
       />
 
       <button
         type="button"
         onClick={handleVerify}
         disabled={isLoading || code.length !== 6}
+        className="rounded-full border border-white/30 px-5 py-3 font-bold transition hover:bg-white hover:text-black disabled:cursor-not-allowed disabled:opacity-40"
       >
         {isLoading ? "Weryfikowanie..." : "Potwierdź"}
       </button>
 
-      {errorMessage && <p role="alert">{errorMessage}</p>}
-    </main>
+      {errorMessage && (
+        <p role="alert" className="text-sm text-red-300">
+          {errorMessage}
+        </p>
+      )}
+    </AuthLayout>
   );
 }
 

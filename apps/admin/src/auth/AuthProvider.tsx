@@ -29,26 +29,45 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
-  const [authStatus, setAuthStatus] =
-    useState<AuthStatus>("loading");
-  const [mfaStatus, setMfaStatus] =
-    useState<MfaStatus | null>(null);
+  const [authStatus, setAuthStatus] = useState<AuthStatus>("loading");
+  const [mfaStatus, setMfaStatus] = useState<MfaStatus | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
+
+    async function loadSession() {
+      const { data, error } = await supabase.auth.getSession();
+
+      if (cancelled) return;
+
+      if (error) {
+        setSession(null);
+        setMfaStatus(null);
+        setAuthStatus("error");
+        return;
+      }
+
+      setSession(data.session);
+      setAuthStatus(data.session ? "checking" : "unauthenticated");
+    }
+
+    void loadSession();
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       setSession(nextSession);
-      setAuthStatus(
-        nextSession ? "checking" : "unauthenticated",
-      );
+      setAuthStatus(nextSession ? "checking" : "unauthenticated");
 
       if (!nextSession) {
         setMfaStatus(null);
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
@@ -73,21 +92,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       if (!data) {
-  setMfaStatus(null);
+        setMfaStatus(null);
 
-  const { error: signOutError } =
-    await supabase.auth.signOut();
+        const { error: signOutError } = await supabase.auth.signOut();
 
-  if (signOutError) {
-    setAuthStatus("error");
-    return;
-  }
+        if (signOutError) {
+          setAuthStatus("error");
+          return;
+        }
 
-  window.location.replace(
-    `${getAdminUrl(adminRoute.login)}?error=unauthorized`,
-  );
-  return;
-}
+        window.location.replace(
+          `${getAdminUrl(adminRoute.login)}?error=unauthorized`,
+        );
+        return;
+      }
 
       try {
         const nextMfaStatus = await getMfaStatus();
@@ -118,9 +136,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         authStatus,
         isAdmin: authStatus === "admin",
         mfaStatus,
-        isLoading:
-          authStatus === "loading" ||
-          authStatus === "checking",
+        isLoading: authStatus === "loading" || authStatus === "checking",
       }}
     >
       {children}
@@ -132,9 +148,7 @@ export function useAuth() {
   const context = useContext(AuthContext);
 
   if (!context) {
-    throw new Error(
-      "useAuth must be used inside AuthProvider",
-    );
+    throw new Error("useAuth must be used inside AuthProvider");
   }
 
   return context;

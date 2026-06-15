@@ -11,7 +11,7 @@ import App from "./App";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AuthProvider>
-      <SessionTimeout/>
+      <SessionTimeout />
       <BrowserRouter basename={ADMIN_BASE_PATH}>
         <App />
       </BrowserRouter>

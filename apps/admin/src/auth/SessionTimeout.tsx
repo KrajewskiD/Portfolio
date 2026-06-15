@@ -19,9 +19,7 @@ function readLastActivity(): number {
   const storedValue = window.sessionStorage.getItem(LAST_ACTIVITY_KEY);
   const timestamp = Number(storedValue);
 
-  return Number.isFinite(timestamp) && timestamp > 0
-    ? timestamp
-    : Date.now();
+  return Number.isFinite(timestamp) && timestamp > 0 ? timestamp : Date.now();
 }
 
 function saveLastActivity(timestamp: number): void {
@@ -69,14 +67,13 @@ function SessionTimeout() {
 
       isSigningOut = true;
 
-     try {
-  await signOut("local");
-  clearLastActivity();
-  window.location.replace(getAdminUrl(adminRoute.login));
-} catch {
-  isSigningOut = false;
-}
-
+      try {
+        await signOut("local");
+        clearLastActivity();
+        window.location.replace(getAdminUrl(adminRoute.login));
+      } catch {
+        isSigningOut = false;
+      }
     }
 
     function handleVisibilityChange() {
@@ -91,10 +88,7 @@ function SessionTimeout() {
       });
     });
 
-    document.addEventListener(
-      "visibilitychange",
-      handleVisibilityChange,
-    );
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     const intervalId = window.setInterval(
       () => void checkInactivity(),
@@ -110,10 +104,7 @@ function SessionTimeout() {
         window.removeEventListener(eventName, registerActivity);
       });
 
-      document.removeEventListener(
-        "visibilitychange",
-        handleVisibilityChange,
-      );
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
 
       window.clearInterval(intervalId);
     };

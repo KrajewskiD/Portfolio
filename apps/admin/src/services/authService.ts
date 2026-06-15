@@ -16,9 +16,7 @@ export async function signInWithGitHub(): Promise<void> {
 
 type SignOutScope = "global" | "local";
 
-export async function signOut(
-  scope: SignOutScope = "global",
-): Promise<void> {
+export async function signOut(scope: SignOutScope = "global"): Promise<void> {
   const { error } = await supabase.auth.signOut({ scope });
 
   if (error) {

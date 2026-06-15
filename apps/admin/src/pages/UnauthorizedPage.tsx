@@ -1,8 +1,12 @@
+import AuthLayout from "../layouts/AuthLayout";
+
 function UnauthorizedPage() {
   return (
-    <main>
-      <h1>401 Unauthorized</h1>
-    </main>
+    <AuthLayout
+      label="401"
+      title="Unauthorized"
+      description="Nie masz dostępu do tej części panelu administratora."
+    />
   );
 }
 
