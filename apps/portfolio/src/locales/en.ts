@@ -10,11 +10,8 @@ export const en: Translations = {
     label: "projects",
     title: "Selected Work",
     noImage: "No project image",
-<<<<<<< HEAD:apps/portfolio/src/locales/en.ts
     loadError: "The projects could not be loaded.",
     emptyMessage: "No projects available.",
-=======
->>>>>>> origin/main:src/locales/en.ts
     topics: {
       overview: "Overview",
       features: "Main features",
