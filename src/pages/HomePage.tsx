@@ -3,21 +3,23 @@ import ProjectsSection from "../features/ProjectsSection";
 import SkillsSection from "../features/SkillsSection";
 import { translations } from "../locales";
 import type { Language } from "../types/language";
-import { useProfile } from "../hooks/useProfile";
 import { useProjects } from "../hooks/useProjects";
 import { useSkillGroups } from "../hooks/useSkillGroups";
+import type { Profile } from "../types/profile";
 
 type HomePageProps = {
   language: Language;
+  profile?: Profile;
+  isProfileLoading: boolean;
+  isProfileError: boolean;
 };
 
-function HomePage({ language }: HomePageProps) {
-  const {
-    data: profile,
-    isPending: isProfilePending,
-    isError: isProfileError,
-  } = useProfile();
-
+function HomePage({
+  language,
+  profile,
+  isProfileLoading,
+  isProfileError,
+}: HomePageProps) {
   const {
     data: projects,
     isPending: areProjectsPending,
@@ -35,7 +37,7 @@ function HomePage({ language }: HomePageProps) {
     <>
       <AboutSection
         profile={profile}
-        isLoading={isProfilePending}
+        isLoading={isProfileLoading}
         isError={isProfileError}
         errorMessage={translation.about.loadError}
         label={translation.about.label}

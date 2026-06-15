@@ -11,12 +11,14 @@ type FooterLinkRow = {
 export async function getFooterLinks(): Promise<FooterLinkData[]> {
   const { data, error } = await supabase
     .from("footer_links")
-    .select(`
+    .select(
+      `
       id,
       label,
       url,
       display_order
-    `)
+    `,
+    )
     .order("display_order", { ascending: true })
     .overrideTypes<FooterLinkRow[]>();
 

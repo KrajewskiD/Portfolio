@@ -3,14 +3,18 @@ import type { ReactNode } from "react";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import TopToolbar from "../components/toolbar/TopToolbar";
+import type { Translations } from "../locales/translations";
 import type { FooterData } from "../types/footer";
 import type { Language } from "../types/language";
-import type { NavigationLinkData } from "../types/link";
-import type { Translations } from "../locales/translations";
+import type { FooterLinkData, NavigationLinkData } from "../types/link";
+import type { Profile } from "../types/profile";
 
 type MainLayoutProps = {
   children: ReactNode;
-  footer: FooterData;
+  profile?: Profile;
+  footerLinks?: FooterLinkData[];
+  isFooterLoading: boolean;
+  isFooterError: boolean;
   footerText: Translations["footer"];
   navigationItems: NavigationLinkData[];
   language: Language;
@@ -20,13 +24,27 @@ type MainLayoutProps = {
 
 function MainLayout({
   children,
-  footer,
+  profile,
+  footerLinks,
+  isFooterLoading,
+  isFooterError,
   footerText,
   navigationItems,
   language,
   navigationText,
   onLanguageChange,
 }: MainLayoutProps) {
+  const footer: FooterData | undefined = profile
+    ? {
+        name: profile.name,
+        description:
+          language === "pl"
+            ? profile.footerDescriptionPl
+            : profile.footerDescriptionEn,
+        links: footerLinks ?? [],
+      }
+    : undefined;
+
   return (
     <div className="flex min-h-screen flex-col">
       <TopToolbar language={language} onLanguageChange={onLanguageChange} />
@@ -39,7 +57,12 @@ function MainLayout({
 
       <main className="mx-auto w-full max-w-7xl flex-1 px-4">{children}</main>
 
-      <Footer footer={footer} socialLinksLabel={footerText.socialLinksLabel} />
+      <Footer
+        footer={footer}
+        isLoading={isFooterLoading}
+        isError={isFooterError}
+        socialLinksLabel={footerText.socialLinksLabel}
+      />
     </div>
   );
 }
