@@ -7,10 +7,19 @@ import {
 } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
+import { getMfaStatus, type MfaStatus } from "../services/mfaService";
+
+type AuthStatus =
+  | "loading"
+  | "unauthenticated"
+  | "checking"
+  | "admin"
+  | "forbidden";
 
 type AuthContextValue = {
   session: Session | null;
   isAdmin: boolean;
+  mfaStatus: MfaStatus | null;
   isLoading: boolean;
 };
 
@@ -18,49 +27,75 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [status, setStatus] = useState<AuthStatus>("loading");
+  const [mfaStatus, setMfaStatus] = useState<MfaStatus | null>(null);
 
   useEffect(() => {
-    async function initializeAuth() {
-      const { data } = await supabase.auth.getSession();
-      setSession(data.session);
-    }
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      setSession(nextSession);
+      setStatus(nextSession ? "checking" : "unauthenticated");
 
-    void initializeAuth();
-
-    const { data } = supabase.auth.onAuthStateChange((_event, newSession) => {
-      setSession(newSession);
+      if (!nextSession) {
+        setMfaStatus(null);
+      }
     });
 
-    return () => data.subscription.unsubscribe();
+    return () => subscription.unsubscribe();
   }, []);
 
   useEffect(() => {
+    if (!session) return;
+
+    let cancelled = false;
+
     async function checkAdmin() {
-      if (!session) {
-        setIsAdmin(false);
-        setIsLoading(false);
-        return;
-      }
-
-      setIsLoading(true);
-
       const { data, error } = await supabase
         .from("admin_users")
         .select("user_id")
-        .eq("user_id", session.user.id)
+        .eq("user_id", session!.user.id)
         .maybeSingle();
 
-      setIsAdmin(!error && Boolean(data));
-      setIsLoading(false);
+      if (cancelled) return;
+
+      if (error || !data) {
+        setMfaStatus(null);
+        setStatus("forbidden");
+        return;
+      }
+
+      try {
+        const nextMfaStatus = await getMfaStatus();
+
+        if (cancelled) return;
+
+        setMfaStatus(nextMfaStatus);
+        setStatus("admin");
+      } catch {
+        if (cancelled) return;
+
+        setMfaStatus(null);
+        setStatus("forbidden");
+      }
     }
 
     void checkAdmin();
+
+    return () => {
+      cancelled = true;
+    };
   }, [session]);
 
   return (
-    <AuthContext.Provider value={{ session, isAdmin, isLoading }}>
+    <AuthContext.Provider
+      value={{
+        session,
+        isAdmin: status === "admin",
+        mfaStatus,
+        isLoading: status === "loading" || status === "checking",
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

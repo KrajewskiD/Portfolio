@@ -1,7 +1,10 @@
 import { Navigate, Route, Routes } from "react-router";
 import ProtectedRoute from "./auth/ProtectedRoute";
+import MfaRoute from "./auth/MfaRoute";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
+import MfaSetupPage from "./pages/MfaSetupPage";
+import MfaVerifyPage from "./pages/MfaVerifyPage";
 
 function App() {
   return (
@@ -9,7 +12,12 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
 
       <Route element={<ProtectedRoute />}>
-        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/mfa/setup" element={<MfaSetupPage />} />
+        <Route path="/mfa/verify" element={<MfaVerifyPage />} />
+
+        <Route element={<MfaRoute />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+        </Route>
       </Route>
 
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
