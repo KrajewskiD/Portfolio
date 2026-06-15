@@ -10,11 +10,8 @@ export const pl: Translations = {
     label: "projekty",
     title: "Wybrane projekty",
     noImage: "Brak zdjęcia projektu",
-<<<<<<< HEAD:apps/portfolio/src/locales/pl.ts
     loadError: "Nie udało się wczytać projektów.",
     emptyMessage: "Brak projektów.",
-=======
->>>>>>> origin/main:src/locales/pl.ts
     topics: {
       overview: "Opis projektu",
       features: "Główne funkcje",

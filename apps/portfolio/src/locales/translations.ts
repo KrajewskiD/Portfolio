@@ -8,11 +8,8 @@ export type Translations = {
     label: string;
     title: string;
     noImage: string;
-<<<<<<< HEAD:apps/portfolio/src/locales/translations.ts
     loadError: string;
     emptyMessage: string;
-=======
->>>>>>> origin/main:src/locales/translations.ts
     topics: {
       overview: string;
       features: string;
