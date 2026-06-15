@@ -2,11 +2,14 @@ export type Translations = {
   about: {
     label: string;
     noImage: string;
+    loadError: string;
   };
   projects: {
     label: string;
     title: string;
     noImage: string;
+    loadError: string;
+    emptyMessage: string;
     topics: {
       overview: string;
       features: string;
@@ -18,6 +21,8 @@ export type Translations = {
     label: string;
     title: string;
     levelLabel: string;
+    loadError: string;
+    emptyMessage: string;
   };
   navigation: {
     mainLabel: string;

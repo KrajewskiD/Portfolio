@@ -4,11 +4,14 @@ export const en: Translations = {
   about: {
     label: "about_me",
     noImage: "No profile image",
+    loadError: "The profile could not be loaded.",
   },
   projects: {
     label: "projects",
     title: "Selected Work",
     noImage: "No project image",
+    loadError: "The projects could not be loaded.",
+    emptyMessage: "No projects available.",
     topics: {
       overview: "Overview",
       features: "Main features",
@@ -20,6 +23,8 @@ export const en: Translations = {
     label: "skills",
     title: "Skills",
     levelLabel: "Level {level} of {maxLevel}",
+    loadError: "The skills could not be loaded.",
+    emptyMessage: "No skills available.",
   },
   navigation: {
     mainLabel: "Main navigation",

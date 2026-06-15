@@ -6,9 +6,22 @@ import HomePage from "./pages/HomePage";
 import NotFoundPage from "./pages/NotFoundPage";
 import type { Language } from "./types/language";
 import { translations } from "./locales";
-import { footerMock, navigationMock } from "./data/portfolio.mock";
+import { navigationData } from "./data/navigation.data";
+import { useProfile } from "./hooks/useProfile";
+import { useFooterLinks } from "./hooks/useFooterLinks";
 
 function App() {
+  const {
+    data: profile,
+    isPending: isProfileLoading,
+    isError: isProfileError,
+  } = useProfile();
+  const {
+    data: footerLinks,
+    isPending: areFooterLinksLoading,
+    isError: areFooterLinksError,
+  } = useFooterLinks();
+
   const [language, setLanguage] = useState<Language>(() => {
     const savedLanguage = localStorage.getItem("language");
 
@@ -28,15 +41,28 @@ function App() {
   return (
     <BrowserRouter>
       <MainLayout
-        footer={footerMock}
+        profile={profile}
+        footerLinks={footerLinks}
+        isFooterLoading={isProfileLoading || areFooterLinksLoading}
+        isFooterError={isProfileError || areFooterLinksError}
         footerText={translation.footer}
-        navigationItems={navigationMock}
+        navigationItems={navigationData}
         navigationText={translation.navigation}
         language={language}
         onLanguageChange={setLanguage}
       >
         <Routes>
-          <Route path="/" element={<HomePage language={language} />} />
+          <Route
+            path="/"
+            element={
+              <HomePage
+                language={language}
+                profile={profile}
+                isProfileLoading={isProfileLoading}
+                isProfileError={isProfileError}
+              />
+            }
+          />
           <Route
             path="*"
             element={
