@@ -14,7 +14,7 @@ function MfaRoute() {
   const location = useLocation();
 
   if (isLoading || !mfaStatus) {
-    return <p>Sprawdzanie MFA...</p>;
+    return null;
   }
 
   const requiredRoute = routeByMfaStatus[mfaStatus];

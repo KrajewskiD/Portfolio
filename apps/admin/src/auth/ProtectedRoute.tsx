@@ -6,7 +6,7 @@ function ProtectedRoute() {
   const { session, authStatus, isLoading } = useAuth();
 
   if (isLoading) {
-    return <p>Sprawdzanie uprawnień...</p>;
+    return null;
   }
 
   if (authStatus === "error") {
