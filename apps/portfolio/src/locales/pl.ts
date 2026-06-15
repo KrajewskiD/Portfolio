@@ -10,16 +10,8 @@ export const pl: Translations = {
     label: "projekty",
     title: "Wybrane projekty",
     noImage: "Brak zdjęcia projektu",
-<<<<<<< HEAD
     loadError: "Nie udało się wczytać projektów.",
     emptyMessage: "Brak projektów.",
-=======
-<<<<<<< HEAD:apps/portfolio/src/locales/pl.ts
-    loadError: "Nie udało się wczytać projektów.",
-    emptyMessage: "Brak projektów.",
-=======
->>>>>>> origin/main:src/locales/pl.ts
->>>>>>> origin/main
     topics: {
       overview: "Opis projektu",
       features: "Główne funkcje",
