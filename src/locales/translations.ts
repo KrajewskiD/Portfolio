@@ -2,6 +2,7 @@ export type Translations = {
   about: {
     label: string;
     noImage: string;
+    loadError: string;
   };
   projects: {
     label: string;

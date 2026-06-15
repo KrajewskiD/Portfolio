@@ -4,6 +4,7 @@ export const pl: Translations = {
   about: {
     label: "o_mnie",
     noImage: "Brak zdjęcia",
+    loadError: "Nie udało się wczytać profilu.",
   },
   projects: {
     label: "projekty",

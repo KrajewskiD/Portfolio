@@ -4,6 +4,7 @@ export const en: Translations = {
   about: {
     label: "about_me",
     noImage: "No profile image",
+    loadError: "The profile could not be loaded.",
   },
   projects: {
     label: "projects",

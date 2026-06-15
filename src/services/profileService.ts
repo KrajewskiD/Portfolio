@@ -13,9 +13,13 @@ type ProfileRow = {
 };
 
 export async function getProfile(): Promise<Profile> {
+  // Skeleton Test
+  //   await new Promise((resolve) => setTimeout(resolve, 3000));
+
   const { data, error } = await supabase
     .from("profiles")
-    .select(`
+    .select(
+      `
       name,
       role_pl,
       role_en,
@@ -24,7 +28,8 @@ export async function getProfile(): Promise<Profile> {
       image_path,
       image_alt_pl,
       image_alt_en
-    `)
+    `,
+    )
     .eq("id", 1)
     .single<ProfileRow>();
 
@@ -33,9 +38,8 @@ export async function getProfile(): Promise<Profile> {
   }
 
   const imageUrl = data.image_path
-    ? supabase.storage
-        .from("profile-images")
-        .getPublicUrl(data.image_path).data.publicUrl
+    ? supabase.storage.from("profile-images").getPublicUrl(data.image_path).data
+        .publicUrl
     : undefined;
 
   return {
