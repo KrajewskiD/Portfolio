@@ -3,7 +3,7 @@ import { useId, useState } from "react";
 import type { Language } from "../../types/language";
 import type { ProjectTopicContent, ProjectTopicId, ProjectTopics,} from "../../types/project";
 import ProjectTopic from "./ProjectTopic";
-import { projectTopicOrder } from "../../config/projectTopics";
+import { projectTopicOrder, projectTopicIcons} from "../../config/projectTopics";
 
 type ProjectTopicsGroupProps = {
   topics: ProjectTopics;
@@ -42,6 +42,7 @@ function ProjectTopicsGroup({
             id={`${groupId}-${topic.id}-tab`}
             panelId={panelId}
             label={topicLabels[topic.id]}
+            iconSrc={projectTopicIcons[topic.id]}
             active={topic.id === activeTopic.id}
             onSelect={() => setActiveId(topic.id)}
           />
