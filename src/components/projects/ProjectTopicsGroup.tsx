@@ -1,47 +1,78 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import type { Language } from "../../types/language";
-import type { ProjectTopicData } from "../../types/project";
+import type {
+  ProjectTopicContent,
+  ProjectTopicId,
+  ProjectTopics,
+} from "../../types/project";
 import ProjectTopic from "./ProjectTopic";
+import {
+  projectTopicOrder,
+  projectTopicIcons,
+} from "../../config/projectTopics";
 
 type ProjectTopicsGroupProps = {
-  topics: ProjectTopicData[];
+  topics: ProjectTopics;
+  topicLabels: Record<ProjectTopicId, string>;
   language: Language;
 };
 
-function ProjectTopicsGroup({ topics, language }: ProjectTopicsGroupProps) {
-  const [activeId, setActiveId] = useState(topics[0]?.id ?? "");
+function ProjectTopicsGroup({
+  topics,
+  topicLabels,
+  language,
+}: ProjectTopicsGroupProps) {
+  const groupId = useId();
 
+  // Orders topics
+  const orderedTopics = projectTopicOrder
+    .map((id) => topics.find((topic) => topic.id === id))
+    .filter((topic): topic is ProjectTopicContent => topic !== undefined);
+
+  const [activeId, setActiveId] = useState(orderedTopics[0]?.id ?? ""); // Stores the ID of the active topic tab
   const activeTopic =
-    topics.find((topic) => topic.id === activeId) ?? topics[0];
+    orderedTopics.find((topic) => topic.id === activeId) ?? orderedTopics[0];
 
   if (!activeTopic) {
     return null;
   }
 
+  const panelId = `${groupId}-panel`;
+
   return (
-    <>
-      <ul className="mt-6 space-y-1">
-        {topics.map((topic) => (
+    <div className="mt-6 grid grid-cols-[1fr_auto] gap-4 sm:block">
+      <div
+        role="tablist"
+        aria-orientation="vertical"
+        className="col-start-2 row-start-1 flex translate-x-3 flex-col border-l sm:translate-x-0 sm:flex-row sm:overflow-x-auto sm:border-b sm:border-l-0"
+      >
+        {orderedTopics.map((topic) => (
           <ProjectTopic
             key={topic.id}
-            label={language === "pl" ? topic.labelPl : topic.labelEn}
+            id={`${groupId}-${topic.id}-tab`}
+            panelId={panelId}
+            label={topicLabels[topic.id]}
+            iconSrc={projectTopicIcons[topic.id]}
             active={topic.id === activeTopic.id}
             onSelect={() => setActiveId(topic.id)}
           />
         ))}
-      </ul>
+      </div>
 
-      <div className="mt-5 rounded-xl border-l-2 p-4">
-        <p className="font-mono text-sm">
-          {language === "pl" ? activeTopic.labelPl : activeTopic.labelEn}
-        </p>
+      <div
+        id={panelId}
+        role="tabpanel"
+        aria-labelledby={`${groupId}-${activeTopic.id}-tab`}
+        className="col-start-1 row-start-1 rounded-xl border-l-2 p-4 sm:mt-5"
+      >
+        <p className="font-mono text-sm">{topicLabels[activeTopic.id]}</p>
 
         <p className="mt-2 leading-7">
           {language === "pl" ? activeTopic.contentPl : activeTopic.contentEn}
         </p>
       </div>
-    </>
+    </div>
   );
 }
 

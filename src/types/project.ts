@@ -1,10 +1,16 @@
-export type ProjectTopicData = {
-  id: string;
-  labelPl: string;
-  labelEn: string;
+export type ProjectTopicId =
+  | "overview"
+  | "features"
+  | "technologies"
+  | "architecture";
+
+export type ProjectTopicContent = {
+  id: ProjectTopicId;
   contentPl: string;
   contentEn: string;
 };
+
+export type ProjectTopics = ProjectTopicContent[];
 
 export type Project = {
   id: string;
@@ -15,5 +21,5 @@ export type Project = {
   imageAltPl: string;
   imageAltEn: string;
   technologies: string[];
-  topics: ProjectTopicData[];
+  topics: ProjectTopics;
 };

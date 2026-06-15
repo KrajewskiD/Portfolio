@@ -9,6 +9,12 @@ export const pl: Translations = {
     label: "projekty",
     title: "Wybrane projekty",
     noImage: "Brak zdjęcia projektu",
+    topics: {
+      overview: "Opis projektu",
+      features: "Główne funkcje",
+      technologies: "Wykorzystane technologie",
+      architecture: "Architektura",
+    },
   },
   skills: {
     label: "umiejętności",

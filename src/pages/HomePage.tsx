@@ -29,6 +29,7 @@ function HomePage({ language }: HomePageProps) {
         projects={projectsMock}
         label={translation.projects.label}
         title={translation.projects.title}
+        topicLabels={translation.projects.topics}
         noImage={translation.projects.noImage}
         language={language}
       />

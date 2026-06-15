@@ -7,7 +7,7 @@ type ProjectImageProps = {
 function ProjectImage({ imageUrl, alt, fallbackLabel }: ProjectImageProps) {
   return (
     <div className="flex p-4 lg:border-r">
-      <div className="flex min-h-64 w-full items-center justify-center overflow-hidden rounded-2xl border border-dashed">
+      <div className="flex h-56 w-full items-center justify-center overflow-hidden rounded-2xl border border-dashed sm:h-72 lg:h-full">
         {imageUrl ? (
           <img
             src={imageUrl}

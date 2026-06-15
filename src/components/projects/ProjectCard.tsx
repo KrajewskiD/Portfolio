@@ -6,7 +6,7 @@ type ProjectCardProps = {
 
 function ProjectCard({ children }: ProjectCardProps) {
   return (
-    <article className="mt-8 grid overflow-hidden rounded-3xl border lg:grid-cols-2">
+    <article className="mt-8 grid w-full min-w-0 overflow-hidden rounded-3xl border lg:min-h-[75vh] lg:grid-cols-2">
       {children}
     </article>
   );
