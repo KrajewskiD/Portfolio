@@ -26,7 +26,7 @@ function Header({ navigationItems, language, navigationText }: HeaderProps) {
       <div className="relative mr-auto w-fit sm:mx-auto">
         <nav
           aria-label={navigationText.mainLabel}
-          className="flex items-center gap-1 rounded-full border bg-white px-2 py-1"
+          className="flex items-center gap-1 sm:rounded-full sm:border sm:bg-white sm:px-2 sm:py-1"
         >
           <MenuToggle
             isOpen={isMenuOpen}
