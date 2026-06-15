@@ -1,6 +1,9 @@
+import { useState } from "react";
+
 import ProjectCard from "../components/projects/ProjectCard";
 import ProjectDetails from "../components/projects/ProjectDetails";
 import ProjectImage from "../components/projects/ProjectImage";
+import ProjectSkeleton from "../components/projects/ProjectSkeleton";
 import ProjectTopicsGroup from "../components/projects/ProjectTopicsGroup";
 import TechnologyTag from "../components/projects/TechnologyTag";
 import SectionHeading from "../components/sections/SectionHeading";
@@ -8,7 +11,10 @@ import type { Language } from "../types/language";
 import type { Project, ProjectTopicId } from "../types/project";
 
 type ProjectsSectionProps = {
-  projects: Project[];
+  projects?: Project[];
+  isLoading: boolean;
+  isError: boolean;
+  errorMessage: string;
   label: string;
   title: string;
   topicLabels: Record<ProjectTopicId, string>;
@@ -18,48 +24,87 @@ type ProjectsSectionProps = {
 
 function ProjectsSection({
   projects,
+  isLoading,
+  isError,
+  errorMessage,
   label,
   title,
   topicLabels,
   noImage,
   language,
 }: ProjectsSectionProps) {
+  const [activeTopics, setActiveTopics] = useState<
+    Record<string, ProjectTopicId>
+  >({});
+
   return (
     <section id="projects" className="scroll-mt-0 pt-4 pb-8 sm:pt-6 sm:pb-10">
       <SectionHeading label={label} title={title} />
 
-      {projects.map((project) => {
-        const projectTitle =
-          language === "pl" ? project.titlePl : project.titleEn;
+      {isLoading ? (
+        <ProjectSkeleton />
+      ) : isError ? (
+        <div
+          role="alert"
+          className="mt-8 flex min-h-96 items-center justify-center rounded-3xl border text-center"
+        >
+          <p className="text-lg">{errorMessage}</p>
+        </div>
+      ) : !projects?.length ? (
+        <div className="mt-8 flex min-h-64 items-center justify-center rounded-3xl border text-center">
+          <p>Brak projektów.</p>
+        </div>
+      ) : (
+        projects.map((project) => {
+          const projectTitle =
+            language === "pl" ? project.titlePl : project.titleEn;
 
-        const imageAlt =
-          language === "pl" ? project.imageAltPl : project.imageAltEn;
+          const selectedTopicId = activeTopics[project.id] ?? "overview";
 
-        return (
-          <ProjectCard key={project.id}>
-            <ProjectImage
-              imageUrl={project.imageUrl}
-              alt={imageAlt}
-              fallbackLabel={noImage}
-            />
+          const activeTopic =
+            project.topics.find((topic) => topic.id === selectedTopicId) ??
+            project.topics[0];
 
-            <ProjectDetails
-              code={project.code}
-              title={projectTitle}
-              technologies={project.technologies.map((technology) => (
-                <TechnologyTag key={technology} label={technology} />
-              ))}
-              topics={
-                <ProjectTopicsGroup
-                  topics={project.topics}
-                  topicLabels={topicLabels}
-                  language={language}
-                />
-              }
-            />
-          </ProjectCard>
-        );
-      })}
+          if (!activeTopic) {
+            return null;
+          }
+
+          const imageAlt =
+            language === "pl" ? activeTopic.imageAltPl : activeTopic.imageAltEn;
+
+          return (
+            <ProjectCard key={project.id}>
+              <ProjectImage
+                imageUrl={activeTopic.imageUrl}
+                alt={imageAlt}
+                fallbackLabel={noImage}
+              />
+
+              <ProjectDetails
+                code={project.code ?? ""}
+                title={projectTitle}
+                technologies={project.technologies.map((technology) => (
+                  <TechnologyTag key={technology} label={technology} />
+                ))}
+                topics={
+                  <ProjectTopicsGroup
+                    topics={project.topics}
+                    activeId={activeTopic.id}
+                    onTopicChange={(topicId) =>
+                      setActiveTopics((current) => ({
+                        ...current,
+                        [project.id]: topicId,
+                      }))
+                    }
+                    topicLabels={topicLabels}
+                    language={language}
+                  />
+                }
+              />
+            </ProjectCard>
+          );
+        })
+      )}
     </section>
   );
 }

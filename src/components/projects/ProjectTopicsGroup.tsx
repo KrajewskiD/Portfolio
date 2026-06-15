@@ -1,5 +1,9 @@
-import { useId, useState } from "react";
+import { useId } from "react";
 
+import {
+  projectTopicIcons,
+  projectTopicOrder,
+} from "../../config/projectTopics";
 import type { Language } from "../../types/language";
 import type {
   ProjectTopicContent,
@@ -7,30 +11,28 @@ import type {
   ProjectTopics,
 } from "../../types/project";
 import ProjectTopic from "./ProjectTopic";
-import {
-  projectTopicOrder,
-  projectTopicIcons,
-} from "../../config/projectTopics";
 
 type ProjectTopicsGroupProps = {
   topics: ProjectTopics;
+  activeId: ProjectTopicId;
+  onTopicChange: (id: ProjectTopicId) => void;
   topicLabels: Record<ProjectTopicId, string>;
   language: Language;
 };
 
 function ProjectTopicsGroup({
   topics,
+  activeId,
+  onTopicChange,
   topicLabels,
   language,
 }: ProjectTopicsGroupProps) {
   const groupId = useId();
 
-  // Orders topics
   const orderedTopics = projectTopicOrder
     .map((id) => topics.find((topic) => topic.id === id))
     .filter((topic): topic is ProjectTopicContent => topic !== undefined);
 
-  const [activeId, setActiveId] = useState(orderedTopics[0]?.id ?? ""); // Stores the ID of the active topic tab
   const activeTopic =
     orderedTopics.find((topic) => topic.id === activeId) ?? orderedTopics[0];
 
@@ -55,7 +57,7 @@ function ProjectTopicsGroup({
             label={topicLabels[topic.id]}
             iconSrc={projectTopicIcons[topic.id]}
             active={topic.id === activeTopic.id}
-            onSelect={() => setActiveId(topic.id)}
+            onSelect={() => onTopicChange(topic.id)}
           />
         ))}
       </div>

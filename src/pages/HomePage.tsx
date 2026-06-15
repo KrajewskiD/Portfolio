@@ -1,25 +1,36 @@
-import { projectsMock, skillGroupsMock } from "../data/portfolio.mock";
+import { skillGroupsMock } from "../data/portfolio.mock";
 import AboutSection from "../features/AboutSection";
 import ProjectsSection from "../features/ProjectsSection";
 import SkillsSection from "../features/SkillsSection";
 import { translations } from "../locales";
 import type { Language } from "../types/language";
 import { useProfile } from "../hooks/useProfile";
+import { useProjects } from "../hooks/useProjects";
 
 type HomePageProps = {
   language: Language;
 };
 
 function HomePage({ language }: HomePageProps) {
-  const { data: profile, isPending, isError } = useProfile();
+  const {
+    data: profile,
+    isPending: isProfilePending,
+    isError: isProfileError,
+  } = useProfile();
+
+  const {
+    data: projects,
+    isPending: areProjectsPending,
+    isError: areProjectsError,
+  } = useProjects();
   const translation = translations[language];
 
   return (
     <>
       <AboutSection
         profile={profile}
-        isLoading={isPending}
-        isError={isError}
+        isLoading={isProfilePending}
+        isError={isProfileError}
         errorMessage={translation.about.loadError}
         label={translation.about.label}
         noImage={translation.about.noImage}
@@ -27,7 +38,10 @@ function HomePage({ language }: HomePageProps) {
       />
 
       <ProjectsSection
-        projects={projectsMock}
+        projects={projects}
+        isLoading={areProjectsPending}
+        isError={areProjectsError}
+        errorMessage="Nie udało się wczytać projektów."
         label={translation.projects.label}
         title={translation.projects.title}
         topicLabels={translation.projects.topics}
