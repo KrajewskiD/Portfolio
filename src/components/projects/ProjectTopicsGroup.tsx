@@ -1,9 +1,16 @@
 import { useId, useState } from "react";
 
 import type { Language } from "../../types/language";
-import type { ProjectTopicContent, ProjectTopicId, ProjectTopics,} from "../../types/project";
+import type {
+  ProjectTopicContent,
+  ProjectTopicId,
+  ProjectTopics,
+} from "../../types/project";
 import ProjectTopic from "./ProjectTopic";
-import { projectTopicOrder, projectTopicIcons} from "../../config/projectTopics";
+import {
+  projectTopicOrder,
+  projectTopicIcons,
+} from "../../config/projectTopics";
 
 type ProjectTopicsGroupProps = {
   topics: ProjectTopics;
@@ -34,8 +41,12 @@ function ProjectTopicsGroup({
   const panelId = `${groupId}-panel`;
 
   return (
-    <>
-      <div role="tablist" className="mt-6 flex w-full overflow-x-auto border-b">
+    <div className="mt-6 grid grid-cols-[1fr_auto] gap-4 sm:block">
+      <div
+        role="tablist"
+        aria-orientation="vertical"
+        className="col-start-2 row-start-1 flex translate-x-3 flex-col border-l sm:translate-x-0 sm:flex-row sm:overflow-x-auto sm:border-b sm:border-l-0"
+      >
         {orderedTopics.map((topic) => (
           <ProjectTopic
             key={topic.id}
@@ -53,7 +64,7 @@ function ProjectTopicsGroup({
         id={panelId}
         role="tabpanel"
         aria-labelledby={`${groupId}-${activeTopic.id}-tab`}
-        className="mt-5 rounded-xl border-l-2 p-4"
+        className="col-start-1 row-start-1 rounded-xl border-l-2 p-4 sm:mt-5"
       >
         <p className="font-mono text-sm">{topicLabels[activeTopic.id]}</p>
 
@@ -61,7 +72,7 @@ function ProjectTopicsGroup({
           {language === "pl" ? activeTopic.contentPl : activeTopic.contentEn}
         </p>
       </div>
-    </>
+    </div>
   );
 }
 
