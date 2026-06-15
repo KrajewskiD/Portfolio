@@ -6,18 +6,20 @@ import {
   type ReactNode,
 } from "react";
 import type { Session } from "@supabase/supabase-js";
+import { adminRoute, getAdminUrl } from "@shared/config/routes";
 import { supabase } from "../lib/supabase";
 import { getMfaStatus, type MfaStatus } from "../services/mfaService";
 
-type AuthStatus =
+export type AuthStatus =
   | "loading"
   | "unauthenticated"
   | "checking"
   | "admin"
-  | "forbidden";
+  | "error";
 
 type AuthContextValue = {
   session: Session | null;
+  authStatus: AuthStatus;
   isAdmin: boolean;
   mfaStatus: MfaStatus | null;
   isLoading: boolean;
@@ -27,15 +29,19 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
-  const [status, setStatus] = useState<AuthStatus>("loading");
-  const [mfaStatus, setMfaStatus] = useState<MfaStatus | null>(null);
+  const [authStatus, setAuthStatus] =
+    useState<AuthStatus>("loading");
+  const [mfaStatus, setMfaStatus] =
+    useState<MfaStatus | null>(null);
 
   useEffect(() => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       setSession(nextSession);
-      setStatus(nextSession ? "checking" : "unauthenticated");
+      setAuthStatus(
+        nextSession ? "checking" : "unauthenticated",
+      );
 
       if (!nextSession) {
         setMfaStatus(null);
@@ -49,21 +55,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!session) return;
 
     let cancelled = false;
+    const userId = session.user.id;
 
     async function checkAdmin() {
       const { data, error } = await supabase
         .from("admin_users")
         .select("user_id")
-        .eq("user_id", session!.user.id)
+        .eq("user_id", userId)
         .maybeSingle();
 
       if (cancelled) return;
 
-      if (error || !data) {
+      if (error) {
         setMfaStatus(null);
-        setStatus("forbidden");
+        setAuthStatus("error");
         return;
       }
+
+      if (!data) {
+  setMfaStatus(null);
+
+  const { error: signOutError } =
+    await supabase.auth.signOut();
+
+  if (signOutError) {
+    setAuthStatus("error");
+    return;
+  }
+
+  window.location.replace(
+    `${getAdminUrl(adminRoute.login)}?error=unauthorized`,
+  );
+  return;
+}
 
       try {
         const nextMfaStatus = await getMfaStatus();
@@ -71,12 +95,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (cancelled) return;
 
         setMfaStatus(nextMfaStatus);
-        setStatus("admin");
+        setAuthStatus("admin");
       } catch {
         if (cancelled) return;
 
         setMfaStatus(null);
-        setStatus("forbidden");
+        setAuthStatus("error");
       }
     }
 
@@ -91,9 +115,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider
       value={{
         session,
-        isAdmin: status === "admin",
+        authStatus,
+        isAdmin: authStatus === "admin",
         mfaStatus,
-        isLoading: status === "loading" || status === "checking",
+        isLoading:
+          authStatus === "loading" ||
+          authStatus === "checking",
       }}
     >
       {children}
@@ -105,7 +132,9 @@ export function useAuth() {
   const context = useContext(AuthContext);
 
   if (!context) {
-    throw new Error("useAuth must be used inside AuthProvider");
+    throw new Error(
+      "useAuth must be used inside AuthProvider",
+    );
   }
 
   return context;

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { adminRoute, getAdminUrl } from "@shared/config/routes";
 import { verifyExistingMfa } from "../services/mfaService";
 
 function MfaVerifyPage() {
@@ -14,7 +15,7 @@ function MfaVerifyPage() {
 
     try {
       await verifyExistingMfa(code);
-      window.location.replace("/dashboard");
+      window.location.replace(getAdminUrl(adminRoute.dashboard));
     } catch {
       setErrorMessage("Kod jest nieprawidłowy lub wygasł.");
     } finally {

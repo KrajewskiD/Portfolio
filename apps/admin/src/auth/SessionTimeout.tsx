@@ -1,63 +1,81 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
+import { adminRoute, getAdminUrl } from "@shared/config/routes";
 import { useAuth } from "./AuthProvider";
 import { signOut } from "../services/authService";
 
+const LAST_ACTIVITY_KEY = "portfolio-admin:last-activity";
 const INACTIVITY_LIMIT = 15 * 60 * 1000;
 const CHECK_INTERVAL = 30 * 1000;
+const PERSIST_INTERVAL = 5 * 1000;
+
+const ACTIVITY_EVENTS = [
+  "pointerdown",
+  "keydown",
+  "scroll",
+  "touchstart",
+] as const;
+
+function readLastActivity(): number {
+  const storedValue = window.sessionStorage.getItem(LAST_ACTIVITY_KEY);
+  const timestamp = Number(storedValue);
+
+  return Number.isFinite(timestamp) && timestamp > 0
+    ? timestamp
+    : Date.now();
+}
+
+function saveLastActivity(timestamp: number): void {
+  window.sessionStorage.setItem(LAST_ACTIVITY_KEY, String(timestamp));
+}
+
+function clearLastActivity(): void {
+  window.sessionStorage.removeItem(LAST_ACTIVITY_KEY);
+}
 
 function SessionTimeout() {
-  const { session } = useAuth();
-  const lastActivity = useRef(Date.now());
-  const isSigningOut = useRef(false);
+  const { session, isLoading } = useAuth();
 
   useEffect(() => {
+    if (isLoading) return;
+
     if (!session) {
+      clearLastActivity();
       return;
     }
 
-    lastActivity.current = Date.now();
-    isSigningOut.current = false;
+    let lastActivity = readLastActivity();
+    let lastPersistedActivity = lastActivity;
+    let isSigningOut = false;
+
+    saveLastActivity(lastActivity);
 
     function registerActivity() {
-      lastActivity.current = Date.now();
+      const now = Date.now();
+
+      lastActivity = now;
+
+      if (now - lastPersistedActivity >= PERSIST_INTERVAL) {
+        saveLastActivity(now);
+        lastPersistedActivity = now;
+      }
     }
 
     async function checkInactivity() {
-      const inactivityTime = Date.now() - lastActivity.current;
+      const inactivityTime = Date.now() - lastActivity;
 
-      if (
-        inactivityTime < INACTIVITY_LIMIT ||
-        isSigningOut.current
-      ) {
+      if (inactivityTime < INACTIVITY_LIMIT || isSigningOut) {
         return;
       }
 
-      isSigningOut.current = true;
+      isSigningOut = true;
 
       try {
         await signOut();
       } finally {
-        window.location.replace("/login");
+        clearLastActivity();
+        window.location.replace(getAdminUrl(adminRoute.login));
       }
     }
-
-    const events = [
-      "pointerdown",
-      "keydown",
-      "scroll",
-      "touchstart",
-    ] as const;
-
-    events.forEach((eventName) => {
-      window.addEventListener(eventName, registerActivity, {
-        passive: true,
-      });
-    });
-
-    const intervalId = window.setInterval(
-      () => void checkInactivity(),
-      CHECK_INTERVAL,
-    );
 
     function handleVisibilityChange() {
       if (document.visibilityState === "visible") {
@@ -65,23 +83,39 @@ function SessionTimeout() {
       }
     }
 
+    ACTIVITY_EVENTS.forEach((eventName) => {
+      window.addEventListener(eventName, registerActivity, {
+        passive: true,
+      });
+    });
+
     document.addEventListener(
       "visibilitychange",
       handleVisibilityChange,
     );
 
+    const intervalId = window.setInterval(
+      () => void checkInactivity(),
+      CHECK_INTERVAL,
+    );
+
+    void checkInactivity();
+
     return () => {
-      events.forEach((eventName) => {
+      saveLastActivity(lastActivity);
+
+      ACTIVITY_EVENTS.forEach((eventName) => {
         window.removeEventListener(eventName, registerActivity);
       });
 
-      window.clearInterval(intervalId);
       document.removeEventListener(
         "visibilitychange",
         handleVisibilityChange,
       );
+
+      window.clearInterval(intervalId);
     };
-  }, [session]);
+  }, [session, isLoading]);
 
   return null;
 }

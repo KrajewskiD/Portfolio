@@ -1,10 +1,11 @@
+import { adminRoute, getAdminUrl } from "@shared/config/routes";
 import { supabase } from "../lib/supabase";
 
 export async function signInWithGitHub(): Promise<void> {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "github",
     options: {
-      redirectTo: `${window.location.origin}/dashboard`,
+      redirectTo: `${window.location.origin}${getAdminUrl(adminRoute.dashboard)}`,
     },
   });
 
