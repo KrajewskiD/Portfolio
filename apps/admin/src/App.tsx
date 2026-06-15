@@ -5,6 +5,7 @@ import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import MfaSetupPage from "./pages/MfaSetupPage";
 import MfaVerifyPage from "./pages/MfaVerifyPage";
+import UnauthorizedPage from "./pages/UnauthorizedPage";
 
 function App() {
   return (
@@ -19,7 +20,7 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
         </Route>
       </Route>
-
+      <Route path="/unauthorized" element={<UnauthorizedPage />} />
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
