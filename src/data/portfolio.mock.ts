@@ -13,6 +13,8 @@ export const profileMock: Profile = {
   imageUrl: undefined,
   imageAltPl: "Zdjęcie Dawida Krajewskiego",
   imageAltEn: "Photo of Dawid Krajewski",
+  footerDescriptionPl: "React · TypeScript · Supabase PL",
+  footerDescriptionEn: "React · TypeScript · Supabase EN",
 };
 
 export const projectsMock: Project[] = [

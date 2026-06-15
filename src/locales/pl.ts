@@ -23,6 +23,8 @@ export const pl: Translations = {
     label: "umiejętności",
     title: "Umiejętności",
     levelLabel: "Poziom {level} na {maxLevel}",
+    loadError: "Nie udało się wczytać umiejętności.",
+    emptyMessage: "Brak umiejętności.",
   },
   navigation: {
     mainLabel: "Główna nawigacja",

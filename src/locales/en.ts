@@ -23,6 +23,8 @@ export const en: Translations = {
     label: "skills",
     title: "Skills",
     levelLabel: "Level {level} of {maxLevel}",
+    loadError: "The skills could not be loaded.",
+    emptyMessage: "No skills available.",
   },
   navigation: {
     mainLabel: "Main navigation",

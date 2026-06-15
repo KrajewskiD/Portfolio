@@ -1,4 +1,3 @@
-import { skillGroupsMock } from "../data/portfolio.mock";
 import AboutSection from "../features/AboutSection";
 import ProjectsSection from "../features/ProjectsSection";
 import SkillsSection from "../features/SkillsSection";
@@ -6,6 +5,7 @@ import { translations } from "../locales";
 import type { Language } from "../types/language";
 import { useProfile } from "../hooks/useProfile";
 import { useProjects } from "../hooks/useProjects";
+import { useSkillGroups } from "../hooks/useSkillGroups";
 
 type HomePageProps = {
   language: Language;
@@ -23,6 +23,12 @@ function HomePage({ language }: HomePageProps) {
     isPending: areProjectsPending,
     isError: areProjectsError,
   } = useProjects();
+  const {
+    data: skillGroups,
+    isPending: areSkillGroupsPending,
+    isError: areSkillGroupsError,
+  } = useSkillGroups();
+
   const translation = translations[language];
 
   return (
@@ -51,7 +57,11 @@ function HomePage({ language }: HomePageProps) {
       />
 
       <SkillsSection
-        skillGroups={skillGroupsMock}
+        skillGroups={skillGroups}
+        isLoading={areSkillGroupsPending}
+        isError={areSkillGroupsError}
+        errorMessage={translation.skills.loadError}
+        emptyMessage={translation.skills.emptyMessage}
         label={translation.skills.label}
         title={translation.skills.title}
         language={language}

@@ -21,7 +21,8 @@ type SkillGroupRow = {
 export async function getSkillGroups(): Promise<SkillGroupData[]> {
   const { data, error } = await supabase
     .from("skill_groups")
-    .select(`
+    .select(
+      `
       id,
       title_pl,
       title_en,
@@ -36,7 +37,8 @@ export async function getSkillGroups(): Promise<SkillGroupData[]> {
           name
         )
       )
-    `)
+    `,
+    )
     .order("display_order", { ascending: true })
     .overrideTypes<SkillGroupRow[]>();
 
@@ -49,9 +51,7 @@ export async function getSkillGroups(): Promise<SkillGroupData[]> {
     titlePl: group.title_pl,
     titleEn: group.title_en,
     skills: group.skills
-      .toSorted(
-        (first, second) => first.display_order - second.display_order,
-      )
+      .toSorted((first, second) => first.display_order - second.display_order)
       .flatMap((skill) =>
         skill.technologies
           ? [

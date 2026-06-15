@@ -9,7 +9,7 @@ export type Translations = {
     title: string;
     noImage: string;
     loadError: string;
-    emptyMessage: string;   
+    emptyMessage: string;
     topics: {
       overview: string;
       features: string;
@@ -21,6 +21,8 @@ export type Translations = {
     label: string;
     title: string;
     levelLabel: string;
+    loadError: string;
+    emptyMessage: string;
   };
   navigation: {
     mainLabel: string;
