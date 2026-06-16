@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { adminRoute, getAdminUrl } from "@shared/config/routes";
 
+import DashboardActions from "../components/DashboardActions";
 import DashboardTabs from "../components/DashboardTabs";
+import type { Language } from "@shared/types/language";
+import { dashboardTabs, type DashboardTabId } from "../config/dashboardTabs";
 import FooterLinksForm from "../forms/FooterLinksForm";
 import ProfileForm from "../forms/ProfileForm";
 import ProjectsForm from "../forms/ProjectsForm";
@@ -9,17 +12,9 @@ import SkillsForm from "../forms/SkillsForm";
 import AdminLayout from "../layouts/AdminLayout";
 import { signOut } from "../services/authService";
 
-type DashboardTabId = "profile" | "projects" | "skills" | "footer";
-
-const dashboardTabs: Array<{ id: DashboardTabId; label: string }> = [
-  { id: "profile", label: "Profil" },
-  { id: "projects", label: "Projekty" },
-  { id: "skills", label: "Umiejętności" },
-  { id: "footer", label: "Footer" },
-];
-
 function DashboardPage() {
   const [activeTabId, setActiveTabId] = useState<DashboardTabId>("profile");
+  const [editLanguage, setEditLanguage] = useState<Language>("pl");
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>();
 
@@ -37,15 +32,19 @@ function DashboardPage() {
   }
 
   function renderActiveForm() {
+    const formProps = {
+      language: editLanguage,
+    };
+
     switch (activeTabId) {
       case "profile":
-        return <ProfileForm />;
+        return <ProfileForm {...formProps} />;
       case "projects":
-        return <ProjectsForm />;
+        return <ProjectsForm {...formProps} />;
       case "skills":
-        return <SkillsForm />;
+        return <SkillsForm {...formProps} />;
       case "footer":
-        return <FooterLinksForm />;
+        return <FooterLinksForm {...formProps} />;
     }
   }
 
@@ -53,20 +52,18 @@ function DashboardPage() {
     <AdminLayout
       title="Panel administratora"
       actions={
-        <button
-          type="button"
-          onClick={handleSignOut}
-          disabled={isSigningOut}
-          className="cursor-pointer rounded-full border border-white/20 bg-neutral-800 px-5 py-3 font-bold text-white transition hover:border-white/30 hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          {isSigningOut ? "Wylogowywanie..." : "Wyloguj"}
-        </button>
+        <DashboardActions
+          language={editLanguage}
+          isSigningOut={isSigningOut}
+          onLanguageChange={setEditLanguage}
+          onSignOut={handleSignOut}
+        />
       }
     >
       <DashboardTabs
         tabs={dashboardTabs}
         activeTabId={activeTabId}
-        onChange={(tabId) => setActiveTabId(tabId as DashboardTabId)}
+        onChange={setActiveTabId}
       />
 
       {errorMessage && (

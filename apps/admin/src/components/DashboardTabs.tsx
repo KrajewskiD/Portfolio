@@ -1,12 +1,14 @@
+import type { DashboardTabId } from "../config/dashboardTabs";
+
 type DashboardTab = {
-  id: string;
+  id: DashboardTabId;
   label: string;
 };
 
 type DashboardTabsProps = {
   tabs: DashboardTab[];
-  activeTabId: string;
-  onChange: (tabId: string) => void;
+  activeTabId: DashboardTabId;
+  onChange: (tabId: DashboardTabId) => void;
 };
 
 function DashboardTabs({ tabs, activeTabId, onChange }: DashboardTabsProps) {
