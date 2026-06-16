@@ -1,7 +1,5 @@
 import type { Language } from "@shared/types/language";
 
-import AdminButton from "./AdminButton";
-
 type AdminTranslateButtonProps = {
   language: Language;
   disabled?: boolean;
@@ -10,21 +8,22 @@ type AdminTranslateButtonProps = {
 
 function AdminTranslateButton({
   language,
-  disabled = true,
+  disabled = false,
   onClick,
 }: AdminTranslateButtonProps) {
-  const label = language === "pl" ? "PLN -> ENG" : "ENG -> PLN";
+  const label = language === "pl" ? "PL → ENG" : "ENG → PL";
 
   return (
-    <AdminButton
+    <button
       type="button"
-      variant="secondary"
+      className="admin-translate-button"
       disabled={disabled}
       onClick={onClick}
-      className="px-4 py-2 text-sm"
+      aria-label={label}
+      title={onClick ? label : `${label} (wkrótce)`}
     >
       {label}
-    </AdminButton>
+    </button>
   );
 }
 

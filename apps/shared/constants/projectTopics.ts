@@ -1,9 +1,13 @@
 import type { Project, ProjectTopicContent } from "../types/project";
+import type { ProjectTopicId } from "../types/projectTopic";
 
 import overviewIcon from "../assets/icons/overview.svg";
 import featuresIcon from "../assets/icons/features.svg";
 import technologiesIcon from "../assets/icons/technologies.svg";
 import architectureIcon from "../assets/icons/architecture.svg";
+
+export type { ProjectTopicId };
+export { DEFAULT_PROJECT_TOPIC_ID } from "../types/projectTopic";
 
 export const projectTopicDefinitions = {
   overview: {
@@ -26,9 +30,10 @@ export const projectTopicDefinitions = {
     labelEn: "Architecture",
     icon: architectureIcon,
   },
-} as const;
-
-export type ProjectTopicId = keyof typeof projectTopicDefinitions;
+} as const satisfies Record<
+  ProjectTopicId,
+  { labelPl: string; labelEn: string; icon: string }
+>;
 
 export const projectTopicOrder = Object.keys(
   projectTopicDefinitions,
@@ -59,7 +64,6 @@ export function createEmptyProjectTopic(
     id,
     contentPl: "",
     contentEn: "",
-    imageUrl: "",
     imageAltPl: "",
     imageAltEn: "",
   };

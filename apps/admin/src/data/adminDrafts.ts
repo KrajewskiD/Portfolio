@@ -1,30 +1,17 @@
 import type { Project } from "@shared/types/project";
+import type { Profile } from "@shared/types/profile";
+import type { FooterLinkData } from "@shared/types/link";
 import type { SkillGroupData } from "@shared/types/skill";
 import { normalizeProjectTopics } from "@shared/constants/projectTopics";
 
-export type ProfileDraft = {
-  name: string;
-  rolePl: string;
-  roleEn: string;
-  descriptionPl: string;
-  descriptionEn: string;
-  imageAltPl: string;
-  imageAltEn: string;
-};
-
-export type FooterLinkDraft = {
-  id: string;
-  label: string;
-  href: string;
-  displayOrder: number;
-};
-
-export const profileDraft: ProfileDraft = {
+export const profileDraft: Profile = {
   name: "Dawid Krajewski",
   rolePl: "Frontend Developer PL",
   roleEn: "Frontend Developer EN",
   descriptionPl: "Lorem ipsum dolor sit amet. PL",
   descriptionEn: "Lorem ipsum dolor sit amet. EN",
+  footerDescriptionPl: "Lorem ipsum stopka PL",
+  footerDescriptionEn: "Lorem ipsum footer EN",
   imageAltPl: "Zdjęcie profilowe",
   imageAltEn: "Profile image",
 };
@@ -41,7 +28,6 @@ export const projectDrafts: Project[] = [
         id: "overview",
         contentPl: "Opis projektu PL",
         contentEn: "Project overview EN",
-        imageUrl: "",
         imageAltPl: "Podgląd projektu PL",
         imageAltEn: "Project preview EN",
       },
@@ -49,7 +35,6 @@ export const projectDrafts: Project[] = [
         id: "features",
         contentPl: "Funkcje projektu PL",
         contentEn: "Project features EN",
-        imageUrl: "",
         imageAltPl: "Funkcje projektu PL",
         imageAltEn: "Project features EN",
       },
@@ -57,7 +42,6 @@ export const projectDrafts: Project[] = [
         id: "technologies",
         contentPl: "Technologie projektu PL",
         contentEn: "Project technologies EN",
-        imageUrl: "",
         imageAltPl: "Technologie projektu PL",
         imageAltEn: "Project technologies EN",
       },
@@ -65,7 +49,6 @@ export const projectDrafts: Project[] = [
         id: "architecture",
         contentPl: "Architektura projektu PL",
         contentEn: "Project architecture EN",
-        imageUrl: "",
         imageAltPl: "Architektura projektu PL",
         imageAltEn: "Project architecture EN",
       },
@@ -82,7 +65,6 @@ export const projectDrafts: Project[] = [
         id: "overview",
         contentPl: "Opis panelu administratora PL",
         contentEn: "Admin panel overview EN",
-        imageUrl: "",
         imageAltPl: "Podgląd panelu administratora PL",
         imageAltEn: "Admin panel preview EN",
       },
@@ -90,7 +72,6 @@ export const projectDrafts: Project[] = [
         id: "features",
         contentPl: "Funkcje panelu administratora PL",
         contentEn: "Admin panel features EN",
-        imageUrl: "",
         imageAltPl: "Funkcje panelu administratora PL",
         imageAltEn: "Admin panel features EN",
       },
@@ -98,7 +79,6 @@ export const projectDrafts: Project[] = [
         id: "technologies",
         contentPl: "Technologie panelu administratora PL",
         contentEn: "Admin panel technologies EN",
-        imageUrl: "",
         imageAltPl: "Technologie panelu administratora PL",
         imageAltEn: "Admin panel technologies EN",
       },
@@ -106,13 +86,13 @@ export const projectDrafts: Project[] = [
         id: "architecture",
         contentPl: "Architektura panelu administratora PL",
         contentEn: "Admin panel architecture EN",
-        imageUrl: "",
         imageAltPl: "Architektura panelu administratora PL",
         imageAltEn: "Admin panel architecture EN",
       },
     ],
   }),
 ];
+
 export const skillGroupDrafts: SkillGroupData[] = [
   {
     id: "frontend",
@@ -137,7 +117,7 @@ export const skillGroupDrafts: SkillGroupData[] = [
   },
 ];
 
-export const footerLinkDrafts: FooterLinkDraft[] = [
+export const footerLinkDrafts: FooterLinkData[] = [
   {
     id: "linkedin",
     label: "LinkedIn",

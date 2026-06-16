@@ -45,7 +45,7 @@ function ProjectTopicsGroup({
     <div className="mt-6 grid grid-cols-[1fr_auto] gap-4 sm:block">
       <div
         role="tablist"
-        aria-orientation="vertical"
+        aria-orientation="horizontal"
         className="col-start-2 row-start-1 flex translate-x-3 flex-col border-l sm:translate-x-0 sm:flex-row sm:overflow-x-auto sm:border-b sm:border-l-0"
       >
         {orderedTopics.map((topic) => (

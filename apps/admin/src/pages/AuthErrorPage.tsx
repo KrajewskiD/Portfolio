@@ -1,13 +1,17 @@
+import AuthLayout from "@admin/layouts/AuthLayout";
+import AdminButton from "@admin/components/ui/AdminButton";
+
 function AuthErrorPage() {
   return (
-    <main role="alert">
-      <h1>Nie udało się sprawdzić uprawnień</h1>
-      <p>Sprawdź połączenie i spróbuj ponownie.</p>
-
-      <button type="button" onClick={() => window.location.reload()}>
+    <AuthLayout
+      label="Błąd autoryzacji"
+      title="Nie udało się sprawdzić uprawnień"
+      description="Sprawdź połączenie i spróbuj ponownie."
+    >
+      <AdminButton type="button" onClick={() => window.location.reload()}>
         Spróbuj ponownie
-      </button>
-    </main>
+      </AdminButton>
+    </AuthLayout>
   );
 }
 

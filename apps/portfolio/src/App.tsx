@@ -43,8 +43,10 @@ function App() {
       <MainLayout
         profile={profile}
         footerLinks={footerLinks}
-        isFooterLoading={isProfileLoading || areFooterLinksLoading}
-        isFooterError={isProfileError || areFooterLinksError}
+        isProfileLoading={isProfileLoading}
+        isProfileError={isProfileError}
+        areFooterLinksLoading={areFooterLinksLoading}
+        areFooterLinksError={areFooterLinksError}
         footerText={translation.footer}
         navigationItems={navigationData}
         navigationText={translation.navigation}

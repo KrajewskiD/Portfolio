@@ -1,12 +1,9 @@
 import { useState } from "react";
 
-import ProjectCard from "../components/projects/ProjectCard";
-import ProjectDetails from "../components/projects/ProjectDetails";
-import ProjectImage from "../components/projects/ProjectImage";
-import ProjectSkeleton from "../components/projects/ProjectSkeleton";
-import ProjectTopicsGroup from "../components/projects/ProjectTopicsGroup";
-import TechnologyTag from "../components/projects/TechnologyTag";
-import SectionHeading from "../components/sections/SectionHeading";
+import ProjectListItem from "@portfolio/components/projects/ProjectListItem";
+import ProjectSkeleton from "@portfolio/components/projects/ProjectSkeleton";
+import SectionHeading from "@portfolio/components/sections/SectionHeading";
+import { DEFAULT_PROJECT_TOPIC_ID } from "@shared/types/projectTopic";
 import type { Language } from "@shared/types/language";
 import type { Project, ProjectTopicId } from "@shared/types/project";
 
@@ -55,54 +52,23 @@ function ProjectsSection({
           <p>{emptyMessage}</p>
         </div>
       ) : (
-        projects.map((project) => {
-          const projectTitle =
-            language === "pl" ? project.titlePl : project.titleEn;
-
-          const selectedTopicId = activeTopics[project.id] ?? "overview";
-
-          const activeTopic =
-            project.topics.find((topic) => topic.id === selectedTopicId) ??
-            project.topics[0];
-
-          if (!activeTopic) {
-            return null;
-          }
-
-          const imageAlt =
-            language === "pl" ? activeTopic.imageAltPl : activeTopic.imageAltEn;
-
-          return (
-            <ProjectCard key={project.id}>
-              <ProjectImage
-                imageUrl={activeTopic.imageUrl}
-                alt={imageAlt}
-                fallbackLabel={noImage}
-              />
-
-              <ProjectDetails
-                code={project.code ?? ""}
-                title={projectTitle}
-                technologies={project.technologies.map((technology) => (
-                  <TechnologyTag key={technology} label={technology} />
-                ))}
-                topics={
-                  <ProjectTopicsGroup
-                    topics={project.topics}
-                    activeId={activeTopic.id}
-                    onTopicChange={(topicId) =>
-                      setActiveTopics((current) => ({
-                        ...current,
-                        [project.id]: topicId,
-                      }))
-                    }
-                    language={language}
-                  />
-                }
-              />
-            </ProjectCard>
-          );
-        })
+        projects.map((project) => (
+          <ProjectListItem
+            key={project.id}
+            project={project}
+            language={language}
+            noImage={noImage}
+            selectedTopicId={
+              activeTopics[project.id] ?? DEFAULT_PROJECT_TOPIC_ID
+            }
+            onTopicChange={(topicId) =>
+              setActiveTopics((current) => ({
+                ...current,
+                [project.id]: topicId,
+              }))
+            }
+          />
+        ))
       )}
     </section>
   );

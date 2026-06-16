@@ -1,4 +1,4 @@
-import type { ProjectTopicId } from "../constants/projectTopics";
+import type { ProjectTopicId } from "./projectTopic";
 
 export type { ProjectTopicId };
 
@@ -6,6 +6,7 @@ export type ProjectTopicContent = {
   id: ProjectTopicId;
   contentPl: string;
   contentEn: string;
+  imagePath?: string;
   imageUrl?: string;
   imageAltPl: string;
   imageAltEn: string;

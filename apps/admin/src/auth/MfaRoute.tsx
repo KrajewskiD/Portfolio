@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useLocation } from "react-router";
 import { adminRoute } from "@shared/config/routes";
-import { useAuth } from "./AuthProvider";
+import { useAuth } from "./useAuth";
 import type { MfaStatus } from "../services/mfaService";
 
 const routeByMfaStatus: Record<MfaStatus, string> = {

@@ -1,4 +1,7 @@
-import { projectTopicOrder } from "@shared/constants/projectTopics";
+import {
+  projectTopicOrder,
+  normalizeProjectTopics,
+} from "@shared/constants/projectTopics";
 import { supabase } from "../lib/supabase";
 import type {
   Project,
@@ -90,13 +93,13 @@ export async function getProjects(): Promise<Project[]> {
       .toSorted((first, second) => first.display_order - second.display_order)
       .flatMap((item) => (item.technologies ? [item.technologies.name] : []));
 
-    return {
+    return normalizeProjectTopics({
       id: project.id,
       code: project.code ?? undefined,
       titlePl: project.title_pl,
       titleEn: project.title_en,
       technologies,
       topics,
-    };
+    });
   });
 }

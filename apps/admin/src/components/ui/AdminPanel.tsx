@@ -6,7 +6,11 @@ type AdminPanelProps = {
 };
 
 function AdminPanel({ children, className = "" }: AdminPanelProps) {
-  return <div className={["admin-panel", className].join(" ")}>{children}</div>;
+  return (
+    <div className={["admin-panel admin-stack", className].join(" ")}>
+      {children}
+    </div>
+  );
 }
 
 export default AdminPanel;

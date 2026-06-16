@@ -1,6 +1,5 @@
-import AdminField from "@admin/components/ui/AdminField";
 import AdminTextarea from "@admin/components/ui/AdminTextarea";
-import AdminTranslateButton from "@admin/components/ui/AdminTranslateButton";
+import AdminTranslatableField from "@admin/components/ui/AdminTranslatableField";
 import { projectTopicLabels } from "@shared/constants/projectTopics";
 import type { Language } from "@shared/types/language";
 import type { ProjectTopicContent } from "@shared/types/project";
@@ -10,29 +9,34 @@ export type ProjectTopicContentField = "contentPl" | "contentEn";
 type ProjectTopicContentPanelProps = {
   topic: ProjectTopicContent;
   language: Language;
+  fillHeight?: boolean;
   onChange: (field: ProjectTopicContentField, value: string) => void;
 };
 
 function ProjectTopicContentPanel({
   topic,
   language,
+  fillHeight = false,
   onChange,
 }: ProjectTopicContentPanelProps) {
   const contentField = language === "pl" ? "contentPl" : "contentEn";
   const topicLabel = projectTopicLabels[topic.id][language];
+  const fieldId = `${topic.id}-content`;
 
   return (
-    <AdminField
-      id="project-topic-content"
+    <AdminTranslatableField
+      id={fieldId}
       label={topicLabel}
-      action={<AdminTranslateButton language={language} />}
+      language={language}
+      className={fillHeight ? "admin-field--fill" : undefined}
     >
       <AdminTextarea
-        id="project-topic-content"
+        id={fieldId}
+        rows={fillHeight ? undefined : 5}
         value={topic[contentField]}
         onChange={(event) => onChange(contentField, event.target.value)}
       />
-    </AdminField>
+    </AdminTranslatableField>
   );
 }
 

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { adminRoute, getAdminUrl } from "@shared/config/routes";
-import { useAuth } from "./AuthProvider";
+import { useAuth } from "./useAuth";
 import { signOut } from "../services/authService";
 
 const LAST_ACTIVITY_KEY = "portfolio-admin:last-activity";

@@ -6,18 +6,36 @@ type AdminFieldProps = {
   hint?: string;
   action?: ReactNode;
   children: ReactNode;
+  className?: string;
+  groupLabel?: boolean;
 };
 
-function AdminField({ id, label, hint, action, children }: AdminFieldProps) {
-  return (
-    <div className="admin-field">
-      <div className="flex items-center justify-between gap-3">
-        <label htmlFor={id} className="admin-label">
-          {label}
-        </label>
+function AdminField({
+  id,
+  label,
+  hint,
+  action,
+  children,
+  className = "",
+  groupLabel = false,
+}: AdminFieldProps) {
+  const labelId = `${id}-label`;
 
-        {action}
-      </div>
+  return (
+    <div className={["admin-field", className].filter(Boolean).join(" ")}>
+      {groupLabel ? (
+        <p id={labelId} className="admin-label">
+          {label}
+        </p>
+      ) : (
+        <div className="admin-field__header">
+          <label htmlFor={id} className="admin-label">
+            {label}
+          </label>
+
+          {action}
+        </div>
+      )}
 
       {children}
 

@@ -30,5 +30,6 @@ export async function getFooterLinks(): Promise<FooterLinkData[]> {
     id: link.id,
     label: link.label,
     href: link.url,
+    displayOrder: link.display_order,
   }));
 }

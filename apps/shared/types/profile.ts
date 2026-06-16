@@ -6,6 +6,7 @@ export type Profile = {
   descriptionEn: string;
   footerDescriptionPl: string;
   footerDescriptionEn: string;
+  imagePath?: string;
   imageUrl?: string;
   imageAltPl: string;
   imageAltEn: string;

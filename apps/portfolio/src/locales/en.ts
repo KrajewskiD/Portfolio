@@ -12,12 +12,6 @@ export const en: Translations = {
     noImage: "No project image",
     loadError: "The projects could not be loaded.",
     emptyMessage: "No projects available.",
-    topics: {
-      overview: "Overview",
-      features: "Main features",
-      technologies: "Technologies",
-      architecture: "Architecture",
-    },
   },
   skills: {
     label: "skills",

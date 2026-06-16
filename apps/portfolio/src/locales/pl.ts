@@ -12,12 +12,6 @@ export const pl: Translations = {
     noImage: "Brak zdjęcia projektu",
     loadError: "Nie udało się wczytać projektów.",
     emptyMessage: "Brak projektów.",
-    topics: {
-      overview: "Opis projektu",
-      features: "Główne funkcje",
-      technologies: "Wykorzystane technologie",
-      architecture: "Architektura",
-    },
   },
   skills: {
     label: "umiejętności",

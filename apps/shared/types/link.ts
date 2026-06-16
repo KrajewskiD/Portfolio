@@ -9,4 +9,5 @@ export type FooterLinkData = {
   id: string;
   label: string;
   href: string;
+  displayOrder: number;
 };

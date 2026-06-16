@@ -1,59 +1,57 @@
-import AdminField from "@admin/components/ui/AdminField";
 import AdminInput from "@admin/components/ui/AdminInput";
-import AdminTranslateButton from "@admin/components/ui/AdminTranslateButton";
+import AdminImagePicker from "@admin/components/ui/AdminImagePicker";
+import AdminTranslatableField from "@admin/components/ui/AdminTranslatableField";
 import { projectTopicLabels } from "@shared/constants/projectTopics";
 import type { Language } from "@shared/types/language";
 import type { ProjectTopicContent } from "@shared/types/project";
 
-export type ProjectTopicImageField = "imageUrl" | "imageAltPl" | "imageAltEn";
+export type ProjectTopicImageField = "imageAltPl" | "imageAltEn";
 
 type ProjectTopicImagePanelProps = {
   topic: ProjectTopicContent;
   language: Language;
+  selectedFile?: File | null;
+  disabled?: boolean;
   onChange: (field: ProjectTopicImageField, value: string) => void;
+  onFileSelect: (file: File | null) => void;
 };
 
 function ProjectTopicImagePanel({
   topic,
   language,
+  selectedFile,
+  disabled = false,
   onChange,
+  onFileSelect,
 }: ProjectTopicImagePanelProps) {
   const imageAltField = language === "pl" ? "imageAltPl" : "imageAltEn";
   const topicLabel = projectTopicLabels[topic.id][language];
+  const imageAltFieldId = `${topic.id}-image-alt`;
 
   return (
-    <div className="space-y-6">
-      <AdminField id="project-image-url" label={`Zdjęcie: ${topicLabel}`}>
-        <div className="flex min-h-80 items-center justify-center rounded-3xl border border-dashed border-white/20 bg-neutral-900 text-center text-white/40">
-          {topic.imageUrl ? (
-            <img
-              src={topic.imageUrl}
-              alt={topic[imageAltField]}
-              className="h-full max-h-80 w-full rounded-3xl object-cover"
-            />
-          ) : (
-            <span>Brak zdjęcia dla tej zakładki</span>
-          )}
-        </div>
+    <div className="admin-image-column admin-image-column--fluid">
+      <AdminImagePicker
+        label={`Zdjęcie: ${topicLabel}`}
+        imageUrl={topic.imageUrl}
+        selectedFile={selectedFile}
+        previewAlt={topic[imageAltField]}
+        emptyLabel="Brak zdjęcia dla tej zakładki"
+        disabled={disabled}
+        onFileSelect={onFileSelect}
+      />
 
-        <AdminInput
-          id="project-image-url"
-          value={topic.imageUrl ?? ""}
-          onChange={(event) => onChange("imageUrl", event.target.value)}
-        />
-      </AdminField>
-
-      <AdminField
-        id="project-image-alt"
+      <AdminTranslatableField
+        id={imageAltFieldId}
         label="Opis alternatywny zdjęcia"
-        action={<AdminTranslateButton language={language} />}
+        language={language}
       >
         <AdminInput
-          id="project-image-alt"
+          id={imageAltFieldId}
           value={topic[imageAltField]}
+          disabled={disabled}
           onChange={(event) => onChange(imageAltField, event.target.value)}
         />
-      </AdminField>
+      </AdminTranslatableField>
     </div>
   );
 }

@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 
-import Footer from "../components/Footer";
-import Header from "../components/Header";
-import TopToolbar from "../components/toolbar/TopToolbar";
-import type { Translations } from "../locales/translations";
+import Footer from "@portfolio/components/Footer";
+import Header from "@portfolio/components/Header";
+import TopToolbar from "@portfolio/components/toolbar/TopToolbar";
+import type { Translations } from "@portfolio/locales/translations";
 import type { FooterData } from "@shared/types/footer";
 import type { Language } from "@shared/types/language";
 import type { FooterLinkData, NavigationLinkData } from "@shared/types/link";
@@ -13,8 +13,10 @@ type MainLayoutProps = {
   children: ReactNode;
   profile?: Profile;
   footerLinks?: FooterLinkData[];
-  isFooterLoading: boolean;
-  isFooterError: boolean;
+  isProfileLoading: boolean;
+  isProfileError: boolean;
+  areFooterLinksLoading: boolean;
+  areFooterLinksError: boolean;
   footerText: Translations["footer"];
   navigationItems: NavigationLinkData[];
   language: Language;
@@ -26,24 +28,28 @@ function MainLayout({
   children,
   profile,
   footerLinks,
-  isFooterLoading,
-  isFooterError,
+  isProfileLoading,
+  isProfileError,
+  areFooterLinksLoading,
+  areFooterLinksError,
   footerText,
   navigationItems,
   language,
   navigationText,
   onLanguageChange,
 }: MainLayoutProps) {
-  const footer: FooterData | undefined = profile
-    ? {
-        name: profile.name,
-        description:
-          language === "pl"
-            ? profile.footerDescriptionPl
-            : profile.footerDescriptionEn,
-        links: footerLinks ?? [],
-      }
-    : undefined;
+  const footer: FooterData | undefined =
+    profile || footerLinks?.length
+      ? {
+          name: profile?.name ?? "",
+          description: profile
+            ? language === "pl"
+              ? profile.footerDescriptionPl
+              : profile.footerDescriptionEn
+            : "",
+          links: footerLinks ?? [],
+        }
+      : undefined;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -59,8 +65,8 @@ function MainLayout({
 
       <Footer
         footer={footer}
-        isLoading={isFooterLoading}
-        isError={isFooterError}
+        isLoading={isProfileLoading || areFooterLinksLoading}
+        isError={isProfileError && areFooterLinksError}
         socialLinksLabel={footerText.socialLinksLabel}
       />
     </div>

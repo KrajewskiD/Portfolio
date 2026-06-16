@@ -88,8 +88,12 @@ function MfaSetupPage() {
             autoFocus
           />
 
-          <AuthButton type="button" onClick={handleEnroll} disabled={isLoading}>
-            {isLoading ? "Generowanie..." : "Skonfiguruj MFA"}
+          <AuthButton
+            type="button"
+            onClick={handleVerify}
+            disabled={isLoading || code.length !== 6}
+          >
+            {isLoading ? "Weryfikowanie..." : "Zweryfikuj i przejdz dalej"}
           </AuthButton>
         </>
       )}

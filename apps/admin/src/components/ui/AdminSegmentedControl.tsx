@@ -1,0 +1,72 @@
+type AdminSegmentedControlItem<T extends string> = {
+  id: T;
+  label: string;
+};
+
+type AdminSegmentedControlProps<T extends string> = {
+  items: AdminSegmentedControlItem<T>[];
+  activeId: T;
+  onChange: (id: T) => void;
+  variant?: "tabs" | "toggle";
+};
+
+function AdminSegmentedControl<T extends string>({
+  items,
+  activeId,
+  onChange,
+  variant = "tabs",
+}: AdminSegmentedControlProps<T>) {
+  if (variant === "toggle") {
+    return (
+      <div className="inline-flex rounded-full border border-white/10 bg-neutral-800 p-1">
+        {items.map((item) => {
+          const isActive = item.id === activeId;
+
+          return (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => onChange(item.id)}
+              className={[
+                "cursor-pointer rounded-full px-4 py-2 text-sm font-black transition",
+                isActive
+                  ? "bg-neutral-600 text-white"
+                  : "text-white/50 hover:bg-neutral-700 hover:text-white",
+              ].join(" ")}
+            >
+              {item.label}
+            </button>
+          );
+        })}
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full max-w-full overflow-x-auto border-b border-white/10 pb-4">
+      <div className="flex min-w-max flex-nowrap gap-2">
+        {items.map((item) => {
+          const isActive = item.id === activeId;
+
+          return (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => onChange(item.id)}
+              className={[
+                "flex-none cursor-pointer whitespace-nowrap rounded-full border px-5 py-2 font-bold transition",
+                isActive
+                  ? "border-white/30 bg-neutral-700 text-white"
+                  : "border-white/10 bg-neutral-800 text-white/60 hover:border-white/20 hover:bg-neutral-700 hover:text-white",
+              ].join(" ")}
+            >
+              {item.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+export default AdminSegmentedControl;
