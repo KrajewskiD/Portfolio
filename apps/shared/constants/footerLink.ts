@@ -1,1 +1,0 @@
-export const FOOTER_LINK_LABEL_MAX_LENGTH = 64;

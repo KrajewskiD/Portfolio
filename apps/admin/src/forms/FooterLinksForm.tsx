@@ -16,7 +16,6 @@ import {
   saveAdminFooterLinks,
 } from "@admin/services/footerContentService";
 import type { AdminFormProps } from "@admin/types/adminForms";
-import { FOOTER_LINK_LABEL_MAX_LENGTH } from "@shared/constants/footerLink";
 import type { FooterLinkData } from "@shared/types/link";
 
 function FooterLinksForm({ language }: AdminFormProps) {
@@ -46,17 +45,12 @@ function FooterLinksForm({ language }: AdminFormProps) {
   );
 
   function updateActiveLink(
-    field: keyof Pick<FooterLinkData, "label" | "href" | "displayOrder">,
+    field: keyof Pick<FooterLinkData, "href" | "displayOrder">,
     value: string | number,
   ) {
-    const nextValue =
-      field === "label" && typeof value === "string"
-        ? value.slice(0, FOOTER_LINK_LABEL_MAX_LENGTH)
-        : value;
-
     setFooterLinks((current) =>
       current.map((link) =>
-        link.id === activeLink.id ? { ...link, [field]: nextValue } : link,
+        link.id === activeLink.id ? { ...link, [field]: value } : link,
       ),
     );
   }
@@ -153,36 +147,18 @@ function FooterLinksForm({ language }: AdminFormProps) {
           Aktywny język edycji: {language.toUpperCase()}
         </p>
 
-        <div className="grid gap-6 lg:grid-cols-2">
-          <AdminField
-            id="footer-link-label"
-            label="Etykieta"
-            hint={`Maksymalnie ${FOOTER_LINK_LABEL_MAX_LENGTH} znaków.`}
-          >
-            <AdminInput
-              id="footer-link-label"
-              maxLength={FOOTER_LINK_LABEL_MAX_LENGTH}
-              value={activeLink.label}
-              disabled={isLoading}
-              onChange={(event) =>
-                updateActiveLink("label", event.target.value)
-              }
-            />
-          </AdminField>
-
-          <AdminField id="footer-link-order" label="Kolejność">
-            <AdminInput
-              id="footer-link-order"
-              type="number"
-              min={1}
-              value={activeLink.displayOrder}
-              disabled={isLoading}
-              onChange={(event) =>
-                updateActiveLink("displayOrder", Number(event.target.value))
-              }
-            />
-          </AdminField>
-        </div>
+        <AdminField id="footer-link-order" label="Kolejność">
+          <AdminInput
+            id="footer-link-order"
+            type="number"
+            min={1}
+            value={activeLink.displayOrder}
+            disabled={isLoading}
+            onChange={(event) =>
+              updateActiveLink("displayOrder", Number(event.target.value))
+            }
+          />
+        </AdminField>
 
         <AdminField id="footer-link-href" label="Adres URL">
           <AdminInput

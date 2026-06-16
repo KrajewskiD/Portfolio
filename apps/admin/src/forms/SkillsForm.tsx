@@ -18,7 +18,6 @@ import {
   saveAdminSkillGroups,
 } from "@admin/services/skillContentService";
 import type { AdminFormProps } from "@admin/types/adminForms";
-import { SKILL_GROUP_TITLE_MAX_LENGTH } from "@shared/constants/skill";
 import type { Skill, SkillGroupData } from "@shared/types/skill";
 
 function SkillsForm({ language }: AdminFormProps) {
@@ -61,21 +60,8 @@ function SkillsForm({ language }: AdminFormProps) {
   const descriptionField =
     language === "pl" ? "descriptionPl" : "descriptionEn";
 
-  function updateActiveGroup(field: "titlePl" | "titleEn", value: string) {
-    const nextValue = value.slice(0, SKILL_GROUP_TITLE_MAX_LENGTH);
-
-    setSkillGroups((current) =>
-      current.map((group) =>
-        group.id === activeGroup.id ? { ...group, [field]: nextValue } : group,
-      ),
-    );
-  }
-
   function updateActiveSkill(
-    field: keyof Pick<
-      Skill,
-      "name" | "level" | "descriptionPl" | "descriptionEn"
-    >,
+    field: keyof Pick<Skill, "level" | "descriptionPl" | "descriptionEn">,
     value: string | number,
   ) {
     setSkillGroups((current) =>
@@ -234,24 +220,7 @@ function SkillsForm({ language }: AdminFormProps) {
           Aktywny język edycji: {language.toUpperCase()}
         </p>
 
-        <AdminTranslatableField
-          id="skill-group-title"
-          label="Nazwa grupy"
-          language={language}
-          hint={`Maksymalnie ${SKILL_GROUP_TITLE_MAX_LENGTH} znaków.`}
-        >
-          <AdminInput
-            id="skill-group-title"
-            maxLength={SKILL_GROUP_TITLE_MAX_LENGTH}
-            value={activeGroup[titleField]}
-            disabled={isLoading}
-            onChange={(event) =>
-              updateActiveGroup(titleField, event.target.value)
-            }
-          />
-        </AdminTranslatableField>
-
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <h3 className="text-lg font-bold">Umiejętności w grupie</h3>
           <AdminAddButton label="Dodaj umiejętność" onClick={addSkill} />
         </div>
@@ -285,32 +254,19 @@ function SkillsForm({ language }: AdminFormProps) {
               />
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-2">
-              <AdminField id="skill-name" label="Nazwa">
-                <AdminInput
-                  id="skill-name"
-                  value={activeSkill.name}
-                  disabled={isLoading}
-                  onChange={(event) =>
-                    updateActiveSkill("name", event.target.value)
-                  }
-                />
-              </AdminField>
-
-              <AdminField id="skill-level" label="Poziom (1–5)">
-                <AdminInput
-                  id="skill-level"
-                  type="number"
-                  min={1}
-                  max={5}
-                  value={activeSkill.level}
-                  disabled={isLoading}
-                  onChange={(event) =>
-                    updateActiveSkill("level", Number(event.target.value))
-                  }
-                />
-              </AdminField>
-            </div>
+            <AdminField id="skill-level" label="Poziom (1–5)">
+              <AdminInput
+                id="skill-level"
+                type="number"
+                min={1}
+                max={5}
+                value={activeSkill.level}
+                disabled={isLoading}
+                onChange={(event) =>
+                  updateActiveSkill("level", Number(event.target.value))
+                }
+              />
+            </AdminField>
 
             <AdminTranslatableField
               id="skill-description"
