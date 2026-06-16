@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import AdminButton from "./AdminButton";
 import AdminDeleteButton from "./AdminDeleteButton";
+import type { AdminSortableDragHandleProps } from "./AdminSortableList";
 import arrowDownIcon from "@shared/assets/icons/arrow-down.svg";
 
 type AdminExpandableSettingRowProps = {
@@ -9,6 +10,7 @@ type AdminExpandableSettingRowProps = {
   isExpanded: boolean;
   disabled?: boolean;
   nested?: boolean;
+  dragHandle?: AdminSortableDragHandleProps;
   onToggle: () => void;
   onDelete?: () => void;
   deleteDisabled?: boolean;
@@ -21,6 +23,7 @@ function AdminExpandableSettingRow({
   isExpanded,
   disabled = false,
   nested = false,
+  dragHandle,
   onToggle,
   onDelete,
   deleteDisabled = false,
@@ -35,7 +38,34 @@ function AdminExpandableSettingRow({
       ].join(" ")}
     >
       <div className="flex items-center justify-between gap-3 px-4 py-3">
-        <span className="min-w-0 truncate font-bold text-white">{title}</span>
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          {dragHandle ? (
+            <button
+              type="button"
+              className="admin-drag-handle"
+              aria-label="Zmień kolejność"
+              title="Przeciągnij, aby zmienić kolejność"
+              draggable={dragHandle.draggable}
+              disabled={!dragHandle.draggable}
+              onDragStart={(event) => {
+                event.dataTransfer.effectAllowed = "move";
+                dragHandle.onDragStart();
+              }}
+              onDragEnd={dragHandle.onDragEnd}
+            >
+              <span aria-hidden className="admin-drag-handle__grip">
+                <span />
+                <span />
+                <span />
+                <span />
+                <span />
+                <span />
+              </span>
+            </button>
+          ) : null}
+
+          <span className="min-w-0 truncate font-bold text-white">{title}</span>
+        </div>
 
         <div className="flex shrink-0 items-center gap-2">
           {onDelete ? (

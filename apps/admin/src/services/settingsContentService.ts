@@ -83,8 +83,13 @@ export async function saveAdminSettings({
   skillGroups,
   footerLinks,
 }: AdminSettingsData): Promise<void> {
+  const normalizedFooterLinks = footerLinks.map((link, index) => ({
+    ...link,
+    displayOrder: index + 1,
+  }));
+
   await syncDeletedSkillGroups(skillGroups);
-  await syncDeletedFooterLinks(footerLinks);
+  await syncDeletedFooterLinks(normalizedFooterLinks);
   await saveAdminSkillGroups(skillGroups);
-  await saveAdminFooterLinks(footerLinks);
+  await saveAdminFooterLinks(normalizedFooterLinks);
 }

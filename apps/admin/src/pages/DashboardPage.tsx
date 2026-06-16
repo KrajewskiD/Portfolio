@@ -5,7 +5,6 @@ import DashboardActions from "../components/DashboardActions";
 import DashboardTabs from "../components/DashboardTabs";
 import type { Language } from "@shared/types/language";
 import { dashboardTabs, type DashboardTabId } from "../config/dashboardTabs";
-import FooterLinksForm from "../forms/FooterLinksForm";
 import ProfileForm from "../forms/ProfileForm";
 import ProjectsForm from "../forms/ProjectsForm";
 import SettingsForm from "../forms/SettingsForm";
@@ -44,8 +43,6 @@ function DashboardPage() {
         return <ProjectsForm {...formProps} />;
       case "skills":
         return <SkillsForm {...formProps} />;
-      case "footer":
-        return <FooterLinksForm {...formProps} />;
       case "settings":
         return <SettingsForm {...formProps} />;
     }

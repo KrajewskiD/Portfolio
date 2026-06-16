@@ -92,6 +92,20 @@ body,
     @apply inline-flex h-12 w-12 shrink-0 items-center justify-center p-0 text-xl font-black;
   }
 
+  .admin-drag-handle {
+    @apply inline-flex h-10 w-6 shrink-0 cursor-grab items-center justify-center rounded-lg text-white/25 transition;
+    @apply hover:text-white/55 active:cursor-grabbing;
+    @apply disabled:cursor-not-allowed disabled:opacity-40;
+  }
+
+  .admin-drag-handle__grip {
+    @apply grid grid-cols-2 gap-1;
+  }
+
+  .admin-drag-handle__grip > span {
+    @apply h-1 w-1 rounded-full bg-current;
+  }
+
   .admin-label {
     @apply text-sm font-bold text-white/60;
   }
