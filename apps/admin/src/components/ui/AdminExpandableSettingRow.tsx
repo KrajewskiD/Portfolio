@@ -1,0 +1,72 @@
+import type { ReactNode } from "react";
+
+import AdminButton from "./AdminButton";
+import AdminDeleteButton from "./AdminDeleteButton";
+import arrowDownIcon from "@shared/assets/icons/arrow-down.svg";
+
+type AdminExpandableSettingRowProps = {
+  title: string;
+  isExpanded: boolean;
+  disabled?: boolean;
+  onToggle: () => void;
+  onDelete?: () => void;
+  deleteDisabled?: boolean;
+  deleteLabel?: string;
+  children: ReactNode;
+};
+
+function AdminExpandableSettingRow({
+  title,
+  isExpanded,
+  disabled = false,
+  onToggle,
+  onDelete,
+  deleteDisabled = false,
+  deleteLabel = "Usuń",
+  children,
+}: AdminExpandableSettingRowProps) {
+  return (
+    <div className="overflow-hidden rounded-2xl border border-white/10 bg-neutral-900/50">
+      <div className="flex items-center justify-between gap-3 px-4 py-3">
+        <span className="min-w-0 truncate font-bold text-white">{title}</span>
+
+        <div className="flex shrink-0 items-center gap-2">
+          {onDelete ? (
+            <AdminDeleteButton
+              label={deleteLabel}
+              disabled={disabled || deleteDisabled}
+              onClick={onDelete}
+            />
+          ) : null}
+
+          <AdminButton
+            type="button"
+            variant="secondary"
+            disabled={disabled}
+            aria-expanded={isExpanded}
+            aria-label={isExpanded ? "Zwiń" : "Rozwiń"}
+            title={isExpanded ? "Zwiń" : "Rozwiń"}
+            className="admin-icon-button"
+            onClick={onToggle}
+          >
+            <img
+              src={arrowDownIcon}
+              alt=""
+              aria-hidden
+              className={[
+                "h-4 w-4 brightness-0 invert transition-transform",
+                isExpanded ? "rotate-180" : "",
+              ].join(" ")}
+            />
+          </AdminButton>
+        </div>
+      </div>
+
+      {isExpanded ? (
+        <div className="border-t border-white/10 px-4 py-4">{children}</div>
+      ) : null}
+    </div>
+  );
+}
+
+export default AdminExpandableSettingRow;
