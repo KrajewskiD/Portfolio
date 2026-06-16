@@ -36,3 +36,6 @@ KontekstProjektowy.md
 .env
 .env.*
 !.env.example
+
+# Other
+.fallow
