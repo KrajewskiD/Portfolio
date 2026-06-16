@@ -9,7 +9,6 @@ import AdminFormHeader from "@admin/components/ui/AdminFormHeader";
 import AdminInput from "@admin/components/ui/AdminInput";
 import AdminPanel from "@admin/components/ui/AdminPanel";
 import AdminSortableList from "@admin/components/ui/AdminSortableList";
-import AdminTranslatableField from "@admin/components/ui/AdminTranslatableField";
 import { footerLinkDrafts, skillGroupDrafts } from "@admin/data/adminDrafts";
 import { useAdminFormSave } from "@admin/hooks/useAdminFormSave";
 import {
@@ -56,7 +55,6 @@ function SettingsForm({ language }: AdminFormProps) {
   });
 
   const titleField = language === "pl" ? "titlePl" : "titleEn";
-  const nameHint = `Maksymalnie ${ADMIN_NAME_MAX_LENGTH} znaków.`;
 
   function addExpandedId(id: string) {
     setExpandedIds((current) => new Set(current).add(id));
@@ -128,7 +126,6 @@ function SettingsForm({ language }: AdminFormProps) {
       ...current,
       skillGroups: current.skillGroups.filter((group) => group.id !== groupId),
     }));
-    removeExpandedId(`group-${groupId}`);
     removeExpandedId(`skills-group-${groupId}`);
   }
 
@@ -175,7 +172,6 @@ function SettingsForm({ language }: AdminFormProps) {
         },
       ],
     }));
-    addExpandedId(`group-${nextId}`);
   }
 
   function addSkillToGroup(groupId: string) {
@@ -207,7 +203,6 @@ function SettingsForm({ language }: AdminFormProps) {
       ),
     }));
     addExpandedId(`skills-group-${groupId}`);
-    addExpandedId(`skill-${nextId}`);
   }
 
   function addFooterLink() {
@@ -299,7 +294,8 @@ function SettingsForm({ language }: AdminFormProps) {
               <div className="admin-stack">
                 <h3 className="text-lg font-bold">Nazwy grup umiejętności</h3>
                 <p className="text-sm text-white/40">
-                  Przeciągnij uchwyt, aby zmienić kolejność grup.
+                  Kliknij nazwę, aby edytować. Przeciągnij uchwyt, aby zmienić
+                  kolejność grup.
                 </p>
               </div>
               <AdminAddButton
@@ -320,43 +316,22 @@ function SettingsForm({ language }: AdminFormProps) {
                 disabled={isLoading || isSaving}
                 onReorder={reorderSkillGroups}
               >
-                {(group, dragHandle) => {
-                  const rowId = `group-${group.id}`;
-
-                  return (
-                    <AdminExpandableSettingRow
-                      title={group[titleField] || group.id}
-                      isExpanded={expandedIds.has(rowId)}
-                      disabled={isLoading || isSaving}
-                      dragHandle={dragHandle}
-                      deleteLabel="Usuń grupę"
-                      deleteDisabled={settings.skillGroups.length <= 1}
-                      onDelete={() => deleteSkillGroup(group.id)}
-                      onToggle={() =>
-                        setExpandedIds((current) =>
-                          toggleExpandedId(current, rowId),
-                        )
-                      }
-                    >
-                      <AdminTranslatableField
-                        id={`settings-group-${group.id}`}
-                        label="Nazwa grupy"
-                        language={language}
-                        hint={nameHint}
-                      >
-                        <AdminInput
-                          id={`settings-group-${group.id}`}
-                          maxLength={ADMIN_NAME_MAX_LENGTH}
-                          value={group[titleField]}
-                          disabled={isLoading}
-                          onChange={(event) =>
-                            updateGroupTitle(group.id, event.target.value)
-                          }
-                        />
-                      </AdminTranslatableField>
-                    </AdminExpandableSettingRow>
-                  );
-                }}
+                {(group, dragHandle) => (
+                  <AdminExpandableSettingRow
+                    editableTitle={{
+                      id: `settings-group-${group.id}`,
+                      value: group[titleField],
+                      maxLength: ADMIN_NAME_MAX_LENGTH,
+                      placeholder: group.id,
+                      onChange: (value) => updateGroupTitle(group.id, value),
+                    }}
+                    disabled={isLoading || isSaving}
+                    dragHandle={dragHandle}
+                    deleteLabel="Usuń grupę"
+                    deleteDisabled={settings.skillGroups.length <= 1}
+                    onDelete={() => deleteSkillGroup(group.id)}
+                  />
+                )}
               </AdminSortableList>
             )}
           </div>
@@ -365,7 +340,8 @@ function SettingsForm({ language }: AdminFormProps) {
             <div className="admin-stack">
               <h3 className="text-lg font-bold">Nazwy umiejętności</h3>
               <p className="text-sm text-white/40">
-                Przeciągnij uchwyt, aby zmienić kolejność umiejętności w grupie.
+                Kliknij nazwę, aby edytować. Rozwiń grupę, aby zarządzać
+                umiejętnościami.
               </p>
             </div>
 
@@ -381,7 +357,13 @@ function SettingsForm({ language }: AdminFormProps) {
                   return (
                     <AdminExpandableSettingRow
                       key={group.id}
-                      title={group[titleField] || group.id}
+                      editableTitle={{
+                        id: `settings-skills-group-${group.id}`,
+                        value: group[titleField],
+                        maxLength: ADMIN_NAME_MAX_LENGTH,
+                        placeholder: group.id,
+                        onChange: (value) => updateGroupTitle(group.id, value),
+                      }}
                       isExpanded={expandedIds.has(groupRowId)}
                       disabled={isLoading || isSaving}
                       onToggle={() =>
@@ -404,48 +386,23 @@ function SettingsForm({ language }: AdminFormProps) {
                               reorderSkillsInGroup(group.id, nextSkills)
                             }
                           >
-                            {(skill, dragHandle) => {
-                              const skillRowId = `skill-${skill.id}`;
-
-                              return (
-                                <AdminExpandableSettingRow
-                                  title={skill.name}
-                                  nested
-                                  isExpanded={expandedIds.has(skillRowId)}
-                                  disabled={isLoading || isSaving}
-                                  dragHandle={dragHandle}
-                                  deleteLabel="Usuń umiejętność"
-                                  onDelete={() =>
-                                    deleteSkill(group.id, skill.id)
-                                  }
-                                  onToggle={() =>
-                                    setExpandedIds((current) =>
-                                      toggleExpandedId(current, skillRowId),
-                                    )
-                                  }
-                                >
-                                  <AdminField
-                                    id={`settings-skill-${skill.id}`}
-                                    label="Nazwa umiejętności"
-                                    hint={nameHint}
-                                  >
-                                    <AdminInput
-                                      id={`settings-skill-${skill.id}`}
-                                      maxLength={ADMIN_NAME_MAX_LENGTH}
-                                      value={skill.name}
-                                      disabled={isLoading}
-                                      onChange={(event) =>
-                                        updateSkillName(
-                                          group.id,
-                                          skill.id,
-                                          event.target.value,
-                                        )
-                                      }
-                                    />
-                                  </AdminField>
-                                </AdminExpandableSettingRow>
-                              );
-                            }}
+                            {(skill, dragHandle) => (
+                              <AdminExpandableSettingRow
+                                nested
+                                editableTitle={{
+                                  id: `settings-skill-${skill.id}`,
+                                  value: skill.name,
+                                  maxLength: ADMIN_NAME_MAX_LENGTH,
+                                  placeholder: "Nowa umiejętność",
+                                  onChange: (value) =>
+                                    updateSkillName(group.id, skill.id, value),
+                                }}
+                                disabled={isLoading || isSaving}
+                                dragHandle={dragHandle}
+                                deleteLabel="Usuń umiejętność"
+                                onDelete={() => deleteSkill(group.id, skill.id)}
+                              />
+                            )}
                           </AdminSortableList>
                         )}
 
@@ -512,7 +469,7 @@ function SettingsForm({ language }: AdminFormProps) {
                         <AdminField
                           id={`settings-footer-link-${link.id}`}
                           label="Etykieta linku"
-                          hint={nameHint}
+                          hint={`Maksymalnie ${ADMIN_NAME_MAX_LENGTH} znaków.`}
                         >
                           <AdminInput
                             id={`settings-footer-link-${link.id}`}

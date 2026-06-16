@@ -2,25 +2,36 @@ import type { ReactNode } from "react";
 
 import AdminButton from "./AdminButton";
 import AdminDeleteButton from "./AdminDeleteButton";
+import AdminInlineEditableTitle from "./AdminInlineEditableTitle";
 import type { AdminSortableDragHandleProps } from "./AdminSortableList";
 import arrowDownIcon from "@shared/assets/icons/arrow-down.svg";
 
+type AdminEditableTitleProps = {
+  id: string;
+  value: string;
+  placeholder?: string;
+  maxLength?: number;
+  onChange: (value: string) => void;
+};
+
 type AdminExpandableSettingRowProps = {
-  title: string;
-  isExpanded: boolean;
+  title?: string;
+  editableTitle?: AdminEditableTitleProps;
+  isExpanded?: boolean;
   disabled?: boolean;
   nested?: boolean;
   dragHandle?: AdminSortableDragHandleProps;
-  onToggle: () => void;
+  onToggle?: () => void;
   onDelete?: () => void;
   deleteDisabled?: boolean;
   deleteLabel?: string;
-  children: ReactNode;
+  children?: ReactNode;
 };
 
 function AdminExpandableSettingRow({
-  title,
-  isExpanded,
+  title = "",
+  editableTitle,
+  isExpanded = false,
   disabled = false,
   nested = false,
   dragHandle,
@@ -30,6 +41,8 @@ function AdminExpandableSettingRow({
   deleteLabel = "Usuń",
   children,
 }: AdminExpandableSettingRowProps) {
+  const isExpandable = children != null && onToggle != null;
+
   return (
     <div
       className={[
@@ -64,7 +77,13 @@ function AdminExpandableSettingRow({
             </button>
           ) : null}
 
-          <span className="min-w-0 truncate font-bold text-white">{title}</span>
+          {editableTitle ? (
+            <AdminInlineEditableTitle {...editableTitle} disabled={disabled} />
+          ) : (
+            <span className="min-w-0 truncate font-bold text-white">
+              {title}
+            </span>
+          )}
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
@@ -76,30 +95,32 @@ function AdminExpandableSettingRow({
             />
           ) : null}
 
-          <AdminButton
-            type="button"
-            variant="secondary"
-            disabled={disabled}
-            aria-expanded={isExpanded}
-            aria-label={isExpanded ? "Zwiń" : "Rozwiń"}
-            title={isExpanded ? "Zwiń" : "Rozwiń"}
-            className="admin-icon-button"
-            onClick={onToggle}
-          >
-            <img
-              src={arrowDownIcon}
-              alt=""
-              aria-hidden
-              className={[
-                "h-4 w-4 brightness-0 invert transition-transform",
-                isExpanded ? "rotate-180" : "",
-              ].join(" ")}
-            />
-          </AdminButton>
+          {isExpandable ? (
+            <AdminButton
+              type="button"
+              variant="secondary"
+              disabled={disabled}
+              aria-expanded={isExpanded}
+              aria-label={isExpanded ? "Zwiń" : "Rozwiń"}
+              title={isExpanded ? "Zwiń" : "Rozwiń"}
+              className="admin-icon-button"
+              onClick={onToggle}
+            >
+              <img
+                src={arrowDownIcon}
+                alt=""
+                aria-hidden
+                className={[
+                  "h-4 w-4 brightness-0 invert transition-transform",
+                  isExpanded ? "rotate-180" : "",
+                ].join(" ")}
+              />
+            </AdminButton>
+          ) : null}
         </div>
       </div>
 
-      {isExpanded ? (
+      {isExpandable && isExpanded ? (
         <div className="border-t border-white/10 px-4 py-4">{children}</div>
       ) : null}
     </div>

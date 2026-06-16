@@ -106,6 +106,16 @@ body,
     @apply h-1 w-1 rounded-full bg-current;
   }
 
+  .admin-inline-editable-title {
+    @apply min-w-0 flex-1 truncate rounded-lg border border-transparent bg-transparent px-2 py-1 text-left font-bold text-white transition;
+    @apply hover:border-white/10 hover:bg-white/5;
+    @apply disabled:cursor-not-allowed disabled:opacity-40;
+  }
+
+  .admin-inline-editable-title__input {
+    @apply min-w-0 flex-1 py-1;
+  }
+
   .admin-label {
     @apply text-sm font-bold text-white/60;
   }
