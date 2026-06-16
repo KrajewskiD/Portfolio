@@ -1,0 +1,1 @@
+export const SKILL_GROUP_TITLE_MAX_LENGTH = 64;

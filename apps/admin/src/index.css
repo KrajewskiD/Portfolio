@@ -33,6 +33,11 @@ body,
     @apply hover:border-red-300/30 hover:bg-red-900/50;
   }
 
+  .admin-button-success {
+    @apply border-emerald-400/20 bg-emerald-950/40 text-emerald-200;
+    @apply hover:border-emerald-300/30 hover:bg-emerald-900/50;
+  }
+
   .admin-field {
     @apply grid gap-3;
   }
@@ -81,6 +86,10 @@ body,
 
   .admin-image-preview__action {
     @apply border-white/20 bg-neutral-950/85 px-4 py-2 text-sm shadow-lg backdrop-blur-sm;
+  }
+
+  .admin-icon-button {
+    @apply inline-flex h-12 w-12 shrink-0 items-center justify-center p-0 text-xl font-black;
   }
 
   .admin-label {

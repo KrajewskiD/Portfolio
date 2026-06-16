@@ -64,6 +64,7 @@ function AdminCustomSelect({
         aria-expanded={isOpen}
         onClick={() => setIsOpen((current) => !current)}
         className="admin-select flex w-full items-center justify-between gap-3 text-left"
+        title={selectedOption?.label}
       >
         <span className="truncate">{selectedOption?.label}</span>
         <span className="text-white/40" aria-hidden>

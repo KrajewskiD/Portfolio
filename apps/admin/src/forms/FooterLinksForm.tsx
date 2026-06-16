@@ -16,6 +16,7 @@ import {
   saveAdminFooterLinks,
 } from "@admin/services/footerContentService";
 import type { AdminFormProps } from "@admin/types/adminForms";
+import { FOOTER_LINK_LABEL_MAX_LENGTH } from "@shared/constants/footerLink";
 import type { FooterLinkData } from "@shared/types/link";
 
 function FooterLinksForm({ language }: AdminFormProps) {
@@ -48,9 +49,14 @@ function FooterLinksForm({ language }: AdminFormProps) {
     field: keyof Pick<FooterLinkData, "label" | "href" | "displayOrder">,
     value: string | number,
   ) {
+    const nextValue =
+      field === "label" && typeof value === "string"
+        ? value.slice(0, FOOTER_LINK_LABEL_MAX_LENGTH)
+        : value;
+
     setFooterLinks((current) =>
       current.map((link) =>
-        link.id === activeLink.id ? { ...link, [field]: value } : link,
+        link.id === activeLink.id ? { ...link, [field]: nextValue } : link,
       ),
     );
   }
@@ -94,6 +100,23 @@ function FooterLinksForm({ language }: AdminFormProps) {
         description="Zarządzaj linkami do mediów społecznościowych wyświetlanymi w stopce strony."
         actions={
           <AdminFormActions>
+            <AdminCustomSelect
+              id="footer-link-select"
+              ariaLabel="Link"
+              className="w-80 max-w-full"
+              value={activeLink.id}
+              disabled={isLoading}
+              options={footerLinks.map((link) => ({
+                value: link.id,
+                label: link.label,
+              }))}
+              onChange={setActiveLinkId}
+            />
+            <AdminDeleteButton
+              label="Usuń link"
+              disabled={isLoading || isSaving || footerLinks.length <= 1}
+              onClick={deleteFooterLink}
+            />
             <AdminAddButton label="Dodaj link" onClick={addFooterLink} />
             <AdminButton
               type="button"
@@ -125,38 +148,20 @@ function FooterLinksForm({ language }: AdminFormProps) {
         </p>
       ) : null}
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-        <div className="flex-1">
-          <AdminField id="footer-link-select" label="Link">
-            <AdminCustomSelect
-              id="footer-link-select"
-              value={activeLink.id}
-              disabled={isLoading}
-              options={footerLinks.map((link) => ({
-                value: link.id,
-                label: link.label,
-              }))}
-              onChange={setActiveLinkId}
-            />
-          </AdminField>
-        </div>
-
-        <AdminDeleteButton
-          label="Usuń link"
-          disabled={isLoading || isSaving || footerLinks.length <= 1}
-          onClick={deleteFooterLink}
-        />
-      </div>
-
       <AdminPanel>
         <p className="font-mono text-sm font-bold text-white/35">
           Aktywny język edycji: {language.toUpperCase()}
         </p>
 
         <div className="grid gap-6 lg:grid-cols-2">
-          <AdminField id="footer-link-label" label="Etykieta">
+          <AdminField
+            id="footer-link-label"
+            label="Etykieta"
+            hint={`Maksymalnie ${FOOTER_LINK_LABEL_MAX_LENGTH} znaków.`}
+          >
             <AdminInput
               id="footer-link-label"
+              maxLength={FOOTER_LINK_LABEL_MAX_LENGTH}
               value={activeLink.label}
               disabled={isLoading}
               onChange={(event) =>
