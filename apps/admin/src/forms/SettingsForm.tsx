@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import AdminAddButton from "@admin/components/ui/AdminAddButton";
 import AdminButton from "@admin/components/ui/AdminButton";
 import AdminExpandableSettingRow from "@admin/components/ui/AdminExpandableSettingRow";
 import AdminField from "@admin/components/ui/AdminField";
@@ -17,6 +18,8 @@ import {
 } from "@admin/services/settingsContentService";
 import type { AdminFormProps } from "@admin/types/adminForms";
 import { ADMIN_NAME_MAX_LENGTH } from "@shared/constants/adminSettings";
+import type { Skill } from "@shared/types/skill";
+import type { FooterLinkData } from "@shared/types/link";
 
 function toggleExpandedId(expandedIds: Set<string>, id: string) {
   const next = new Set(expandedIds);
@@ -53,6 +56,10 @@ function SettingsForm({ language }: AdminFormProps) {
 
   const titleField = language === "pl" ? "titlePl" : "titleEn";
   const nameHint = `Maksymalnie ${ADMIN_NAME_MAX_LENGTH} znaków.`;
+
+  function addExpandedId(id: string) {
+    setExpandedIds((current) => new Set(current).add(id));
+  }
 
   function updateGroupTitle(groupId: string, value: string) {
     const nextValue = value.slice(0, ADMIN_NAME_MAX_LENGTH);
@@ -112,6 +119,7 @@ function SettingsForm({ language }: AdminFormProps) {
       skillGroups: current.skillGroups.filter((group) => group.id !== groupId),
     }));
     removeExpandedId(`group-${groupId}`);
+    removeExpandedId(`skills-group-${groupId}`);
   }
 
   function deleteSkill(groupId: string, skillId: string) {
@@ -139,6 +147,75 @@ function SettingsForm({ language }: AdminFormProps) {
       footerLinks: current.footerLinks.filter((link) => link.id !== linkId),
     }));
     removeExpandedId(`footer-${linkId}`);
+  }
+
+  function addSkillGroup() {
+    const nextIndex = settings.skillGroups.length + 1;
+    const nextId = `group-${String(nextIndex).padStart(2, "0")}`;
+
+    setSettings((current) => ({
+      ...current,
+      skillGroups: [
+        ...current.skillGroups,
+        {
+          id: nextId,
+          titlePl: "Nowa grupa PL",
+          titleEn: "New group EN",
+          skills: [],
+        },
+      ],
+    }));
+    addExpandedId(`group-${nextId}`);
+  }
+
+  function addSkillToGroup(groupId: string) {
+    const targetGroup = settings.skillGroups.find(
+      (group) => group.id === groupId,
+    );
+
+    if (!targetGroup) {
+      return;
+    }
+
+    const nextIndex = targetGroup.skills.length + 1;
+    const nextId = `${groupId}-skill-${String(nextIndex).padStart(2, "0")}`;
+
+    const nextSkill: Skill = {
+      id: nextId,
+      name: "Nowa umiejętność",
+      level: 1,
+      descriptionPl: "",
+      descriptionEn: "",
+    };
+
+    setSettings((current) => ({
+      ...current,
+      skillGroups: current.skillGroups.map((group) =>
+        group.id === groupId
+          ? { ...group, skills: [...group.skills, nextSkill] }
+          : group,
+      ),
+    }));
+    addExpandedId(`skills-group-${groupId}`);
+    addExpandedId(`skill-${nextId}`);
+  }
+
+  function addFooterLink() {
+    const nextIndex = settings.footerLinks.length + 1;
+    const nextId = `link-${String(nextIndex).padStart(2, "0")}`;
+
+    const nextLink: FooterLinkData = {
+      id: nextId,
+      label: "Nowy link",
+      href: "#",
+      displayOrder: nextIndex,
+    };
+
+    setSettings((current) => ({
+      ...current,
+      footerLinks: [...current.footerLinks, nextLink],
+    }));
+    addExpandedId(`footer-${nextId}`);
   }
 
   return (
@@ -185,10 +262,19 @@ function SettingsForm({ language }: AdminFormProps) {
 
         <div className="admin-stack">
           <div className="admin-stack">
-            <h3 className="text-lg font-bold">Nazwy grup umiejętności</h3>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h3 className="text-lg font-bold">Nazwy grup umiejętności</h3>
+              <AdminAddButton
+                label="Dodaj grupę"
+                disabled={isLoading || isSaving}
+                onClick={addSkillGroup}
+              />
+            </div>
 
             {settings.skillGroups.length === 0 ? (
-              <p className="text-white/50">Brak grup umiejętności.</p>
+              <p className="text-white/50">
+                Brak grup umiejętności. Kliknij +, aby dodać pierwszą grupę.
+              </p>
             ) : (
               <div className="admin-stack">
                 {settings.skillGroups.map((group) => {
@@ -235,60 +321,104 @@ function SettingsForm({ language }: AdminFormProps) {
           <div className="admin-stack border-t border-white/10 pt-6">
             <h3 className="text-lg font-bold">Nazwy umiejętności</h3>
 
-            {settings.skillGroups.every((group) => group.skills.length === 0) ? (
-              <p className="text-white/50">Brak umiejętności do edycji.</p>
+            {settings.skillGroups.length === 0 ? (
+              <p className="text-white/50">
+                Najpierw dodaj grupę umiejętności.
+              </p>
             ) : (
               <div className="admin-stack">
-                {settings.skillGroups.flatMap((group) =>
-                  group.skills.map((skill) => {
-                    const rowId = `skill-${skill.id}`;
+                {settings.skillGroups.map((group) => {
+                  const groupRowId = `skills-group-${group.id}`;
 
-                    return (
-                      <AdminExpandableSettingRow
-                        key={skill.id}
-                        title={`${group[titleField]} · ${skill.name}`}
-                        isExpanded={expandedIds.has(rowId)}
-                        disabled={isLoading || isSaving}
-                        deleteLabel="Usuń umiejętność"
-                        onDelete={() => deleteSkill(group.id, skill.id)}
-                        onToggle={() =>
-                          setExpandedIds((current) =>
-                            toggleExpandedId(current, rowId),
-                          )
-                        }
-                      >
-                        <AdminField
-                          id={`settings-skill-${skill.id}`}
-                          label="Nazwa umiejętności"
-                          hint={nameHint}
-                        >
-                          <AdminInput
-                            id={`settings-skill-${skill.id}`}
-                            maxLength={ADMIN_NAME_MAX_LENGTH}
-                            value={skill.name}
-                            disabled={isLoading}
-                            onChange={(event) =>
-                              updateSkillName(
-                                group.id,
-                                skill.id,
-                                event.target.value,
-                              )
-                            }
+                  return (
+                    <AdminExpandableSettingRow
+                      key={group.id}
+                      title={group[titleField] || group.id}
+                      isExpanded={expandedIds.has(groupRowId)}
+                      disabled={isLoading || isSaving}
+                      onToggle={() =>
+                        setExpandedIds((current) =>
+                          toggleExpandedId(current, groupRowId),
+                        )
+                      }
+                    >
+                      <div className="admin-stack">
+                        {group.skills.length === 0 ? (
+                          <p className="text-white/50">
+                            Brak umiejętności w tej grupie.
+                          </p>
+                        ) : (
+                          group.skills.map((skill) => {
+                            const skillRowId = `skill-${skill.id}`;
+
+                            return (
+                              <AdminExpandableSettingRow
+                                key={skill.id}
+                                title={skill.name}
+                                nested
+                                isExpanded={expandedIds.has(skillRowId)}
+                                disabled={isLoading || isSaving}
+                                deleteLabel="Usuń umiejętność"
+                                onDelete={() => deleteSkill(group.id, skill.id)}
+                                onToggle={() =>
+                                  setExpandedIds((current) =>
+                                    toggleExpandedId(current, skillRowId),
+                                  )
+                                }
+                              >
+                                <AdminField
+                                  id={`settings-skill-${skill.id}`}
+                                  label="Nazwa umiejętności"
+                                  hint={nameHint}
+                                >
+                                  <AdminInput
+                                    id={`settings-skill-${skill.id}`}
+                                    maxLength={ADMIN_NAME_MAX_LENGTH}
+                                    value={skill.name}
+                                    disabled={isLoading}
+                                    onChange={(event) =>
+                                      updateSkillName(
+                                        group.id,
+                                        skill.id,
+                                        event.target.value,
+                                      )
+                                    }
+                                  />
+                                </AdminField>
+                              </AdminExpandableSettingRow>
+                            );
+                          })
+                        )}
+
+                        <div className="flex justify-end">
+                          <AdminAddButton
+                            label="Dodaj umiejętność"
+                            disabled={isLoading || isSaving}
+                            onClick={() => addSkillToGroup(group.id)}
                           />
-                        </AdminField>
-                      </AdminExpandableSettingRow>
-                    );
-                  }),
-                )}
+                        </div>
+                      </div>
+                    </AdminExpandableSettingRow>
+                  );
+                })}
               </div>
             )}
           </div>
 
           <div className="admin-stack border-t border-white/10 pt-6">
-            <h3 className="text-lg font-bold">Etykiety linków w stopce</h3>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h3 className="text-lg font-bold">Etykiety linków w stopce</h3>
+              <AdminAddButton
+                label="Dodaj link"
+                disabled={isLoading || isSaving}
+                onClick={addFooterLink}
+              />
+            </div>
 
             {settings.footerLinks.length === 0 ? (
-              <p className="text-white/50">Brak linków w stopce.</p>
+              <p className="text-white/50">
+                Brak linków w stopce. Kliknij +, aby dodać pierwszy link.
+              </p>
             ) : (
               <div className="admin-stack">
                 {settings.footerLinks.map((link) => {

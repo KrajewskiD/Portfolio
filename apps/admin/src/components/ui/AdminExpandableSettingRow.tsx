@@ -8,6 +8,7 @@ type AdminExpandableSettingRowProps = {
   title: string;
   isExpanded: boolean;
   disabled?: boolean;
+  nested?: boolean;
   onToggle: () => void;
   onDelete?: () => void;
   deleteDisabled?: boolean;
@@ -19,6 +20,7 @@ function AdminExpandableSettingRow({
   title,
   isExpanded,
   disabled = false,
+  nested = false,
   onToggle,
   onDelete,
   deleteDisabled = false,
@@ -26,7 +28,12 @@ function AdminExpandableSettingRow({
   children,
 }: AdminExpandableSettingRowProps) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/10 bg-neutral-900/50">
+    <div
+      className={[
+        "overflow-hidden rounded-2xl border bg-neutral-900/50",
+        nested ? "ml-4 border-white/5" : "border-white/10",
+      ].join(" ")}
+    >
       <div className="flex items-center justify-between gap-3 px-4 py-3">
         <span className="min-w-0 truncate font-bold text-white">{title}</span>
 

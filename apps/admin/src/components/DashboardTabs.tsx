@@ -1,4 +1,7 @@
-import type { DashboardContentTabId, DashboardTabId } from "@admin/config/dashboardTabs";
+import type {
+  DashboardContentTabId,
+  DashboardTabId,
+} from "@admin/config/dashboardTabs";
 import AdminSegmentedControl from "@admin/components/ui/AdminSegmentedControl";
 import featuresIcon from "@shared/assets/icons/features.svg";
 

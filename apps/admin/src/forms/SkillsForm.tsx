@@ -80,36 +80,6 @@ function SkillsForm({ language }: AdminFormProps) {
     );
   }
 
-  function addSkillGroup() {
-    const nextIndex = skillGroups.length + 1;
-    const nextId = `group-${String(nextIndex).padStart(2, "0")}`;
-
-    const nextGroup: SkillGroupData = {
-      id: nextId,
-      titlePl: "Nowa grupa PL",
-      titleEn: "New group EN",
-      skills: [],
-    };
-
-    setSkillGroups((current) => [...current, nextGroup]);
-    setActiveGroupId(nextId);
-    setActiveSkillId("");
-  }
-
-  function deleteSkillGroup() {
-    if (skillGroups.length <= 1) {
-      return;
-    }
-
-    const remainingGroups = skillGroups.filter(
-      (group) => group.id !== activeGroup.id,
-    );
-
-    setSkillGroups(remainingGroups);
-    setActiveGroupId(remainingGroups[0]?.id ?? "");
-    setActiveSkillId(remainingGroups[0]?.skills[0]?.id ?? "");
-  }
-
   function addSkill() {
     const nextIndex = activeGroup.skills.length + 1;
     const nextId = `${activeGroup.id}-skill-${String(nextIndex).padStart(2, "0")}`;
@@ -179,12 +149,6 @@ function SkillsForm({ language }: AdminFormProps) {
                 setActiveSkillId(group?.skills[0]?.id ?? "");
               }}
             />
-            <AdminDeleteButton
-              label="Usuń grupę"
-              disabled={isLoading || isSaving || skillGroups.length <= 1}
-              onClick={deleteSkillGroup}
-            />
-            <AdminAddButton label="Dodaj grupę" onClick={addSkillGroup} />
             <AdminButton
               type="button"
               variant="secondary"

@@ -1,9 +1,7 @@
 import { useMemo, useState } from "react";
 
-import AdminAddButton from "@admin/components/ui/AdminAddButton";
 import AdminButton from "@admin/components/ui/AdminButton";
 import AdminCustomSelect from "@admin/components/ui/AdminCustomSelect";
-import AdminDeleteButton from "@admin/components/ui/AdminDeleteButton";
 import AdminField from "@admin/components/ui/AdminField";
 import AdminFormActions from "@admin/components/ui/AdminFormActions";
 import AdminFormHeader from "@admin/components/ui/AdminFormHeader";
@@ -55,34 +53,6 @@ function FooterLinksForm({ language }: AdminFormProps) {
     );
   }
 
-  function addFooterLink() {
-    const nextIndex = footerLinks.length + 1;
-    const nextId = `link-${String(nextIndex).padStart(2, "0")}`;
-
-    const nextLink: FooterLinkData = {
-      id: nextId,
-      label: "Nowy link",
-      href: "#",
-      displayOrder: nextIndex,
-    };
-
-    setFooterLinks((current) => [...current, nextLink]);
-    setActiveLinkId(nextId);
-  }
-
-  function deleteFooterLink() {
-    if (footerLinks.length <= 1) {
-      return;
-    }
-
-    const remainingLinks = footerLinks.filter(
-      (link) => link.id !== activeLink.id,
-    );
-
-    setFooterLinks(remainingLinks);
-    setActiveLinkId(remainingLinks[0]?.id ?? "");
-  }
-
   if (!activeLink) {
     return null;
   }
@@ -106,12 +76,6 @@ function FooterLinksForm({ language }: AdminFormProps) {
               }))}
               onChange={setActiveLinkId}
             />
-            <AdminDeleteButton
-              label="Usuń link"
-              disabled={isLoading || isSaving || footerLinks.length <= 1}
-              onClick={deleteFooterLink}
-            />
-            <AdminAddButton label="Dodaj link" onClick={addFooterLink} />
             <AdminButton
               type="button"
               variant="secondary"
