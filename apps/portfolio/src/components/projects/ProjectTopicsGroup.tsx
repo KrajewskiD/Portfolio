@@ -2,6 +2,7 @@ import { useId } from "react";
 
 import {
   projectTopicIcons,
+  projectTopicLabels,
   projectTopicOrder,
 } from "@shared/constants/projectTopics";
 import type { Language } from "@shared/types/language";
@@ -16,7 +17,6 @@ type ProjectTopicsGroupProps = {
   topics: ProjectTopics;
   activeId: ProjectTopicId;
   onTopicChange: (id: ProjectTopicId) => void;
-  topicLabels: Record<ProjectTopicId, string>;
   language: Language;
 };
 
@@ -24,7 +24,6 @@ function ProjectTopicsGroup({
   topics,
   activeId,
   onTopicChange,
-  topicLabels,
   language,
 }: ProjectTopicsGroupProps) {
   const groupId = useId();
@@ -54,7 +53,7 @@ function ProjectTopicsGroup({
             key={topic.id}
             id={`${groupId}-${topic.id}-tab`}
             panelId={panelId}
-            label={topicLabels[topic.id]}
+            label={projectTopicLabels[topic.id][language]}
             iconSrc={projectTopicIcons[topic.id]}
             active={topic.id === activeTopic.id}
             onSelect={() => onTopicChange(topic.id)}
@@ -68,7 +67,9 @@ function ProjectTopicsGroup({
         aria-labelledby={`${groupId}-${activeTopic.id}-tab`}
         className="col-start-1 row-start-1 rounded-xl border-l-2 p-4 sm:mt-5"
       >
-        <p className="font-mono text-sm">{topicLabels[activeTopic.id]}</p>
+        <p className="font-mono text-sm">
+          {projectTopicLabels[activeTopic.id][language]}
+        </p>
 
         <p className="mt-2 leading-7">
           {language === "pl" ? activeTopic.contentPl : activeTopic.contentEn}

@@ -17,7 +17,6 @@ type ProjectsSectionProps = {
   errorMessage: string;
   label: string;
   title: string;
-  topicLabels: Record<ProjectTopicId, string>;
   language: Language;
   noImage: string;
   emptyMessage: string;
@@ -30,7 +29,6 @@ function ProjectsSection({
   errorMessage,
   label,
   title,
-  topicLabels,
   noImage,
   emptyMessage,
   language,
@@ -98,7 +96,6 @@ function ProjectsSection({
                         [project.id]: topicId,
                       }))
                     }
-                    topicLabels={topicLabels}
                     language={language}
                   />
                 }

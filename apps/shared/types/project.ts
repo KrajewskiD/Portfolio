@@ -1,8 +1,6 @@
-export type ProjectTopicId =
-  | "overview"
-  | "features"
-  | "technologies"
-  | "architecture";
+import type { ProjectTopicId } from "../constants/projectTopics";
+
+export type { ProjectTopicId };
 
 export type ProjectTopicContent = {
   id: ProjectTopicId;

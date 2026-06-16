@@ -4,19 +4,24 @@ type AdminFieldProps = {
   id: string;
   label: string;
   hint?: string;
+  action?: ReactNode;
   children: ReactNode;
 };
 
-function AdminField({ id, label, hint, children }: AdminFieldProps) {
+function AdminField({ id, label, hint, action, children }: AdminFieldProps) {
   return (
     <div className="admin-field">
-      <label htmlFor={id} className="admin-label">
-        {label}
-      </label>
+      <div className="flex items-center justify-between gap-3">
+        <label htmlFor={id} className="admin-label">
+          {label}
+        </label>
+
+        {action}
+      </div>
 
       {children}
 
-      {hint && <p className="admin-hint">{hint}</p>}
+      {hint ? <p className="admin-hint">{hint}</p> : null}
     </div>
   );
 }
