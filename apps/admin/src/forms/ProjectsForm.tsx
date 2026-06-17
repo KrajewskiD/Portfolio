@@ -30,6 +30,7 @@ import {
   projectTopicOrder,
   createEmptyProjectTopic,
 } from "@shared/constants/projectTopics";
+import { PROJECT_TITLE_MAX_LENGTH } from "@shared/constants/project";
 import { DEFAULT_PROJECT_TOPIC_ID } from "@shared/types/projectTopic";
 import type { Project, ProjectTopicId } from "@shared/types/project";
 
@@ -121,12 +122,17 @@ function ProjectsForm({ language }: AdminFormProps) {
   const titleField = language === "pl" ? "titlePl" : "titleEn";
 
   function updateProject(field: ProjectTextField, value: string) {
+    const nextValue =
+      field === "titlePl" || field === "titleEn"
+        ? value.slice(0, PROJECT_TITLE_MAX_LENGTH)
+        : value;
+
     setProjects((currentProjects) =>
       currentProjects.map((project) =>
         project.id === activeProject.id
           ? {
               ...project,
-              [field]: value,
+              [field]: nextValue,
             }
           : project,
       ),
@@ -224,7 +230,7 @@ function ProjectsForm({ language }: AdminFormProps) {
             <AdminCustomSelect
               id="project-select"
               ariaLabel="Projekt"
-              className="w-52"
+              className="w-80 max-w-full"
               value={activeProject.id}
               disabled={isLoading}
               options={projects.map((project) => ({
@@ -319,9 +325,11 @@ function ProjectsForm({ language }: AdminFormProps) {
                 id="project-title"
                 label="Nazwa projektu"
                 language={language}
+                hint={`Maksymalnie ${PROJECT_TITLE_MAX_LENGTH} znaków.`}
               >
                 <AdminInput
                   id="project-title"
+                  maxLength={PROJECT_TITLE_MAX_LENGTH}
                   value={activeProject[titleField]}
                   onChange={(event) =>
                     updateProject(titleField, event.target.value)

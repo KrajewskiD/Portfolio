@@ -1,9 +1,7 @@
 import { useMemo, useState } from "react";
 
-import AdminAddButton from "@admin/components/ui/AdminAddButton";
 import AdminButton from "@admin/components/ui/AdminButton";
 import AdminCustomSelect from "@admin/components/ui/AdminCustomSelect";
-import AdminDeleteButton from "@admin/components/ui/AdminDeleteButton";
 import AdminField from "@admin/components/ui/AdminField";
 import AdminFormActions from "@admin/components/ui/AdminFormActions";
 import AdminFormHeader from "@admin/components/ui/AdminFormHeader";
@@ -60,19 +58,8 @@ function SkillsForm({ language }: AdminFormProps) {
   const descriptionField =
     language === "pl" ? "descriptionPl" : "descriptionEn";
 
-  function updateActiveGroup(field: "titlePl" | "titleEn", value: string) {
-    setSkillGroups((current) =>
-      current.map((group) =>
-        group.id === activeGroup.id ? { ...group, [field]: value } : group,
-      ),
-    );
-  }
-
   function updateActiveSkill(
-    field: keyof Pick<
-      Skill,
-      "name" | "level" | "descriptionPl" | "descriptionEn"
-    >,
+    field: keyof Pick<Skill, "level" | "descriptionPl" | "descriptionEn">,
     value: string | number,
   ) {
     setSkillGroups((current) =>
@@ -91,77 +78,6 @@ function SkillsForm({ language }: AdminFormProps) {
     );
   }
 
-  function addSkillGroup() {
-    const nextIndex = skillGroups.length + 1;
-    const nextId = `group-${String(nextIndex).padStart(2, "0")}`;
-
-    const nextGroup: SkillGroupData = {
-      id: nextId,
-      titlePl: "Nowa grupa PL",
-      titleEn: "New group EN",
-      skills: [],
-    };
-
-    setSkillGroups((current) => [...current, nextGroup]);
-    setActiveGroupId(nextId);
-    setActiveSkillId("");
-  }
-
-  function deleteSkillGroup() {
-    if (skillGroups.length <= 1) {
-      return;
-    }
-
-    const remainingGroups = skillGroups.filter(
-      (group) => group.id !== activeGroup.id,
-    );
-
-    setSkillGroups(remainingGroups);
-    setActiveGroupId(remainingGroups[0]?.id ?? "");
-    setActiveSkillId(remainingGroups[0]?.skills[0]?.id ?? "");
-  }
-
-  function addSkill() {
-    const nextIndex = activeGroup.skills.length + 1;
-    const nextId = `${activeGroup.id}-skill-${String(nextIndex).padStart(2, "0")}`;
-
-    const nextSkill: Skill = {
-      id: nextId,
-      name: "Nowa umiejętność",
-      level: 1,
-      descriptionPl: "",
-      descriptionEn: "",
-    };
-
-    setSkillGroups((current) =>
-      current.map((group) =>
-        group.id === activeGroup.id
-          ? { ...group, skills: [...group.skills, nextSkill] }
-          : group,
-      ),
-    );
-    setActiveSkillId(nextId);
-  }
-
-  function deleteSkill() {
-    if (!activeSkill) {
-      return;
-    }
-
-    const remainingSkills = activeGroup.skills.filter(
-      (skill) => skill.id !== activeSkill.id,
-    );
-
-    setSkillGroups((current) =>
-      current.map((group) =>
-        group.id === activeGroup.id
-          ? { ...group, skills: remainingSkills }
-          : group,
-      ),
-    );
-    setActiveSkillId(remainingSkills[0]?.id ?? "");
-  }
-
   if (!activeGroup) {
     return null;
   }
@@ -173,7 +89,23 @@ function SkillsForm({ language }: AdminFormProps) {
         description="Edytuj grupy umiejętności technicznych oraz poziomy i opisy poszczególnych pozycji."
         actions={
           <AdminFormActions>
-            <AdminAddButton label="Dodaj grupę" onClick={addSkillGroup} />
+            <AdminCustomSelect
+              id="skill-group-select"
+              ariaLabel="Grupa umiejętności"
+              className="w-80 max-w-full"
+              value={activeGroup.id}
+              disabled={isLoading}
+              options={skillGroups.map((group) => ({
+                value: group.id,
+                label: group[titleField],
+              }))}
+              onChange={(groupId) => {
+                const group = skillGroups.find((item) => item.id === groupId);
+
+                setActiveGroupId(groupId);
+                setActiveSkillId(group?.skills[0]?.id ?? "");
+              }}
+            />
             <AdminButton
               type="button"
               variant="secondary"
@@ -204,106 +136,49 @@ function SkillsForm({ language }: AdminFormProps) {
         </p>
       ) : null}
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-        <div className="flex-1">
-          <AdminField id="skill-group-select" label="Grupa umiejętności">
-            <AdminCustomSelect
-              id="skill-group-select"
-              value={activeGroup.id}
-              disabled={isLoading}
-              options={skillGroups.map((group) => ({
-                value: group.id,
-                label: group[titleField],
-              }))}
-              onChange={(groupId) => {
-                const group = skillGroups.find((item) => item.id === groupId);
-
-                setActiveGroupId(groupId);
-                setActiveSkillId(group?.skills[0]?.id ?? "");
-              }}
-            />
-          </AdminField>
-        </div>
-
-        <AdminDeleteButton
-          label="Usuń grupę"
-          disabled={isLoading || isSaving || skillGroups.length <= 1}
-          onClick={deleteSkillGroup}
-        />
-      </div>
-
-      <AdminPanel>
+      <AdminPanel className="gap-4">
         <p className="font-mono text-sm font-bold text-white/35">
           Aktywny język edycji: {language.toUpperCase()}
         </p>
 
-        <AdminTranslatableField
-          id="skill-group-title"
-          label="Nazwa grupy"
-          language={language}
-        >
-          <AdminInput
-            id="skill-group-title"
-            value={activeGroup[titleField]}
-            disabled={isLoading}
-            onChange={(event) =>
-              updateActiveGroup(titleField, event.target.value)
-            }
-          />
-        </AdminTranslatableField>
-
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-6">
-          <h3 className="text-lg font-bold">Umiejętności w grupie</h3>
-          <AdminAddButton label="Dodaj umiejętność" onClick={addSkill} />
-        </div>
+        <h3 className="text-base font-bold">Umiejętności w grupie</h3>
 
         {activeGroup.skills.length === 0 ? (
-          <p className="text-white/50">
-            Brak umiejętności w tej grupie. Dodaj pierwszą pozycję.
+          <p className="text-sm text-white/50">
+            Brak umiejętności w tej grupie. Dodaj je w Ustawieniach.
           </p>
         ) : activeSkill ? (
-          <>
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-              <div className="flex-1">
-                <AdminField id="skill-select" label="Umiejętność">
-                  <AdminCustomSelect
-                    id="skill-select"
-                    value={activeSkill.id}
-                    disabled={isLoading}
-                    options={activeGroup.skills.map((skill) => ({
-                      value: skill.id,
-                      label: skill.name,
-                    }))}
-                    onChange={setActiveSkillId}
-                  />
-                </AdminField>
-              </div>
-
-              <AdminDeleteButton
-                label="Usuń umiejętność"
-                disabled={isLoading || isSaving}
-                onClick={deleteSkill}
-              />
-            </div>
-
-            <div className="grid gap-6 lg:grid-cols-2">
-              <AdminField id="skill-name" label="Nazwa">
-                <AdminInput
-                  id="skill-name"
-                  value={activeSkill.name}
+          <div className="flex flex-col gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-12 sm:items-end">
+              <AdminField
+                id="skill-select"
+                label="Umiejętność"
+                className="admin-field--compact min-w-0 sm:col-span-2"
+              >
+                <AdminCustomSelect
+                  id="skill-select"
+                  compact
+                  value={activeSkill.id}
                   disabled={isLoading}
-                  onChange={(event) =>
-                    updateActiveSkill("name", event.target.value)
-                  }
+                  options={activeGroup.skills.map((skill) => ({
+                    value: skill.id,
+                    label: skill.name,
+                  }))}
+                  onChange={setActiveSkillId}
                 />
               </AdminField>
 
-              <AdminField id="skill-level" label="Poziom (1–5)">
+              <AdminField
+                id="skill-level"
+                label="Poziom"
+                className="admin-field--compact min-w-0 sm:col-span-2"
+              >
                 <AdminInput
                   id="skill-level"
                   type="number"
                   min={1}
                   max={5}
+                  className="admin-control-compact text-center"
                   value={activeSkill.level}
                   disabled={isLoading}
                   onChange={(event) =>
@@ -317,10 +192,12 @@ function SkillsForm({ language }: AdminFormProps) {
               id="skill-description"
               label="Opis"
               language={language}
+              className="admin-field--compact"
             >
               <AdminTextarea
                 id="skill-description"
-                rows={4}
+                rows={2}
+                className="admin-textarea-compact admin-control-compact"
                 value={activeSkill[descriptionField]}
                 disabled={isLoading}
                 onChange={(event) =>
@@ -328,7 +205,7 @@ function SkillsForm({ language }: AdminFormProps) {
                 }
               />
             </AdminTranslatableField>
-          </>
+          </div>
         ) : null}
       </AdminPanel>
     </section>
