@@ -14,25 +14,25 @@ function AdminFormFeedback({
   return (
     <>
       {extraErrors.map((error) => (
-        <p key={error} role="alert" className="text-sm text-red-300">
+        <p key={error} role="alert" className="admin-alert-error">
           {error}
         </p>
       ))}
 
       {loadError ? (
-        <p role="status" className="text-sm text-amber-300">
+        <p role="status" className="admin-alert-warning">
           {loadError}
         </p>
       ) : null}
 
       {saveError ? (
-        <p role="alert" className="text-sm text-red-300">
+        <p role="alert" className="admin-alert-error">
           {saveError}
         </p>
       ) : null}
 
       {saveSuccess ? (
-        <p role="status" className="text-sm text-emerald-300">
+        <p role="status" className="admin-alert-success">
           Zmiany zostały zapisane.
         </p>
       ) : null}

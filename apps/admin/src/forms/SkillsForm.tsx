@@ -1,20 +1,19 @@
 import { useCallback, useMemo, useState } from "react";
 
-import AdminCustomSelect from "@admin/components/ui/AdminCustomSelect";
 import AdminEditLanguageBanner from "@admin/components/ui/AdminEditLanguageBanner";
+import AdminEmptyMessage from "@admin/components/ui/AdminEmptyMessage";
+import AdminEntitySelect from "@admin/components/ui/AdminEntitySelect";
 import AdminField from "@admin/components/ui/AdminField";
 import AdminFormActions from "@admin/components/ui/AdminFormActions";
-import AdminFormFeedback from "@admin/components/ui/AdminFormFeedback";
-import AdminFormHeader from "@admin/components/ui/AdminFormHeader";
 import AdminFormSaveActions from "@admin/components/ui/AdminFormSaveActions";
+import AdminFormShell from "@admin/components/ui/AdminFormShell";
 import AdminInput from "@admin/components/ui/AdminInput";
-import AdminPanel from "@admin/components/ui/AdminPanel";
 import AdminTextarea from "@admin/components/ui/AdminTextarea";
 import AdminTranslatableField from "@admin/components/ui/AdminTranslatableField";
 import { skillGroupDrafts } from "@admin/data/adminDrafts";
 import {
   createActiveGroupSkillTranslateFields,
-  updateSkillInGroups,
+  patchSkillInGroups,
 } from "@admin/forms/skillTranslatableFields";
 import { useAdminForm } from "@admin/hooks/useAdminForm";
 import { useTranslateFields } from "@admin/hooks/useTranslateFields";
@@ -84,7 +83,7 @@ function SkillsForm({ language }: AdminFormProps) {
       }
 
       setSkillGroups((current) =>
-        updateSkillInGroups(current, activeGroup.id, skillId, field, text),
+        patchSkillInGroups(current, activeGroup.id, skillId, field, text),
       );
     },
     [activeGroup, setSkillGroups],
@@ -117,13 +116,7 @@ function SkillsForm({ language }: AdminFormProps) {
     }
 
     setSkillGroups((current) =>
-      updateSkillInGroups(
-        current,
-        activeGroup.id,
-        activeSkill.id,
-        field,
-        value,
-      ),
+      patchSkillInGroups(current, activeGroup.id, activeSkill.id, field, value),
     );
   }
 
@@ -132,148 +125,141 @@ function SkillsForm({ language }: AdminFormProps) {
   }
 
   return (
-    <section className="admin-stack">
-      <AdminFormHeader
-        title="Umiejętności"
-        description="Edytuj grupy umiejętności technicznych oraz poziomy i opisy poszczególnych pozycji."
-        actions={
-          <AdminFormActions>
-            <AdminCustomSelect
-              id="skill-group-select"
-              ariaLabel="Grupa umiejętności"
-              className="w-80 max-w-full"
-              value={activeGroup.id}
-              disabled={isLoading}
-              options={skillGroups.map((group) => ({
-                value: group.id,
-                label: getLocalizedField(group, language, "titlePl", "titleEn"),
-              }))}
-              onChange={(groupId) => {
-                const group = skillGroups.find((item) => item.id === groupId);
+    <AdminFormShell
+      title="Umiejętności"
+      description="Edytuj grupy umiejętności technicznych oraz poziomy i opisy poszczególnych pozycji."
+      panelCompact
+      loadError={loadError}
+      saveError={saveError}
+      saveSuccess={saveSuccess}
+      extraErrors={bulkTranslate.error ? [bulkTranslate.error] : []}
+      actions={
+        <AdminFormActions>
+          <AdminEntitySelect
+            id="skill-group-select"
+            ariaLabel="Grupa umiejętności"
+            className="w-80 max-w-full"
+            value={activeGroup.id}
+            disabled={isLoading}
+            items={skillGroups}
+            getItemId={(group) => group.id}
+            getItemLabel={(group) =>
+              getLocalizedField(group, language, "titlePl", "titleEn")
+            }
+            onChange={(groupId) => {
+              const group = skillGroups.find((item) => item.id === groupId);
 
-                setActiveGroupId(groupId);
-                setActiveSkillId(group?.skills[0]?.id ?? "");
-              }}
-            />
-            <AdminFormSaveActions
-              language={language}
-              saveDisabled={formDisabled}
-              isSaving={isSaving}
-              onSave={save}
-              translateDisabled={
-                formDisabled || activeGroup.skills.length === 0
-              }
-              isBulkTranslating={bulkTranslate.isTranslating}
-              translateTitle="Przetłumacz opisy umiejętności w grupie przez Gemini AI"
-              onTranslateAll={bulkTranslate.onTranslateAll}
-            />
-          </AdminFormActions>
-        }
-      />
+              setActiveGroupId(groupId);
+              setActiveSkillId(group?.skills[0]?.id ?? "");
+            }}
+          />
+          <AdminFormSaveActions
+            language={language}
+            saveDisabled={formDisabled}
+            isSaving={isSaving}
+            onSave={save}
+            translateDisabled={formDisabled || activeGroup.skills.length === 0}
+            isBulkTranslating={bulkTranslate.isTranslating}
+            translateTitle="Przetłumacz opisy umiejętności w grupie przez Gemini AI"
+            onTranslateAll={bulkTranslate.onTranslateAll}
+          />
+        </AdminFormActions>
+      }
+    >
+      <AdminEditLanguageBanner language={language} />
 
-      <AdminFormFeedback
-        loadError={loadError}
-        saveError={saveError}
-        saveSuccess={saveSuccess}
-        extraErrors={bulkTranslate.error ? [bulkTranslate.error] : []}
-      />
+      <h3 className="admin-section-title">Umiejętności w grupie</h3>
 
-      <AdminPanel className="gap-4">
-        <AdminEditLanguageBanner language={language} />
-
-        <h3 className="text-base font-bold">Umiejętności w grupie</h3>
-
-        {activeGroup.skills.length === 0 ? (
-          <p className="text-sm text-white/50">
-            Brak umiejętności w tej grupie. Dodaj je w Ustawieniach.
-          </p>
-        ) : activeSkill ? (
-          <div className="flex flex-col gap-3">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
-              <AdminField
+      {activeGroup.skills.length === 0 ? (
+        <AdminEmptyMessage inline>
+          Brak umiejętności w tej grupie. Dodaj je w Ustawieniach.
+        </AdminEmptyMessage>
+      ) : activeSkill ? (
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
+            <AdminField
+              id="skill-select"
+              label="Umiejętność"
+              className="admin-field--compact min-w-0 sm:w-1/4"
+            >
+              <AdminEntitySelect
                 id="skill-select"
-                label="Umiejętność"
-                className="admin-field--compact min-w-0 sm:w-1/4"
-              >
-                <AdminCustomSelect
-                  id="skill-select"
-                  compact
-                  value={activeSkill.id}
-                  disabled={isLoading}
-                  options={activeGroup.skills.map((skill) => ({
-                    value: skill.id,
-                    label: skill.name,
-                  }))}
-                  onChange={setActiveSkillId}
-                />
-              </AdminField>
+                ariaLabel="Umiejętność"
+                compact
+                value={activeSkill.id}
+                disabled={isLoading}
+                items={activeGroup.skills}
+                getItemId={(skill) => skill.id}
+                getItemLabel={(skill) => skill.name}
+                onChange={setActiveSkillId}
+              />
+            </AdminField>
 
-              <AdminField
+            <AdminField
+              id="skill-level"
+              label="Poziom"
+              className="admin-field--compact w-full shrink-0 sm:w-[12.5%] sm:min-w-[3.75rem] sm:max-w-[4.5rem]"
+            >
+              <AdminInput
                 id="skill-level"
-                label="Poziom"
-                className="admin-field--compact w-full shrink-0 sm:w-[12.5%] sm:min-w-[3.75rem] sm:max-w-[4.5rem]"
-              >
-                <AdminInput
-                  id="skill-level"
-                  type="number"
-                  min={1}
-                  max={5}
-                  className="admin-control-compact admin-control-compact--level text-center"
-                  value={activeSkill.level}
-                  disabled={isLoading}
-                  onChange={(event) =>
-                    updateActiveSkill("level", Number(event.target.value))
-                  }
-                />
-              </AdminField>
-            </div>
+                type="number"
+                min={1}
+                max={5}
+                className="admin-control-compact admin-control-compact--level text-center"
+                value={activeSkill.level}
+                disabled={isLoading}
+                onChange={(event) =>
+                  updateActiveSkill("level", Number(event.target.value))
+                }
+              />
+            </AdminField>
+          </div>
 
-            <AdminTranslatableField
+          <AdminTranslatableField
+            id="skill-description"
+            label="Opis"
+            language={language}
+            className="admin-field--compact"
+            disabled={formDisabled || !activeSkill}
+            sourceText={getLocalizedField(
+              activeSkill,
+              language,
+              "descriptionPl",
+              "descriptionEn",
+            )}
+            onApply={(text) =>
+              updateActiveSkill(
+                getOppositeLocalizedKey(
+                  language,
+                  "descriptionPl",
+                  "descriptionEn",
+                ),
+                text,
+              )
+            }
+          >
+            <AdminTextarea
               id="skill-description"
-              label="Opis"
-              language={language}
-              className="admin-field--compact"
-              disabled={formDisabled || !activeSkill}
-              sourceText={getLocalizedField(
+              rows={2}
+              className="admin-textarea-compact admin-control-compact"
+              value={getLocalizedField(
                 activeSkill,
                 language,
                 "descriptionPl",
                 "descriptionEn",
               )}
-              onApply={(text) =>
+              disabled={isLoading}
+              onChange={(event) =>
                 updateActiveSkill(
-                  getOppositeLocalizedKey(
-                    language,
-                    "descriptionPl",
-                    "descriptionEn",
-                  ),
-                  text,
+                  getLocalizedKey(language, "descriptionPl", "descriptionEn"),
+                  event.target.value,
                 )
               }
-            >
-              <AdminTextarea
-                id="skill-description"
-                rows={2}
-                className="admin-textarea-compact admin-control-compact"
-                value={getLocalizedField(
-                  activeSkill,
-                  language,
-                  "descriptionPl",
-                  "descriptionEn",
-                )}
-                disabled={isLoading}
-                onChange={(event) =>
-                  updateActiveSkill(
-                    getLocalizedKey(language, "descriptionPl", "descriptionEn"),
-                    event.target.value,
-                  )
-                }
-              />
-            </AdminTranslatableField>
-          </div>
-        ) : null}
-      </AdminPanel>
-    </section>
+            />
+          </AdminTranslatableField>
+        </div>
+      ) : null}
+    </AdminFormShell>
   );
 }
 

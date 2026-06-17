@@ -1,5 +1,4 @@
-export { getFooterLinksFromDatabase, mapFooterLinkRow } from "./footer";
-export type { FooterLinkRow } from "./footer";
+export { getFooterLinksFromDatabase } from "./footer";
 export {
   ensureUuid,
   isUuid,
@@ -7,15 +6,13 @@ export {
   normalizeProjectIds,
   normalizeSkillGroupIds,
 } from "./ids";
-export { getProfileFromDatabase, mapProfileRow } from "./profile";
-export type { ProfileRow } from "./profile";
-export { getProjectsFromDatabase, mapProjectRow } from "./projects";
-export type { ProjectRow, TechnologyIdRow } from "./projects";
-export { getSkillGroupsFromDatabase, mapSkillGroupRow } from "./skills";
-export type { SkillGroupRow } from "./skills";
+export { getProfileFromDatabase } from "./profile";
+export { getProjectsFromDatabase } from "./projects";
+export { getSkillGroupsFromDatabase } from "./skills";
 export {
   PROFILE_IMAGES_BUCKET,
   PROJECT_IMAGES_BUCKET,
+  createBucketUrlResolver,
   getStoragePublicUrl,
 } from "./storage/storageUrls";
 export { getOrCreateTechnologyId } from "./technologies";

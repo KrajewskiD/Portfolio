@@ -1,8 +1,10 @@
 import AdminAddButton from "@admin/components/ui/AdminAddButton";
+import AdminEmptyMessage from "@admin/components/ui/AdminEmptyMessage";
 import AdminExpandableSettingRow from "@admin/components/ui/AdminExpandableSettingRow";
 import AdminField from "@admin/components/ui/AdminField";
 import AdminInput from "@admin/components/ui/AdminInput";
 import AdminSortableList from "@admin/components/ui/AdminSortableList";
+import SettingsSection from "@admin/components/settings/SettingsSection";
 import { ADMIN_NAME_MAX_LENGTH } from "@shared/constants/adminSettings";
 import type { FooterLinkData } from "@shared/database/types/link";
 
@@ -34,25 +36,22 @@ function SettingsFooterLinksSection({
   onUpdatePlatform,
 }: SettingsFooterLinksSectionProps) {
   return (
-    <div className="admin-stack border-t border-white/10 pt-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="admin-stack">
-          <h3 className="text-lg font-bold">Linki w stopce</h3>
-          <p className="text-sm text-white/40">
-            Przeciągnij uchwyt, aby zmienić kolejność linków.
-          </p>
-        </div>
+    <SettingsSection
+      bordered
+      title="Linki w stopce"
+      description="Przeciągnij uchwyt, aby zmienić kolejność linków."
+      action={
         <AdminAddButton
           label="Dodaj link"
           disabled={disabled}
           onClick={onAddLink}
         />
-      </div>
-
+      }
+    >
       {footerLinks.length === 0 ? (
-        <p className="text-white/50">
+        <AdminEmptyMessage inline>
           Brak linków w stopce. Kliknij +, aby dodać pierwszy link.
-        </p>
+        </AdminEmptyMessage>
       ) : (
         <AdminSortableList
           items={footerLinks}
@@ -125,7 +124,7 @@ function SettingsFooterLinksSection({
           }}
         </AdminSortableList>
       )}
-    </div>
+    </SettingsSection>
   );
 }
 

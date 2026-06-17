@@ -1,10 +1,7 @@
 import type { Language } from "@shared/database/types/language";
 import type { Skill, SkillGroupData } from "@shared/database/types/skill";
-import {
-  getLocalizedField,
-  getOppositeLocalizedKey,
-} from "@shared/utils/localizedField";
 
+import { createTranslateFields } from "@admin/forms/createTranslateFields";
 import type { TranslateFieldItem } from "@admin/hooks/useTranslateFields";
 
 export function createActiveGroupSkillTranslateFields(
@@ -16,24 +13,23 @@ export function createActiveGroupSkillTranslateFields(
     text: string,
   ) => void,
 ): TranslateFieldItem[] {
-  return group.skills.map((skill) => ({
-    id: `skill-${skill.id}-description`,
-    sourceText: getLocalizedField(
+  return group.skills.flatMap((skill) =>
+    createTranslateFields(
       skill,
       language,
-      "descriptionPl",
-      "descriptionEn",
+      [
+        {
+          id: `skill-${skill.id}-description`,
+          plKey: "descriptionPl",
+          enKey: "descriptionEn",
+        },
+      ],
+      (field, text) => onApply(skill.id, field, text),
     ),
-    onApply: (text) =>
-      onApply(
-        skill.id,
-        getOppositeLocalizedKey(language, "descriptionPl", "descriptionEn"),
-        text,
-      ),
-  }));
+  );
 }
 
-export function updateSkillInGroups(
+export function patchSkillInGroups(
   groups: SkillGroupData[],
   groupId: string,
   skillId: string,

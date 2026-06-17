@@ -9,7 +9,7 @@ export function patchSettings(
   return { ...settings, ...patch };
 }
 
-export function updateSkillGroup(
+export function patchSkillGroupInSettings(
   settings: AdminSettingsData,
   groupId: string,
   updater: (group: SkillGroupData) => SkillGroupData,
@@ -21,13 +21,13 @@ export function updateSkillGroup(
   });
 }
 
-export function updateSkillInGroup(
+export function patchSkillInSettings(
   settings: AdminSettingsData,
   groupId: string,
   skillId: string,
   updater: (skill: Skill) => Skill,
 ): AdminSettingsData {
-  return updateSkillGroup(settings, groupId, (group) => ({
+  return patchSkillGroupInSettings(settings, groupId, (group) => ({
     ...group,
     skills: group.skills.map((skill) =>
       skill.id === skillId ? updater(skill) : skill,

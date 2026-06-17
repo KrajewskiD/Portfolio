@@ -1,4 +1,5 @@
 import { getFooterLinksFromDatabase } from "@shared/database";
+import { mapFooterLinkToRow } from "@shared/database/footer/footerMapper";
 import { supabase } from "@admin/lib/supabase";
 import type { FooterLinkData } from "@shared/database/types/link";
 
@@ -14,13 +15,7 @@ export async function saveAdminFooterLinks(
     return;
   }
 
-  const rows = links.map((link) => ({
-    id: link.id,
-    label: link.label,
-    url: link.href,
-    platform: link.platform,
-    display_order: link.displayOrder,
-  }));
+  const rows = links.map(mapFooterLinkToRow);
 
   const { error } = await supabase.from("footer_links").upsert(rows);
 

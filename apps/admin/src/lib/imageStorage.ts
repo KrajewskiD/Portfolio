@@ -2,20 +2,23 @@ import { supabase } from "@admin/lib/supabase";
 import {
   PROFILE_IMAGES_BUCKET,
   PROJECT_IMAGES_BUCKET,
-  getStoragePublicUrl,
+  createBucketUrlResolver,
 } from "@shared/database";
 import {
   validateWebpImageFile,
   WEBP_IMAGE_ACCEPT,
 } from "@shared/utils/webpImage";
 
-export function getProfileImagePublicUrl(path: string): string {
-  return getStoragePublicUrl(supabase, PROFILE_IMAGES_BUCKET, path);
-}
+const getProfileImagePublicUrl = createBucketUrlResolver(
+  supabase,
+  PROFILE_IMAGES_BUCKET,
+);
+const getProjectImagePublicUrl = createBucketUrlResolver(
+  supabase,
+  PROJECT_IMAGES_BUCKET,
+);
 
-export function getProjectImagePublicUrl(path: string): string {
-  return getStoragePublicUrl(supabase, PROJECT_IMAGES_BUCKET, path);
-}
+export { getProfileImagePublicUrl, getProjectImagePublicUrl };
 
 async function assertWebpImageFile(file: File): Promise<void> {
   const validation = await validateWebpImageFile(file);
