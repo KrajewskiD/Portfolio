@@ -17,6 +17,7 @@ import {
 } from "@admin/services/footerContentService";
 import type { AdminFormProps } from "@admin/types/adminForms";
 import type { FooterLinkData } from "@shared/database/types/link";
+import { createFooterLinkPlatform } from "@shared/utils/footerLink";
 
 function FooterLinksForm({ language }: AdminFormProps) {
   const {
@@ -59,10 +60,13 @@ function FooterLinksForm({ language }: AdminFormProps) {
     const nextIndex = footerLinks.length + 1;
     const nextId = `link-${String(nextIndex).padStart(2, "0")}`;
 
+    const label = "Nowy link";
+
     const nextLink: FooterLinkData = {
       id: nextId,
-      label: "Nowy link",
+      label,
       href: "#",
+      platform: createFooterLinkPlatform(label),
       displayOrder: nextIndex,
     };
 

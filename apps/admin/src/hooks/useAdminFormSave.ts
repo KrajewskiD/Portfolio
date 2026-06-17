@@ -66,8 +66,18 @@ export function useAdminFormSave<T>({
       await saveValue(preparedValue);
       setValue(preparedValue);
       setSaveSuccess(true);
-    } catch {
-      setSaveError("Nie udało się zapisać zmian. Spróbuj ponownie.");
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : typeof error === "object" &&
+              error !== null &&
+              "message" in error &&
+              typeof error.message === "string"
+            ? error.message
+            : "Nie udało się zapisać zmian. Spróbuj ponownie.";
+
+      setSaveError(message);
     } finally {
       setIsSaving(false);
     }

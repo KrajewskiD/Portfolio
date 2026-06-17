@@ -122,18 +122,21 @@ export const footerLinkDrafts: FooterLinkData[] = [
     id: "linkedin",
     label: "LinkedIn",
     href: "#",
+    platform: "linkedin",
     displayOrder: 1,
   },
   {
     id: "github",
     label: "GitHub",
     href: "#",
+    platform: "github",
     displayOrder: 2,
   },
   {
     id: "youtube",
     label: "YouTube",
     href: "#",
+    platform: "youtube",
     displayOrder: 3,
   },
 ];

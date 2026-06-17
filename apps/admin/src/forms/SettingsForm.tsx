@@ -13,6 +13,7 @@ import { footerLinkDrafts, skillGroupDrafts } from "@admin/data/adminDrafts";
 import { useAdminFormSave } from "@admin/hooks/useAdminFormSave";
 import {
   getAdminSettings,
+  normalizeAdminSettingsIds,
   saveAdminSettings,
   type AdminSettingsData,
 } from "@admin/services/settingsContentService";
@@ -20,6 +21,7 @@ import type { AdminFormProps } from "@admin/types/adminForms";
 import { ADMIN_NAME_MAX_LENGTH } from "@shared/constants/adminSettings";
 import type { FooterLinkData } from "@shared/database/types/link";
 import type { Skill, SkillGroupData } from "@shared/database/types/skill";
+import { createFooterLinkPlatform } from "@shared/utils/footerLink";
 
 function toggleExpandedId(expandedIds: Set<string>, id: string) {
   const next = new Set(expandedIds);
@@ -52,6 +54,7 @@ function SettingsForm({ language }: AdminFormProps) {
     },
     loadValue: getAdminSettings,
     saveValue: saveAdminSettings,
+    prepareBeforeSave: async (settings) => normalizeAdminSettingsIds(settings),
   });
 
   const titleField = language === "pl" ? "titlePl" : "titleEn";
@@ -109,6 +112,17 @@ function SettingsForm({ language }: AdminFormProps) {
     }));
   }
 
+  function updateFooterPlatform(linkId: string, value: string) {
+    const nextValue = createFooterLinkPlatform(value);
+
+    setSettings((current) => ({
+      ...current,
+      footerLinks: current.footerLinks.map((link) =>
+        link.id === linkId ? { ...link, platform: nextValue } : link,
+      ),
+    }));
+  }
+
   function removeExpandedId(id: string) {
     setExpandedIds((current) => {
       const next = new Set(current);
@@ -118,10 +132,6 @@ function SettingsForm({ language }: AdminFormProps) {
   }
 
   function deleteSkillGroup(groupId: string) {
-    if (settings.skillGroups.length <= 1) {
-      return;
-    }
-
     setSettings((current) => ({
       ...current,
       skillGroups: current.skillGroups.filter((group) => group.id !== groupId),
@@ -145,10 +155,6 @@ function SettingsForm({ language }: AdminFormProps) {
   }
 
   function deleteFooterLink(linkId: string) {
-    if (settings.footerLinks.length <= 1) {
-      return;
-    }
-
     setSettings((current) => ({
       ...current,
       footerLinks: current.footerLinks.filter((link) => link.id !== linkId),
@@ -157,8 +163,7 @@ function SettingsForm({ language }: AdminFormProps) {
   }
 
   function addSkillGroup() {
-    const nextIndex = settings.skillGroups.length + 1;
-    const nextId = `group-${String(nextIndex).padStart(2, "0")}`;
+    const nextId = crypto.randomUUID();
 
     setSettings((current) => ({
       ...current,
@@ -183,8 +188,7 @@ function SettingsForm({ language }: AdminFormProps) {
       return;
     }
 
-    const nextIndex = targetGroup.skills.length + 1;
-    const nextId = `${groupId}-skill-${String(nextIndex).padStart(2, "0")}`;
+    const nextId = crypto.randomUUID();
 
     const nextSkill: Skill = {
       id: nextId,
@@ -206,13 +210,15 @@ function SettingsForm({ language }: AdminFormProps) {
   }
 
   function addFooterLink() {
+    const nextId = crypto.randomUUID();
     const nextIndex = settings.footerLinks.length + 1;
-    const nextId = `link-${String(nextIndex).padStart(2, "0")}`;
+    const label = "Nowy link";
 
     const nextLink: FooterLinkData = {
       id: nextId,
-      label: "Nowy link",
+      label,
       href: "#",
+      platform: createFooterLinkPlatform(label),
       displayOrder: nextIndex,
     };
 
@@ -328,7 +334,6 @@ function SettingsForm({ language }: AdminFormProps) {
                     disabled={isLoading || isSaving}
                     dragHandle={dragHandle}
                     deleteLabel="Usuń grupę"
-                    deleteDisabled={settings.skillGroups.length <= 1}
                     onDelete={() => deleteSkillGroup(group.id)}
                   />
                 )}
@@ -457,7 +462,6 @@ function SettingsForm({ language }: AdminFormProps) {
                       disabled={isLoading || isSaving}
                       dragHandle={dragHandle}
                       deleteLabel="Usuń link"
-                      deleteDisabled={settings.footerLinks.length <= 1}
                       onDelete={() => deleteFooterLink(link.id)}
                       onToggle={() =>
                         setExpandedIds((current) =>
@@ -493,6 +497,21 @@ function SettingsForm({ language }: AdminFormProps) {
                             disabled={isLoading}
                             onChange={(event) =>
                               updateFooterHref(link.id, event.target.value)
+                            }
+                          />
+                        </AdminField>
+
+                        <AdminField
+                          id={`settings-footer-link-platform-${link.id}`}
+                          label="Platforma"
+                          hint="Np. linkedin, github, youtube. Używane w bazie danych."
+                        >
+                          <AdminInput
+                            id={`settings-footer-link-platform-${link.id}`}
+                            value={link.platform}
+                            disabled={isLoading}
+                            onChange={(event) =>
+                              updateFooterPlatform(link.id, event.target.value)
                             }
                           />
                         </AdminField>

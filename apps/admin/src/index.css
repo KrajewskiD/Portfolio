@@ -155,6 +155,10 @@ body,
     @apply text-sm text-white/40;
   }
 
+  .admin-field--error .admin-hint {
+    @apply text-red-300;
+  }
+
   .admin-select {
     @apply cursor-pointer appearance-none rounded-2xl border border-white/10 bg-neutral-800 px-4 py-3 font-bold text-white outline-none transition;
     @apply hover:bg-neutral-700 focus:border-white/30;
@@ -177,6 +181,10 @@ body,
 
   .admin-control-compact {
     @apply px-3 py-2 text-sm;
+  }
+
+  .admin-control-compact--level {
+    @apply px-2;
   }
 
   .admin-textarea-compact {
