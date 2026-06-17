@@ -1,6 +1,6 @@
 import { getProjectImagePublicUrl } from "@admin/lib/imageStorage";
 import { supabase } from "@admin/lib/supabase";
-import { getProjectsFromDatabase } from "@shared/database/projects";
+import { getProjectsFromDatabase } from "@shared/database";
 import type { Project } from "@shared/database/types/project";
 
 import {

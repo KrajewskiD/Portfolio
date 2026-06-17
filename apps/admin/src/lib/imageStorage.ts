@@ -1,14 +1,20 @@
 import { supabase } from "@admin/lib/supabase";
-import { validateWebpImageFile, WEBP_IMAGE_ACCEPT } from "@shared/utils/webpImage";
+import {
+  PROFILE_IMAGES_BUCKET,
+  PROJECT_IMAGES_BUCKET,
+  getStoragePublicUrl,
+} from "@shared/database";
+import {
+  validateWebpImageFile,
+  WEBP_IMAGE_ACCEPT,
+} from "@shared/utils/webpImage";
 
 export function getProfileImagePublicUrl(path: string): string {
-  return supabase.storage.from("profile-images").getPublicUrl(path).data
-    .publicUrl;
+  return getStoragePublicUrl(supabase, PROFILE_IMAGES_BUCKET, path);
 }
 
 export function getProjectImagePublicUrl(path: string): string {
-  return supabase.storage.from("project-images").getPublicUrl(path).data
-    .publicUrl;
+  return getStoragePublicUrl(supabase, PROJECT_IMAGES_BUCKET, path);
 }
 
 async function assertWebpImageFile(file: File): Promise<void> {
@@ -25,7 +31,7 @@ export async function uploadProfileImage(file: File): Promise<string> {
   const path = "profile.webp";
 
   const { error } = await supabase.storage
-    .from("profile-images")
+    .from(PROFILE_IMAGES_BUCKET)
     .upload(path, file, { upsert: true, contentType: WEBP_IMAGE_ACCEPT });
 
   if (error) {
@@ -45,7 +51,7 @@ export async function uploadProjectTopicImage(
   const path = `${projectId}/${topicId}.webp`;
 
   const { error } = await supabase.storage
-    .from("project-images")
+    .from(PROJECT_IMAGES_BUCKET)
     .upload(path, file, { upsert: true, contentType: WEBP_IMAGE_ACCEPT });
 
   if (error) {
@@ -56,7 +62,9 @@ export async function uploadProjectTopicImage(
 }
 
 export async function deleteProfileImage(path: string): Promise<void> {
-  const { error } = await supabase.storage.from("profile-images").remove([path]);
+  const { error } = await supabase.storage
+    .from(PROFILE_IMAGES_BUCKET)
+    .remove([path]);
 
   if (error) {
     throw error;
@@ -64,9 +72,34 @@ export async function deleteProfileImage(path: string): Promise<void> {
 }
 
 export async function deleteProjectTopicImage(path: string): Promise<void> {
-  const { error } = await supabase.storage.from("project-images").remove([path]);
+  const { error } = await supabase.storage
+    .from(PROJECT_IMAGES_BUCKET)
+    .remove([path]);
 
   if (error) {
     throw error;
+  }
+}
+
+export async function deleteProjectImages(projectId: string): Promise<void> {
+  const { data: files, error: listError } = await supabase.storage
+    .from(PROJECT_IMAGES_BUCKET)
+    .list(projectId);
+
+  if (listError) {
+    throw listError;
+  }
+
+  if (!files?.length) {
+    return;
+  }
+
+  const paths = files.map((file) => `${projectId}/${file.name}`);
+  const { error: removeError } = await supabase.storage
+    .from(PROJECT_IMAGES_BUCKET)
+    .remove(paths);
+
+  if (removeError) {
+    throw removeError;
   }
 }

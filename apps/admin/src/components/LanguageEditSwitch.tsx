@@ -3,6 +3,7 @@ import type { Language } from "@shared/database/types/language";
 
 type LanguageEditSwitchProps = {
   value: Language;
+  disabled?: boolean;
   onChange: (language: Language) => void;
 };
 
@@ -11,11 +12,16 @@ const languages = [
   { id: "en" as const, label: "ENG" },
 ];
 
-function LanguageEditSwitch({ value, onChange }: LanguageEditSwitchProps) {
+function LanguageEditSwitch({
+  value,
+  disabled = false,
+  onChange,
+}: LanguageEditSwitchProps) {
   return (
     <AdminSegmentedControl
       items={languages}
       activeId={value}
+      disabled={disabled}
       onChange={onChange}
       variant="toggle"
     />

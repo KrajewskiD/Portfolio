@@ -1,10 +1,13 @@
 import AdminTextarea from "@admin/components/ui/AdminTextarea";
 import AdminTranslatableField from "@admin/components/ui/AdminTranslatableField";
-import { useTranslateField } from "@admin/hooks/useTranslateField";
 import { projectTopicLabels } from "@shared/constants/projectTopics";
 import type { Language } from "@shared/database/types/language";
 import type { ProjectTopicContent } from "@shared/database/types/project";
-import { getOppositeLocalizedKey } from "@shared/utils/localizedField";
+import {
+  getLocalizedField,
+  getLocalizedKey,
+  getOppositeLocalizedKey,
+} from "@shared/utils/localizedField";
 
 export type ProjectTopicContentField = "contentPl" | "contentEn";
 
@@ -23,17 +26,9 @@ function ProjectTopicContentPanel({
   disabled = false,
   onChange,
 }: ProjectTopicContentPanelProps) {
-  const contentField = language === "pl" ? "contentPl" : "contentEn";
+  const contentField = getLocalizedKey(language, "contentPl", "contentEn");
   const topicLabel = projectTopicLabels[topic.id][language];
   const fieldId = `${topic.id}-content`;
-
-  const contentTranslate = useTranslateField({
-    language,
-    sourceText: topic[contentField],
-    disabled,
-    onApply: (text) =>
-      onChange(getOppositeLocalizedKey(language, "contentPl", "contentEn"), text),
-  });
 
   return (
     <AdminTranslatableField
@@ -41,10 +36,14 @@ function ProjectTopicContentPanel({
       label={topicLabel}
       language={language}
       className={fillHeight ? "admin-field--fill" : undefined}
-      onTranslate={() => void contentTranslate.onTranslate()}
-      translateDisabled={disabled || contentTranslate.isTranslating}
-      isTranslating={contentTranslate.isTranslating}
-      translateError={contentTranslate.error}
+      disabled={disabled}
+      sourceText={getLocalizedField(topic, language, "contentPl", "contentEn")}
+      onApply={(text) =>
+        onChange(
+          getOppositeLocalizedKey(language, "contentPl", "contentEn"),
+          text,
+        )
+      }
     >
       <AdminTextarea
         id={fieldId}

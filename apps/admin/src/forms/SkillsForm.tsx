@@ -1,24 +1,36 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
-import AdminButton from "@admin/components/ui/AdminButton";
 import AdminCustomSelect from "@admin/components/ui/AdminCustomSelect";
+import AdminEditLanguageBanner from "@admin/components/ui/AdminEditLanguageBanner";
 import AdminField from "@admin/components/ui/AdminField";
 import AdminFormActions from "@admin/components/ui/AdminFormActions";
+import AdminFormFeedback from "@admin/components/ui/AdminFormFeedback";
 import AdminFormHeader from "@admin/components/ui/AdminFormHeader";
+import AdminFormSaveActions from "@admin/components/ui/AdminFormSaveActions";
 import AdminInput from "@admin/components/ui/AdminInput";
 import AdminPanel from "@admin/components/ui/AdminPanel";
 import AdminTextarea from "@admin/components/ui/AdminTextarea";
 import AdminTranslatableField from "@admin/components/ui/AdminTranslatableField";
 import { skillGroupDrafts } from "@admin/data/adminDrafts";
-import { useAdminFormSave } from "@admin/hooks/useAdminFormSave";
-import { useTranslateField } from "@admin/hooks/useTranslateField";
+import {
+  createActiveGroupSkillTranslateFields,
+  updateSkillInGroups,
+} from "@admin/forms/skillTranslatableFields";
+import { useAdminForm } from "@admin/hooks/useAdminForm";
+import { useTranslateFields } from "@admin/hooks/useTranslateFields";
+import { useTranslationOverlay } from "@admin/context/TranslationOverlayContext";
 import {
   getAdminSkillGroups,
   saveAdminSkillGroups,
 } from "@admin/services/skillContentService";
 import type { AdminFormProps } from "@admin/types/adminForms";
+import { normalizeSkillGroupIds } from "@shared/database";
 import type { Skill, SkillGroupData } from "@shared/database/types/skill";
-import { getOppositeLocalizedKey } from "@shared/utils/localizedField";
+import {
+  getLocalizedField,
+  getLocalizedKey,
+  getOppositeLocalizedKey,
+} from "@shared/utils/localizedField";
 
 function SkillsForm({ language }: AdminFormProps) {
   const {
@@ -30,11 +42,14 @@ function SkillsForm({ language }: AdminFormProps) {
     saveError,
     saveSuccess,
     save,
-  } = useAdminFormSave<SkillGroupData[]>({
+  } = useAdminForm<SkillGroupData[]>({
     initialValue: skillGroupDrafts,
     loadValue: getAdminSkillGroups,
     saveValue: saveAdminSkillGroups,
+    prepareBeforeSave: async (groups) => normalizeSkillGroupIds(groups),
   });
+
+  const { isOverlayOpen } = useTranslationOverlay();
 
   const [activeGroupId, setActiveGroupId] = useState(
     skillGroupDrafts[0]?.id ?? "",
@@ -56,38 +71,58 @@ function SkillsForm({ language }: AdminFormProps) {
     [activeGroup, activeSkillId],
   );
 
-  const titleField = language === "pl" ? "titlePl" : "titleEn";
-  const descriptionField =
-    language === "pl" ? "descriptionPl" : "descriptionEn";
-  const formDisabled = isLoading || isSaving;
+  const formDisabled = isLoading || isSaving || isOverlayOpen;
 
-  const descriptionTranslate = useTranslateField({
+  const applySkillDescription = useCallback(
+    (
+      skillId: string,
+      field: "descriptionPl" | "descriptionEn",
+      text: string,
+    ) => {
+      if (!activeGroup) {
+        return;
+      }
+
+      setSkillGroups((current) =>
+        updateSkillInGroups(current, activeGroup.id, skillId, field, text),
+      );
+    },
+    [activeGroup, setSkillGroups],
+  );
+
+  const bulkTranslateFields = useMemo(
+    () =>
+      activeGroup
+        ? createActiveGroupSkillTranslateFields(
+            activeGroup,
+            language,
+            applySkillDescription,
+          )
+        : [],
+    [activeGroup, applySkillDescription, language],
+  );
+
+  const bulkTranslate = useTranslateFields({
     language,
-    sourceText: activeSkill?.[descriptionField] ?? "",
-    disabled: formDisabled || !activeSkill,
-    onApply: (text) =>
-      updateActiveSkill(
-        getOppositeLocalizedKey(language, "descriptionPl", "descriptionEn"),
-        text,
-      ),
+    disabled: formDisabled || !activeGroup || activeGroup.skills.length === 0,
+    fields: bulkTranslateFields,
   });
 
   function updateActiveSkill(
     field: keyof Pick<Skill, "level" | "descriptionPl" | "descriptionEn">,
     value: string | number,
   ) {
+    if (!activeGroup || !activeSkill) {
+      return;
+    }
+
     setSkillGroups((current) =>
-      current.map((group) =>
-        group.id === activeGroup.id
-          ? {
-              ...group,
-              skills: group.skills.map((skill) =>
-                skill.id === activeSkill.id
-                  ? { ...skill, [field]: value }
-                  : skill,
-              ),
-            }
-          : group,
+      updateSkillInGroups(
+        current,
+        activeGroup.id,
+        activeSkill.id,
+        field,
+        value,
       ),
     );
   }
@@ -111,7 +146,7 @@ function SkillsForm({ language }: AdminFormProps) {
               disabled={isLoading}
               options={skillGroups.map((group) => ({
                 value: group.id,
-                label: group[titleField],
+                label: getLocalizedField(group, language, "titlePl", "titleEn"),
               }))}
               onChange={(groupId) => {
                 const group = skillGroups.find((item) => item.id === groupId);
@@ -120,40 +155,31 @@ function SkillsForm({ language }: AdminFormProps) {
                 setActiveSkillId(group?.skills[0]?.id ?? "");
               }}
             />
-            <AdminButton
-              type="button"
-              variant="secondary"
-              disabled={isLoading || isSaving}
-              onClick={() => void save()}
-            >
-              {isSaving ? "Zapisywanie..." : "Zapisz"}
-            </AdminButton>
+            <AdminFormSaveActions
+              language={language}
+              saveDisabled={formDisabled}
+              isSaving={isSaving}
+              onSave={save}
+              translateDisabled={
+                formDisabled || activeGroup.skills.length === 0
+              }
+              isBulkTranslating={bulkTranslate.isTranslating}
+              translateTitle="Przetłumacz opisy umiejętności w grupie przez Gemini AI"
+              onTranslateAll={bulkTranslate.onTranslateAll}
+            />
           </AdminFormActions>
         }
       />
 
-      {loadError ? (
-        <p role="status" className="text-sm text-amber-300">
-          {loadError}
-        </p>
-      ) : null}
-
-      {saveError ? (
-        <p role="alert" className="text-sm text-red-300">
-          {saveError}
-        </p>
-      ) : null}
-
-      {saveSuccess ? (
-        <p role="status" className="text-sm text-emerald-300">
-          Zmiany zostały zapisane.
-        </p>
-      ) : null}
+      <AdminFormFeedback
+        loadError={loadError}
+        saveError={saveError}
+        saveSuccess={saveSuccess}
+        extraErrors={bulkTranslate.error ? [bulkTranslate.error] : []}
+      />
 
       <AdminPanel className="gap-4">
-        <p className="font-mono text-sm font-bold text-white/35">
-          Aktywny język edycji: {language.toUpperCase()}
-        </p>
+        <AdminEditLanguageBanner language={language} />
 
         <h3 className="text-base font-bold">Umiejętności w grupie</h3>
 
@@ -207,21 +233,40 @@ function SkillsForm({ language }: AdminFormProps) {
               label="Opis"
               language={language}
               className="admin-field--compact"
-              onTranslate={() => void descriptionTranslate.onTranslate()}
-              translateDisabled={
-                formDisabled || descriptionTranslate.isTranslating
+              disabled={formDisabled || !activeSkill}
+              sourceText={getLocalizedField(
+                activeSkill,
+                language,
+                "descriptionPl",
+                "descriptionEn",
+              )}
+              onApply={(text) =>
+                updateActiveSkill(
+                  getOppositeLocalizedKey(
+                    language,
+                    "descriptionPl",
+                    "descriptionEn",
+                  ),
+                  text,
+                )
               }
-              isTranslating={descriptionTranslate.isTranslating}
-              translateError={descriptionTranslate.error}
             >
               <AdminTextarea
                 id="skill-description"
                 rows={2}
                 className="admin-textarea-compact admin-control-compact"
-                value={activeSkill[descriptionField]}
+                value={getLocalizedField(
+                  activeSkill,
+                  language,
+                  "descriptionPl",
+                  "descriptionEn",
+                )}
                 disabled={isLoading}
                 onChange={(event) =>
-                  updateActiveSkill(descriptionField, event.target.value)
+                  updateActiveSkill(
+                    getLocalizedKey(language, "descriptionPl", "descriptionEn"),
+                    event.target.value,
+                  )
                 }
               />
             </AdminTranslatableField>

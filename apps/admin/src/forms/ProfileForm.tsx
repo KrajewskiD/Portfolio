@@ -1,28 +1,38 @@
-import AdminButton from "@admin/components/ui/AdminButton";
+import AdminEditLanguageBanner from "@admin/components/ui/AdminEditLanguageBanner";
 import AdminField from "@admin/components/ui/AdminField";
 import AdminFormActions from "@admin/components/ui/AdminFormActions";
+import AdminFormFeedback from "@admin/components/ui/AdminFormFeedback";
 import AdminFormHeader from "@admin/components/ui/AdminFormHeader";
+import AdminFormSaveActions from "@admin/components/ui/AdminFormSaveActions";
 import AdminImagePicker from "@admin/components/ui/AdminImagePicker";
 import AdminInput from "@admin/components/ui/AdminInput";
 import AdminPanel from "@admin/components/ui/AdminPanel";
 import AdminTextarea from "@admin/components/ui/AdminTextarea";
 import AdminTranslatableField from "@admin/components/ui/AdminTranslatableField";
-import AdminTranslateButton from "@admin/components/ui/AdminTranslateButton";
 import { profileDraft } from "@admin/data/adminDrafts";
-import { useAdminFormSave } from "@admin/hooks/useAdminFormSave";
-import { useTranslateField } from "@admin/hooks/useTranslateField";
-import { useTranslateFields } from "@admin/hooks/useTranslateFields";
 import {
-  getProfileImagePublicUrl,
+  createProfileTranslateFields,
+  getProfileLocalizedField,
+} from "@admin/forms/profileTranslatableFields";
+import { useAdminForm } from "@admin/hooks/useAdminForm";
+import { usePendingSingleImage } from "@admin/hooks/usePendingSingleImage";
+import { useTranslateFields } from "@admin/hooks/useTranslateFields";
+import { useTranslationOverlay } from "@admin/context/TranslationOverlayContext";
+import {
+  deleteProfileImage,
   getAdminProfile,
+  getProfileImagePublicUrl,
   saveAdminProfile,
   uploadProfileImage,
-  deleteProfileImage,
 } from "@admin/services/profileContentService";
 import type { AdminFormProps } from "@admin/types/adminForms";
 import type { Profile } from "@shared/database/types/profile";
-import { getOppositeLocalizedKey } from "@shared/utils/localizedField";
-import { useCallback, useState } from "react";
+import {
+  getLocalizedField,
+  getLocalizedKey,
+  getOppositeLocalizedKey,
+} from "@shared/utils/localizedField";
+import { useCallback, useMemo } from "react";
 
 type ProfileTextField =
   | "name"
@@ -36,11 +46,14 @@ type ProfileTextField =
   | "imageAltEn";
 
 function ProfileForm({ language }: AdminFormProps) {
-  const [pendingProfileImage, setPendingProfileImage] = useState<File | null>(
-    null,
-  );
-  const [profileImageMarkedForRemoval, setProfileImageMarkedForRemoval] =
-    useState(false);
+  const {
+    pendingFile: pendingProfileImage,
+    setPendingFile: setPendingProfileImage,
+    markedForRemoval: profileImageMarkedForRemoval,
+    setMarkedForRemoval: setProfileImageMarkedForRemoval,
+    hasPendingEdits: hasPendingImageEdits,
+    discardPending: discardPendingImage,
+  } = usePendingSingleImage();
 
   const prepareBeforeSave = useCallback(
     async (currentProfile: Profile) => {
@@ -69,7 +82,12 @@ function ProfileForm({ language }: AdminFormProps) {
       setProfileImageMarkedForRemoval(false);
       return nextProfile;
     },
-    [pendingProfileImage, profileImageMarkedForRemoval],
+    [
+      pendingProfileImage,
+      profileImageMarkedForRemoval,
+      setPendingProfileImage,
+      setProfileImageMarkedForRemoval,
+    ],
   );
 
   const {
@@ -81,12 +99,16 @@ function ProfileForm({ language }: AdminFormProps) {
     saveError,
     saveSuccess,
     save,
-  } = useAdminFormSave<Profile>({
+  } = useAdminForm<Profile>({
     initialValue: profileDraft,
     loadValue: getAdminProfile,
     saveValue: saveAdminProfile,
     prepareBeforeSave,
+    extraDirty: hasPendingImageEdits,
+    onDiscard: discardPendingImage,
   });
+
+  const { isOverlayOpen } = useTranslationOverlay();
 
   function updateProfile(field: ProfileTextField, value: string) {
     setProfile((current) => ({
@@ -95,105 +117,25 @@ function ProfileForm({ language }: AdminFormProps) {
     }));
   }
 
-  const roleField = language === "pl" ? "rolePl" : "roleEn";
-  const descriptionField =
-    language === "pl" ? "descriptionPl" : "descriptionEn";
-  const footerDescriptionField =
-    language === "pl" ? "footerDescriptionPl" : "footerDescriptionEn";
-  const imageAltField = language === "pl" ? "imageAltPl" : "imageAltEn";
-  const formDisabled = isLoading || isSaving;
+  const formDisabled = isLoading || isSaving || isOverlayOpen;
 
-  const imageAltTranslate = useTranslateField({
-    language,
-    sourceText: profile[imageAltField],
-    disabled: formDisabled,
-    onApply: (text) =>
-      updateProfile(getOppositeLocalizedKey(language, "imageAltPl", "imageAltEn"), text),
-  });
-
-  const roleTranslate = useTranslateField({
-    language,
-    sourceText: profile[roleField],
-    disabled: formDisabled,
-    onApply: (text) =>
-      updateProfile(getOppositeLocalizedKey(language, "rolePl", "roleEn"), text),
-  });
-
-  const descriptionTranslate = useTranslateField({
-    language,
-    sourceText: profile[descriptionField],
-    disabled: formDisabled,
-    onApply: (text) =>
-      updateProfile(
-        getOppositeLocalizedKey(language, "descriptionPl", "descriptionEn"),
-        text,
+  const bulkTranslateFields = useMemo(
+    () =>
+      createProfileTranslateFields(profile, language, (field, text) =>
+        updateProfile(field, text),
       ),
-  });
-
-  const footerDescriptionTranslate = useTranslateField({
-    language,
-    sourceText: profile[footerDescriptionField],
-    disabled: formDisabled,
-    onApply: (text) =>
-      updateProfile(
-        getOppositeLocalizedKey(
-          language,
-          "footerDescriptionPl",
-          "footerDescriptionEn",
-        ),
-        text,
-      ),
-  });
+    [language, profile],
+  );
 
   const bulkTranslate = useTranslateFields({
     language,
     disabled: formDisabled,
-    fields: [
-      {
-        sourceText: profile[imageAltField],
-        onApply: (text) =>
-          updateProfile(
-            getOppositeLocalizedKey(language, "imageAltPl", "imageAltEn"),
-            text,
-          ),
-      },
-      {
-        sourceText: profile[roleField],
-        onApply: (text) =>
-          updateProfile(
-            getOppositeLocalizedKey(language, "rolePl", "roleEn"),
-            text,
-          ),
-      },
-      {
-        sourceText: profile[descriptionField],
-        onApply: (text) =>
-          updateProfile(
-            getOppositeLocalizedKey(language, "descriptionPl", "descriptionEn"),
-            text,
-          ),
-      },
-      {
-        sourceText: profile[footerDescriptionField],
-        onApply: (text) =>
-          updateProfile(
-            getOppositeLocalizedKey(
-              language,
-              "footerDescriptionPl",
-              "footerDescriptionEn",
-            ),
-            text,
-          ),
-      },
-    ],
+    fields: bulkTranslateFields,
   });
 
-  const isAnyTranslating =
-    bulkTranslate.isTranslating ||
-    imageAltTranslate.isTranslating ||
-    roleTranslate.isTranslating ||
-    descriptionTranslate.isTranslating ||
-    footerDescriptionTranslate.isTranslating;
+  const applyOppositeField =
+    (plKey: ProfileTextField, enKey: ProfileTextField) => (text: string) =>
+      updateProfile(getOppositeLocalizedKey(language, plKey, enKey), text);
 
   return (
     <section className="admin-stack">
@@ -202,53 +144,29 @@ function ProfileForm({ language }: AdminFormProps) {
         description="Edytuj dane wyświetlane w sekcji „O mnie” oraz w stopce strony."
         actions={
           <AdminFormActions>
-            <AdminTranslateButton
+            <AdminFormSaveActions
               language={language}
-              disabled={formDisabled || isAnyTranslating}
-              isLoading={bulkTranslate.isTranslating}
-              title="Przetłumacz wszystkie pola przez Gemini AI"
-              onClick={() => void bulkTranslate.onTranslateAll()}
+              saveDisabled={formDisabled}
+              isSaving={isSaving}
+              onSave={save}
+              translateDisabled={formDisabled}
+              isBulkTranslating={bulkTranslate.isTranslating}
+              translateTitle="Przetłumacz wszystkie pola przez Gemini AI"
+              onTranslateAll={bulkTranslate.onTranslateAll}
             />
-            <AdminButton
-              type="button"
-              variant="secondary"
-              disabled={isLoading || isSaving || isAnyTranslating}
-              onClick={() => void save()}
-            >
-              {isSaving ? "Zapisywanie..." : "Zapisz"}
-            </AdminButton>
           </AdminFormActions>
         }
       />
 
-      {bulkTranslate.error ? (
-        <p role="alert" className="text-sm text-red-300">
-          {bulkTranslate.error}
-        </p>
-      ) : null}
-
-      {loadError ? (
-        <p role="status" className="text-sm text-amber-300">
-          {loadError}
-        </p>
-      ) : null}
-
-      {saveError ? (
-        <p role="alert" className="text-sm text-red-300">
-          {saveError}
-        </p>
-      ) : null}
-
-      {saveSuccess ? (
-        <p role="status" className="text-sm text-emerald-300">
-          Zmiany zostały zapisane.
-        </p>
-      ) : null}
+      <AdminFormFeedback
+        loadError={loadError}
+        saveError={saveError}
+        saveSuccess={saveSuccess}
+        extraErrors={bulkTranslate.error ? [bulkTranslate.error] : []}
+      />
 
       <AdminPanel>
-        <p className="font-mono text-sm font-bold text-white/35">
-          Aktywny język edycji: {language.toUpperCase()}
-        </p>
+        <AdminEditLanguageBanner language={language} />
 
         <div className="grid gap-6 lg:grid-cols-2 lg:items-stretch">
           <div className="admin-image-column admin-image-column--fluid">
@@ -257,7 +175,12 @@ function ProfileForm({ language }: AdminFormProps) {
               imageUrl={profile.imageUrl}
               selectedFile={pendingProfileImage}
               imageMarkedForRemoval={profileImageMarkedForRemoval}
-              previewAlt={profile[imageAltField]}
+              previewAlt={getProfileLocalizedField(
+                profile,
+                language,
+                "imageAltPl",
+                "imageAltEn",
+              )}
               emptyLabel="Brak zdjęcia profilowego"
               disabled={isLoading || isSaving}
               onFileSelect={(file) => {
@@ -273,17 +196,29 @@ function ProfileForm({ language }: AdminFormProps) {
               id="profile-image-alt"
               label="Opis alternatywny zdjęcia"
               language={language}
-              onTranslate={() => void imageAltTranslate.onTranslate()}
-              translateDisabled={formDisabled || isAnyTranslating}
-              isTranslating={imageAltTranslate.isTranslating}
-              translateError={imageAltTranslate.error}
+              disabled={formDisabled}
+              sourceText={getProfileLocalizedField(
+                profile,
+                language,
+                "imageAltPl",
+                "imageAltEn",
+              )}
+              onApply={applyOppositeField("imageAltPl", "imageAltEn")}
             >
               <AdminInput
                 id="profile-image-alt"
-                value={profile[imageAltField]}
+                value={getProfileLocalizedField(
+                  profile,
+                  language,
+                  "imageAltPl",
+                  "imageAltEn",
+                )}
                 disabled={isLoading}
                 onChange={(event) =>
-                  updateProfile(imageAltField, event.target.value)
+                  updateProfile(
+                    getLocalizedKey(language, "imageAltPl", "imageAltEn"),
+                    event.target.value,
+                  )
                 }
               />
             </AdminTranslatableField>
@@ -306,17 +241,29 @@ function ProfileForm({ language }: AdminFormProps) {
                 id="profile-role"
                 label="Stanowisko"
                 language={language}
-                onTranslate={() => void roleTranslate.onTranslate()}
-                translateDisabled={formDisabled || isAnyTranslating}
-                isTranslating={roleTranslate.isTranslating}
-                translateError={roleTranslate.error}
+                disabled={formDisabled}
+                sourceText={getProfileLocalizedField(
+                  profile,
+                  language,
+                  "rolePl",
+                  "roleEn",
+                )}
+                onApply={applyOppositeField("rolePl", "roleEn")}
               >
                 <AdminInput
                   id="profile-role"
-                  value={profile[roleField]}
+                  value={getProfileLocalizedField(
+                    profile,
+                    language,
+                    "rolePl",
+                    "roleEn",
+                  )}
                   disabled={isLoading}
                   onChange={(event) =>
-                    updateProfile(roleField, event.target.value)
+                    updateProfile(
+                      getLocalizedKey(language, "rolePl", "roleEn"),
+                      event.target.value,
+                    )
                   }
                 />
               </AdminTranslatableField>
@@ -325,18 +272,34 @@ function ProfileForm({ language }: AdminFormProps) {
                 id="profile-description"
                 label="Opis"
                 language={language}
-                onTranslate={() => void descriptionTranslate.onTranslate()}
-                translateDisabled={formDisabled || isAnyTranslating}
-                isTranslating={descriptionTranslate.isTranslating}
-                translateError={descriptionTranslate.error}
+                disabled={formDisabled}
+                sourceText={getProfileLocalizedField(
+                  profile,
+                  language,
+                  "descriptionPl",
+                  "descriptionEn",
+                )}
+                onApply={applyOppositeField("descriptionPl", "descriptionEn")}
               >
                 <AdminTextarea
                   id="profile-description"
                   rows={5}
-                  value={profile[descriptionField]}
+                  value={getProfileLocalizedField(
+                    profile,
+                    language,
+                    "descriptionPl",
+                    "descriptionEn",
+                  )}
                   disabled={isLoading}
                   onChange={(event) =>
-                    updateProfile(descriptionField, event.target.value)
+                    updateProfile(
+                      getLocalizedKey(
+                        language,
+                        "descriptionPl",
+                        "descriptionEn",
+                      ),
+                      event.target.value,
+                    )
                   }
                 />
               </AdminTranslatableField>
@@ -347,17 +310,36 @@ function ProfileForm({ language }: AdminFormProps) {
                 id="profile-footer-description"
                 label="Opis w stopce"
                 language={language}
-                onTranslate={() => void footerDescriptionTranslate.onTranslate()}
-                translateDisabled={formDisabled || isAnyTranslating}
-                isTranslating={footerDescriptionTranslate.isTranslating}
-                translateError={footerDescriptionTranslate.error}
+                disabled={formDisabled}
+                sourceText={getProfileLocalizedField(
+                  profile,
+                  language,
+                  "footerDescriptionPl",
+                  "footerDescriptionEn",
+                )}
+                onApply={applyOppositeField(
+                  "footerDescriptionPl",
+                  "footerDescriptionEn",
+                )}
               >
                 <AdminInput
                   id="profile-footer-description"
-                  value={profile[footerDescriptionField]}
+                  value={getProfileLocalizedField(
+                    profile,
+                    language,
+                    "footerDescriptionPl",
+                    "footerDescriptionEn",
+                  )}
                   disabled={isLoading}
                   onChange={(event) =>
-                    updateProfile(footerDescriptionField, event.target.value)
+                    updateProfile(
+                      getLocalizedKey(
+                        language,
+                        "footerDescriptionPl",
+                        "footerDescriptionEn",
+                      ),
+                      event.target.value,
+                    )
                   }
                 />
               </AdminTranslatableField>

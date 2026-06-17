@@ -8,18 +8,22 @@ import ProjectTopicImagePanel, {
 } from "@admin/components/projects/ProjectTopicImagePanel";
 import ProjectTopicTabs from "@admin/components/projects/ProjectTopicTabs";
 import AdminAddButton from "@admin/components/ui/AdminAddButton";
-import AdminButton from "@admin/components/ui/AdminButton";
 import AdminCustomSelect from "@admin/components/ui/AdminCustomSelect";
 import AdminDeleteButton from "@admin/components/ui/AdminDeleteButton";
+import AdminEditLanguageBanner from "@admin/components/ui/AdminEditLanguageBanner";
 import AdminField from "@admin/components/ui/AdminField";
 import AdminFormActions from "@admin/components/ui/AdminFormActions";
+import AdminFormFeedback from "@admin/components/ui/AdminFormFeedback";
 import AdminFormHeader from "@admin/components/ui/AdminFormHeader";
+import AdminFormSaveActions from "@admin/components/ui/AdminFormSaveActions";
 import AdminInput from "@admin/components/ui/AdminInput";
 import AdminPanel from "@admin/components/ui/AdminPanel";
 import AdminTranslatableField from "@admin/components/ui/AdminTranslatableField";
 import { projectDrafts } from "@admin/data/adminDrafts";
-import { useAdminFormSave } from "@admin/hooks/useAdminFormSave";
-import { useTranslateField } from "@admin/hooks/useTranslateField";
+import { useAdminForm } from "@admin/hooks/useAdminForm";
+import { usePendingKeyedImages } from "@admin/hooks/usePendingKeyedImages";
+import { useTranslateFields } from "@admin/hooks/useTranslateFields";
+import { useTranslationOverlay } from "@admin/context/TranslationOverlayContext";
 import {
   deleteAdminProject,
   deleteProjectTopicImage,
@@ -34,9 +38,14 @@ import {
   createEmptyProjectTopic,
 } from "@shared/constants/projectTopics";
 import { PROJECT_TITLE_MAX_LENGTH } from "@shared/constants/project";
+import { normalizeProjectIds } from "@shared/database";
 import { DEFAULT_PROJECT_TOPIC_ID } from "@shared/database/types/projectTopic";
 import type { Project, ProjectTopicId } from "@shared/database/types/project";
-import { getOppositeLocalizedKey } from "@shared/utils/localizedField";
+import {
+  getLocalizedField,
+  getLocalizedKey,
+  getOppositeLocalizedKey,
+} from "@shared/utils/localizedField";
 
 type ProjectTextField = "code" | "titlePl" | "titleEn";
 type TopicTextField = ProjectTopicContentField | ProjectTopicImageField;
@@ -46,28 +55,32 @@ function topicImageKey(projectId: string, topicId: ProjectTopicId) {
 }
 
 function ProjectsForm({ language }: AdminFormProps) {
-  const [pendingTopicImages, setPendingTopicImages] = useState<
-    Record<string, File>
-  >({});
-  const [pendingTopicImageRemovals, setPendingTopicImageRemovals] = useState<
-    Record<string, boolean>
-  >({});
+  const {
+    pendingFiles: pendingTopicImages,
+    setPendingFiles: setPendingTopicImages,
+    markedForRemovals: pendingTopicImageRemovals,
+    setMarkedForRemovals: setPendingTopicImageRemovals,
+    hasPendingEdits: hasPendingImageEdits,
+    discardPending: discardPendingImages,
+    clearKeysForPrefix,
+  } = usePendingKeyedImages();
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string>();
 
   const prepareBeforeSave = useCallback(
     async (currentProjects: Project[]) => {
+      const normalizedProjects = normalizeProjectIds(currentProjects);
       const hasPendingUploads = Object.keys(pendingTopicImages).length > 0;
       const hasPendingRemovals = Object.values(pendingTopicImageRemovals).some(
         Boolean,
       );
 
       if (!hasPendingUploads && !hasPendingRemovals) {
-        return currentProjects;
+        return normalizedProjects;
       }
 
       const updatedProjects = await Promise.all(
-        currentProjects.map(async (project) => ({
+        normalizedProjects.map(async (project) => ({
           ...project,
           topics: await Promise.all(
             project.topics.map(async (topic) => {
@@ -109,24 +122,34 @@ function ProjectsForm({ language }: AdminFormProps) {
       setPendingTopicImageRemovals({});
       return updatedProjects;
     },
-    [pendingTopicImages, pendingTopicImageRemovals],
+    [
+      pendingTopicImageRemovals,
+      pendingTopicImages,
+      setPendingTopicImageRemovals,
+      setPendingTopicImages,
+    ],
   );
 
   const {
     value: projects,
     setValue: setProjects,
+    syncSavedValue,
     isLoading,
     isSaving,
     loadError,
     saveError,
     saveSuccess,
     save,
-  } = useAdminFormSave<Project[]>({
+  } = useAdminForm<Project[]>({
     initialValue: projectDrafts,
     loadValue: getAdminProjects,
     saveValue: saveAdminProjects,
     prepareBeforeSave,
+    extraDirty: hasPendingImageEdits,
+    onDiscard: discardPendingImages,
   });
+
+  const { isOverlayOpen } = useTranslationOverlay();
 
   const [activeProjectId, setActiveProjectId] = useState(
     projectDrafts[0]?.id ?? "",
@@ -146,16 +169,7 @@ function ProjectsForm({ language }: AdminFormProps) {
       activeProject.topics[0])
     : undefined;
 
-  const titleField = language === "pl" ? "titlePl" : "titleEn";
-  const isBusy = isLoading || isSaving || isDeleting;
-
-  const titleTranslate = useTranslateField({
-    language,
-    sourceText: activeProject?.[titleField] ?? "",
-    disabled: isBusy || !activeProject,
-    onApply: (text) =>
-      updateProject(getOppositeLocalizedKey(language, "titlePl", "titleEn"), text),
-  });
+  const isBusy = isLoading || isSaving || isDeleting || isOverlayOpen;
 
   function updateProject(field: ProjectTextField, value: string) {
     if (!activeProject) {
@@ -204,13 +218,25 @@ function ProjectsForm({ language }: AdminFormProps) {
       return;
     }
 
+    updateProjectTopic(activeTopic.id, field, value);
+  }
+
+  function updateProjectTopic(
+    topicId: ProjectTopicId,
+    field: TopicTextField,
+    value: string,
+  ) {
+    if (!activeProject) {
+      return;
+    }
+
     setProjects((currentProjects) =>
       currentProjects.map((project) =>
         project.id === activeProject.id
           ? {
               ...project,
               topics: project.topics.map((topic) =>
-                topic.id === activeTopic.id
+                topic.id === topicId
                   ? {
                       ...topic,
                       [field]: value,
@@ -222,6 +248,63 @@ function ProjectsForm({ language }: AdminFormProps) {
       ),
     );
   }
+
+  const bulkTranslateFields = activeProject
+    ? [
+        {
+          id: "project-title",
+          sourceText: getLocalizedField(
+            activeProject,
+            language,
+            "titlePl",
+            "titleEn",
+          ),
+          onApply: (text: string) =>
+            updateProject(
+              getOppositeLocalizedKey(language, "titlePl", "titleEn"),
+              text,
+            ),
+        },
+        ...activeProject.topics.flatMap((topic) => [
+          {
+            id: `topic-${topic.id}-content`,
+            sourceText: getLocalizedField(
+              topic,
+              language,
+              "contentPl",
+              "contentEn",
+            ),
+            onApply: (text: string) =>
+              updateProjectTopic(
+                topic.id,
+                getOppositeLocalizedKey(language, "contentPl", "contentEn"),
+                text,
+              ),
+          },
+          {
+            id: `topic-${topic.id}-image-alt`,
+            sourceText: getLocalizedField(
+              topic,
+              language,
+              "imageAltPl",
+              "imageAltEn",
+            ),
+            onApply: (text: string) =>
+              updateProjectTopic(
+                topic.id,
+                getOppositeLocalizedKey(language, "imageAltPl", "imageAltEn"),
+                text,
+              ),
+          },
+        ]),
+      ]
+    : [];
+
+  const bulkTranslate = useTranslateFields({
+    language,
+    disabled: isBusy || !activeProject,
+    fields: bulkTranslateFields,
+  });
 
   function addProject() {
     const nextIndex = projects.length + 1;
@@ -257,29 +340,8 @@ function ProjectsForm({ language }: AdminFormProps) {
         (project) => project.id !== activeProject.id,
       );
 
-      setProjects(remainingProjects);
-      setPendingTopicImages((current) => {
-        const next = { ...current };
-
-        for (const key of Object.keys(next)) {
-          if (key.startsWith(`${activeProject.id}:`)) {
-            delete next[key];
-          }
-        }
-
-        return next;
-      });
-      setPendingTopicImageRemovals((current) => {
-        const next = { ...current };
-
-        for (const key of Object.keys(next)) {
-          if (key.startsWith(`${activeProject.id}:`)) {
-            delete next[key];
-          }
-        }
-
-        return next;
-      });
+      syncSavedValue(remainingProjects);
+      clearKeysForPrefix(activeProject.id);
       setActiveProjectId(remainingProjects[0]?.id ?? "");
       setActiveTopicId(DEFAULT_PROJECT_TOPIC_ID);
     } catch {
@@ -288,6 +350,13 @@ function ProjectsForm({ language }: AdminFormProps) {
       setIsDeleting(false);
     }
   }
+
+  const activeTopicImageKey = activeProject
+    ? topicImageKey(
+        activeProject.id,
+        activeTopic?.id ?? DEFAULT_PROJECT_TOPIC_ID,
+      )
+    : "";
 
   return (
     <section className="admin-stack">
@@ -304,7 +373,12 @@ function ProjectsForm({ language }: AdminFormProps) {
               disabled={isLoading || projects.length === 0}
               options={projects.map((project) => ({
                 value: project.id,
-                label: project[titleField],
+                label: getLocalizedField(
+                  project,
+                  language,
+                  "titlePl",
+                  "titleEn",
+                ),
               }))}
               onChange={(projectId) => {
                 setActiveProjectId(projectId);
@@ -321,41 +395,29 @@ function ProjectsForm({ language }: AdminFormProps) {
               disabled={isBusy}
               onClick={addProject}
             />
-            <AdminButton
-              type="button"
-              variant="secondary"
-              disabled={isBusy || projects.length === 0}
-              onClick={() => void save()}
-            >
-              {isSaving ? "Zapisywanie..." : "Zapisz"}
-            </AdminButton>
+            <AdminFormSaveActions
+              language={language}
+              saveDisabled={isBusy || projects.length === 0}
+              isSaving={isSaving}
+              onSave={save}
+              translateDisabled={isBusy || !activeProject}
+              isBulkTranslating={bulkTranslate.isTranslating}
+              translateTitle="Przetłumacz wszystkie pola projektu przez Gemini AI"
+              onTranslateAll={bulkTranslate.onTranslateAll}
+            />
           </AdminFormActions>
         }
       />
 
-      {loadError ? (
-        <p role="status" className="text-sm text-amber-300">
-          {loadError}
-        </p>
-      ) : null}
-
-      {saveError ? (
-        <p role="alert" className="text-sm text-red-300">
-          {saveError}
-        </p>
-      ) : null}
-
-      {deleteError ? (
-        <p role="alert" className="text-sm text-red-300">
-          {deleteError}
-        </p>
-      ) : null}
-
-      {saveSuccess ? (
-        <p role="status" className="text-sm text-emerald-300">
-          Zmiany zostały zapisane.
-        </p>
-      ) : null}
+      <AdminFormFeedback
+        loadError={loadError}
+        saveError={saveError}
+        saveSuccess={saveSuccess}
+        extraErrors={[
+          ...(bulkTranslate.error ? [bulkTranslate.error] : []),
+          ...(deleteError ? [deleteError] : []),
+        ]}
+      />
 
       <AdminPanel>
         {!activeProject || !activeTopic ? (
@@ -364,9 +426,7 @@ function ProjectsForm({ language }: AdminFormProps) {
           </div>
         ) : (
           <>
-            <p className="font-mono text-sm font-bold text-white/35">
-              Aktywny język edycji: {language.toUpperCase()}
-            </p>
+            <AdminEditLanguageBanner language={language} />
 
             <div className="grid gap-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-stretch">
               <div className="admin-stack min-w-0">
@@ -384,61 +444,45 @@ function ProjectsForm({ language }: AdminFormProps) {
                   topic={activeTopic}
                   language={language}
                   disabled={isBusy}
-                  selectedFile={
-                    pendingTopicImages[
-                      topicImageKey(activeProject.id, activeTopic.id)
-                    ] ?? null
-                  }
+                  selectedFile={pendingTopicImages[activeTopicImageKey] ?? null}
                   imageMarkedForRemoval={
-                    pendingTopicImageRemovals[
-                      topicImageKey(activeProject.id, activeTopic.id)
-                    ] ?? false
+                    pendingTopicImageRemovals[activeTopicImageKey] ?? false
                   }
                   onFileSelect={(file) => {
-                    const key = topicImageKey(
-                      activeProject.id,
-                      activeTopic.id,
-                    );
-
                     setPendingTopicImages((current) => {
                       if (!file) {
                         const next = { ...current };
-                        delete next[key];
+                        delete next[activeTopicImageKey];
                         return next;
                       }
 
-                      return { ...current, [key]: file };
+                      return { ...current, [activeTopicImageKey]: file };
                     });
 
                     if (file) {
                       setPendingTopicImageRemovals((current) => {
-                        if (!current[key]) {
+                        if (!current[activeTopicImageKey]) {
                           return current;
                         }
 
                         const next = { ...current };
-                        delete next[key];
+                        delete next[activeTopicImageKey];
                         return next;
                       });
                     }
                   }}
                   onImageMarkedForRemovalChange={(marked) => {
-                    const key = topicImageKey(
-                      activeProject.id,
-                      activeTopic.id,
-                    );
-
                     setPendingTopicImageRemovals((current) => {
                       if (marked) {
-                        return { ...current, [key]: true };
+                        return { ...current, [activeTopicImageKey]: true };
                       }
 
-                      if (!current[key]) {
+                      if (!current[activeTopicImageKey]) {
                         return current;
                       }
 
                       const next = { ...current };
-                      delete next[key];
+                      delete next[activeTopicImageKey];
                       return next;
                     });
                   }}
@@ -453,17 +497,34 @@ function ProjectsForm({ language }: AdminFormProps) {
                     label="Nazwa projektu"
                     language={language}
                     hint={`Maksymalnie ${PROJECT_TITLE_MAX_LENGTH} znaków.`}
-                    onTranslate={() => void titleTranslate.onTranslate()}
-                    translateDisabled={isBusy || titleTranslate.isTranslating}
-                    isTranslating={titleTranslate.isTranslating}
-                    translateError={titleTranslate.error}
+                    disabled={isBusy}
+                    sourceText={getLocalizedField(
+                      activeProject,
+                      language,
+                      "titlePl",
+                      "titleEn",
+                    )}
+                    onApply={(text) =>
+                      updateProject(
+                        getOppositeLocalizedKey(language, "titlePl", "titleEn"),
+                        text,
+                      )
+                    }
                   >
                     <AdminInput
                       id="project-title"
                       maxLength={PROJECT_TITLE_MAX_LENGTH}
-                      value={activeProject[titleField]}
+                      value={getLocalizedField(
+                        activeProject,
+                        language,
+                        "titlePl",
+                        "titleEn",
+                      )}
                       onChange={(event) =>
-                        updateProject(titleField, event.target.value)
+                        updateProject(
+                          getLocalizedKey(language, "titlePl", "titleEn"),
+                          event.target.value,
+                        )
                       }
                     />
                   </AdminTranslatableField>

@@ -6,7 +6,10 @@ import TopToolbar from "@portfolio/components/toolbar/TopToolbar";
 import type { Translations } from "@portfolio/locales/translations";
 import type { FooterData } from "@shared/database/types/footer";
 import type { Language } from "@shared/database/types/language";
-import type { FooterLinkData, NavigationLinkData } from "@shared/database/types/link";
+import type {
+  FooterLinkData,
+  NavigationLinkData,
+} from "@shared/database/types/link";
 import type { Profile } from "@shared/database/types/profile";
 
 type MainLayoutProps = {
