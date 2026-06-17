@@ -19,6 +19,7 @@ import AdminPanel from "@admin/components/ui/AdminPanel";
 import AdminTranslatableField from "@admin/components/ui/AdminTranslatableField";
 import { projectDrafts } from "@admin/data/adminDrafts";
 import { useAdminFormSave } from "@admin/hooks/useAdminFormSave";
+import { useTranslateField } from "@admin/hooks/useTranslateField";
 import {
   deleteAdminProject,
   deleteProjectTopicImage,
@@ -35,6 +36,7 @@ import {
 import { PROJECT_TITLE_MAX_LENGTH } from "@shared/constants/project";
 import { DEFAULT_PROJECT_TOPIC_ID } from "@shared/database/types/projectTopic";
 import type { Project, ProjectTopicId } from "@shared/database/types/project";
+import { getOppositeLocalizedKey } from "@shared/utils/localizedField";
 
 type ProjectTextField = "code" | "titlePl" | "titleEn";
 type TopicTextField = ProjectTopicContentField | ProjectTopicImageField;
@@ -146,6 +148,14 @@ function ProjectsForm({ language }: AdminFormProps) {
 
   const titleField = language === "pl" ? "titlePl" : "titleEn";
   const isBusy = isLoading || isSaving || isDeleting;
+
+  const titleTranslate = useTranslateField({
+    language,
+    sourceText: activeProject?.[titleField] ?? "",
+    disabled: isBusy || !activeProject,
+    onApply: (text) =>
+      updateProject(getOppositeLocalizedKey(language, "titlePl", "titleEn"), text),
+  });
 
   function updateProject(field: ProjectTextField, value: string) {
     if (!activeProject) {
@@ -443,6 +453,10 @@ function ProjectsForm({ language }: AdminFormProps) {
                     label="Nazwa projektu"
                     language={language}
                     hint={`Maksymalnie ${PROJECT_TITLE_MAX_LENGTH} znaków.`}
+                    onTranslate={() => void titleTranslate.onTranslate()}
+                    translateDisabled={isBusy || titleTranslate.isTranslating}
+                    isTranslating={titleTranslate.isTranslating}
+                    translateError={titleTranslate.error}
                   >
                     <AdminInput
                       id="project-title"
@@ -486,6 +500,7 @@ function ProjectsForm({ language }: AdminFormProps) {
                   topic={activeTopic}
                   language={language}
                   fillHeight
+                  disabled={isBusy}
                   onChange={updateTopic}
                 />
               </div>

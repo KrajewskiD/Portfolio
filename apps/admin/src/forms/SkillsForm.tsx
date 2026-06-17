@@ -11,12 +11,14 @@ import AdminTextarea from "@admin/components/ui/AdminTextarea";
 import AdminTranslatableField from "@admin/components/ui/AdminTranslatableField";
 import { skillGroupDrafts } from "@admin/data/adminDrafts";
 import { useAdminFormSave } from "@admin/hooks/useAdminFormSave";
+import { useTranslateField } from "@admin/hooks/useTranslateField";
 import {
   getAdminSkillGroups,
   saveAdminSkillGroups,
 } from "@admin/services/skillContentService";
 import type { AdminFormProps } from "@admin/types/adminForms";
 import type { Skill, SkillGroupData } from "@shared/database/types/skill";
+import { getOppositeLocalizedKey } from "@shared/utils/localizedField";
 
 function SkillsForm({ language }: AdminFormProps) {
   const {
@@ -57,6 +59,18 @@ function SkillsForm({ language }: AdminFormProps) {
   const titleField = language === "pl" ? "titlePl" : "titleEn";
   const descriptionField =
     language === "pl" ? "descriptionPl" : "descriptionEn";
+  const formDisabled = isLoading || isSaving;
+
+  const descriptionTranslate = useTranslateField({
+    language,
+    sourceText: activeSkill?.[descriptionField] ?? "",
+    disabled: formDisabled || !activeSkill,
+    onApply: (text) =>
+      updateActiveSkill(
+        getOppositeLocalizedKey(language, "descriptionPl", "descriptionEn"),
+        text,
+      ),
+  });
 
   function updateActiveSkill(
     field: keyof Pick<Skill, "level" | "descriptionPl" | "descriptionEn">,
@@ -149,11 +163,11 @@ function SkillsForm({ language }: AdminFormProps) {
           </p>
         ) : activeSkill ? (
           <div className="flex flex-col gap-3">
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-12 sm:items-end">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
               <AdminField
                 id="skill-select"
                 label="Umiejętność"
-                className="admin-field--compact min-w-0 sm:col-span-2"
+                className="admin-field--compact min-w-0 sm:w-1/4"
               >
                 <AdminCustomSelect
                   id="skill-select"
@@ -171,14 +185,14 @@ function SkillsForm({ language }: AdminFormProps) {
               <AdminField
                 id="skill-level"
                 label="Poziom"
-                className="admin-field--compact min-w-0 sm:col-span-2"
+                className="admin-field--compact w-full shrink-0 sm:w-[12.5%] sm:min-w-[3.75rem] sm:max-w-[4.5rem]"
               >
                 <AdminInput
                   id="skill-level"
                   type="number"
                   min={1}
                   max={5}
-                  className="admin-control-compact text-center"
+                  className="admin-control-compact admin-control-compact--level text-center"
                   value={activeSkill.level}
                   disabled={isLoading}
                   onChange={(event) =>
@@ -193,6 +207,12 @@ function SkillsForm({ language }: AdminFormProps) {
               label="Opis"
               language={language}
               className="admin-field--compact"
+              onTranslate={() => void descriptionTranslate.onTranslate()}
+              translateDisabled={
+                formDisabled || descriptionTranslate.isTranslating
+              }
+              isTranslating={descriptionTranslate.isTranslating}
+              translateError={descriptionTranslate.error}
             >
               <AdminTextarea
                 id="skill-description"

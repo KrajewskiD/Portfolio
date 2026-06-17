@@ -7,8 +7,11 @@ import AdminInput from "@admin/components/ui/AdminInput";
 import AdminPanel from "@admin/components/ui/AdminPanel";
 import AdminTextarea from "@admin/components/ui/AdminTextarea";
 import AdminTranslatableField from "@admin/components/ui/AdminTranslatableField";
+import AdminTranslateButton from "@admin/components/ui/AdminTranslateButton";
 import { profileDraft } from "@admin/data/adminDrafts";
 import { useAdminFormSave } from "@admin/hooks/useAdminFormSave";
+import { useTranslateField } from "@admin/hooks/useTranslateField";
+import { useTranslateFields } from "@admin/hooks/useTranslateFields";
 import {
   getProfileImagePublicUrl,
   getAdminProfile,
@@ -18,6 +21,7 @@ import {
 } from "@admin/services/profileContentService";
 import type { AdminFormProps } from "@admin/types/adminForms";
 import type { Profile } from "@shared/database/types/profile";
+import { getOppositeLocalizedKey } from "@shared/utils/localizedField";
 import { useCallback, useState } from "react";
 
 type ProfileTextField =
@@ -97,6 +101,99 @@ function ProfileForm({ language }: AdminFormProps) {
   const footerDescriptionField =
     language === "pl" ? "footerDescriptionPl" : "footerDescriptionEn";
   const imageAltField = language === "pl" ? "imageAltPl" : "imageAltEn";
+  const formDisabled = isLoading || isSaving;
+
+  const imageAltTranslate = useTranslateField({
+    language,
+    sourceText: profile[imageAltField],
+    disabled: formDisabled,
+    onApply: (text) =>
+      updateProfile(getOppositeLocalizedKey(language, "imageAltPl", "imageAltEn"), text),
+  });
+
+  const roleTranslate = useTranslateField({
+    language,
+    sourceText: profile[roleField],
+    disabled: formDisabled,
+    onApply: (text) =>
+      updateProfile(getOppositeLocalizedKey(language, "rolePl", "roleEn"), text),
+  });
+
+  const descriptionTranslate = useTranslateField({
+    language,
+    sourceText: profile[descriptionField],
+    disabled: formDisabled,
+    onApply: (text) =>
+      updateProfile(
+        getOppositeLocalizedKey(language, "descriptionPl", "descriptionEn"),
+        text,
+      ),
+  });
+
+  const footerDescriptionTranslate = useTranslateField({
+    language,
+    sourceText: profile[footerDescriptionField],
+    disabled: formDisabled,
+    onApply: (text) =>
+      updateProfile(
+        getOppositeLocalizedKey(
+          language,
+          "footerDescriptionPl",
+          "footerDescriptionEn",
+        ),
+        text,
+      ),
+  });
+
+  const bulkTranslate = useTranslateFields({
+    language,
+    disabled: formDisabled,
+    fields: [
+      {
+        sourceText: profile[imageAltField],
+        onApply: (text) =>
+          updateProfile(
+            getOppositeLocalizedKey(language, "imageAltPl", "imageAltEn"),
+            text,
+          ),
+      },
+      {
+        sourceText: profile[roleField],
+        onApply: (text) =>
+          updateProfile(
+            getOppositeLocalizedKey(language, "rolePl", "roleEn"),
+            text,
+          ),
+      },
+      {
+        sourceText: profile[descriptionField],
+        onApply: (text) =>
+          updateProfile(
+            getOppositeLocalizedKey(language, "descriptionPl", "descriptionEn"),
+            text,
+          ),
+      },
+      {
+        sourceText: profile[footerDescriptionField],
+        onApply: (text) =>
+          updateProfile(
+            getOppositeLocalizedKey(
+              language,
+              "footerDescriptionPl",
+              "footerDescriptionEn",
+            ),
+            text,
+          ),
+      },
+    ],
+  });
+
+  const isAnyTranslating =
+    bulkTranslate.isTranslating ||
+    imageAltTranslate.isTranslating ||
+    roleTranslate.isTranslating ||
+    descriptionTranslate.isTranslating ||
+    footerDescriptionTranslate.isTranslating;
 
   return (
     <section className="admin-stack">
@@ -105,10 +202,17 @@ function ProfileForm({ language }: AdminFormProps) {
         description="Edytuj dane wyświetlane w sekcji „O mnie” oraz w stopce strony."
         actions={
           <AdminFormActions>
+            <AdminTranslateButton
+              language={language}
+              disabled={formDisabled || isAnyTranslating}
+              isLoading={bulkTranslate.isTranslating}
+              title="Przetłumacz wszystkie pola przez Gemini AI"
+              onClick={() => void bulkTranslate.onTranslateAll()}
+            />
             <AdminButton
               type="button"
               variant="secondary"
-              disabled={isLoading || isSaving}
+              disabled={isLoading || isSaving || isAnyTranslating}
               onClick={() => void save()}
             >
               {isSaving ? "Zapisywanie..." : "Zapisz"}
@@ -116,6 +220,12 @@ function ProfileForm({ language }: AdminFormProps) {
           </AdminFormActions>
         }
       />
+
+      {bulkTranslate.error ? (
+        <p role="alert" className="text-sm text-red-300">
+          {bulkTranslate.error}
+        </p>
+      ) : null}
 
       {loadError ? (
         <p role="status" className="text-sm text-amber-300">
@@ -163,6 +273,10 @@ function ProfileForm({ language }: AdminFormProps) {
               id="profile-image-alt"
               label="Opis alternatywny zdjęcia"
               language={language}
+              onTranslate={() => void imageAltTranslate.onTranslate()}
+              translateDisabled={formDisabled || isAnyTranslating}
+              isTranslating={imageAltTranslate.isTranslating}
+              translateError={imageAltTranslate.error}
             >
               <AdminInput
                 id="profile-image-alt"
@@ -192,6 +306,10 @@ function ProfileForm({ language }: AdminFormProps) {
                 id="profile-role"
                 label="Stanowisko"
                 language={language}
+                onTranslate={() => void roleTranslate.onTranslate()}
+                translateDisabled={formDisabled || isAnyTranslating}
+                isTranslating={roleTranslate.isTranslating}
+                translateError={roleTranslate.error}
               >
                 <AdminInput
                   id="profile-role"
@@ -207,6 +325,10 @@ function ProfileForm({ language }: AdminFormProps) {
                 id="profile-description"
                 label="Opis"
                 language={language}
+                onTranslate={() => void descriptionTranslate.onTranslate()}
+                translateDisabled={formDisabled || isAnyTranslating}
+                isTranslating={descriptionTranslate.isTranslating}
+                translateError={descriptionTranslate.error}
               >
                 <AdminTextarea
                   id="profile-description"
@@ -225,6 +347,10 @@ function ProfileForm({ language }: AdminFormProps) {
                 id="profile-footer-description"
                 label="Opis w stopce"
                 language={language}
+                onTranslate={() => void footerDescriptionTranslate.onTranslate()}
+                translateDisabled={formDisabled || isAnyTranslating}
+                isTranslating={footerDescriptionTranslate.isTranslating}
+                translateError={footerDescriptionTranslate.error}
               >
                 <AdminInput
                   id="profile-footer-description"

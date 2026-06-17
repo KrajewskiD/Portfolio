@@ -5,6 +5,7 @@ type FooterLinkRow = {
   id: string;
   label: string;
   url: string;
+  platform: string;
   display_order: number;
 };
 
@@ -16,6 +17,7 @@ export async function getFooterLinks(): Promise<FooterLinkData[]> {
       id,
       label,
       url,
+      platform,
       display_order
     `,
     )
@@ -30,6 +32,7 @@ export async function getFooterLinks(): Promise<FooterLinkData[]> {
     id: link.id,
     label: link.label,
     href: link.url,
+    platform: link.platform,
     displayOrder: link.display_order,
   }));
 }

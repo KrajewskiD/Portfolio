@@ -117,7 +117,7 @@ export async function saveAdminSkillGroups(
 
       const { error: skillError } = await supabase.from("skills").upsert({
         id: skill.id,
-        skill_group_id: group.id,
+        group_id: group.id,
         technology_id: technologyId,
         description_pl: skill.descriptionPl,
         description_en: skill.descriptionEn,

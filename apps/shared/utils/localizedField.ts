@@ -12,3 +12,11 @@ export function getLocalizedField<
 ): T[PlKey] | T[EnKey] {
   return language === "pl" ? source[plKey] : source[enKey];
 }
+
+export function getOppositeLocalizedKey<T extends string>(
+  language: Language,
+  plKey: T,
+  enKey: T,
+): T {
+  return language === "pl" ? enKey : plKey;
+}
