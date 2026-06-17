@@ -11,6 +11,7 @@ type AdminCustomSelectProps = {
   options: AdminCustomSelectOption[];
   disabled?: boolean;
   className?: string;
+  compact?: boolean;
   ariaLabel?: string;
   onChange: (value: string) => void;
 };
@@ -21,6 +22,7 @@ function AdminCustomSelect({
   options,
   disabled = false,
   className = "",
+  compact = false,
   ariaLabel,
   onChange,
 }: AdminCustomSelectProps) {
@@ -63,7 +65,12 @@ function AdminCustomSelect({
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         onClick={() => setIsOpen((current) => !current)}
-        className="admin-select flex w-full items-center justify-between gap-3 text-left"
+        className={[
+          "admin-select flex w-full items-center justify-between gap-2 text-left",
+          compact ? "admin-control-compact" : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
         title={selectedOption?.label}
       >
         <span className="truncate">{selectedOption?.label}</span>

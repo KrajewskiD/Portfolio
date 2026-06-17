@@ -9,6 +9,7 @@ type AdminSegmentedControlProps<T extends string> = {
   onChange: (id: T) => void;
   variant?: "tabs" | "toggle";
   borderless?: boolean;
+  compact?: boolean;
 };
 
 function AdminSegmentedControl<T extends string>({
@@ -17,7 +18,11 @@ function AdminSegmentedControl<T extends string>({
   onChange,
   variant = "tabs",
   borderless = false,
+  compact = false,
 }: AdminSegmentedControlProps<T>) {
+  const tabButtonClass = compact
+    ? "flex-none cursor-pointer whitespace-nowrap rounded-full border px-3 py-1.5 text-sm font-bold transition"
+    : "flex-none cursor-pointer whitespace-nowrap rounded-full border px-5 py-2 font-bold transition";
   if (variant === "toggle") {
     return (
       <div className="inline-flex rounded-full border border-white/10 bg-neutral-800 p-1">
@@ -53,7 +58,7 @@ function AdminSegmentedControl<T extends string>({
         type="button"
         onClick={() => onChange(item.id)}
         className={[
-          "flex-none cursor-pointer whitespace-nowrap rounded-full border px-5 py-2 font-bold transition",
+          tabButtonClass,
           isActive
             ? "border-white/30 bg-neutral-700 text-white"
             : "border-white/10 bg-neutral-800 text-white/60 hover:border-white/20 hover:bg-neutral-700 hover:text-white",

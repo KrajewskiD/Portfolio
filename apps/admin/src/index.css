@@ -136,8 +136,20 @@ body,
     @apply disabled:cursor-not-allowed disabled:opacity-40;
   }
 
+  .admin-field--compact {
+    @apply gap-2;
+  }
+
+  .admin-field--compact .admin-field__header {
+    @apply min-h-6;
+  }
+
+  .admin-control-compact {
+    @apply px-3 py-2 text-sm;
+  }
+
   .admin-textarea-compact {
-    @apply min-h-0;
+    @apply min-h-16 resize-y;
   }
 
   .admin-input {
