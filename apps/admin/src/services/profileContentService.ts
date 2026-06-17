@@ -1,9 +1,10 @@
 import { supabase } from "@admin/lib/supabase";
 import {
+  deleteProfileImage,
   getProfileImagePublicUrl,
   uploadProfileImage,
 } from "@admin/lib/imageStorage";
-import type { Profile } from "@shared/types/profile";
+import type { Profile } from "@shared/database/types/profile";
 
 type ProfileRow = {
   name: string;
@@ -86,4 +87,4 @@ export async function saveAdminProfile(profile: Profile): Promise<void> {
   }
 }
 
-export { uploadProfileImage, getProfileImagePublicUrl };
+export { uploadProfileImage, getProfileImagePublicUrl, deleteProfileImage };

@@ -2,8 +2,8 @@ import SectionHeading from "../components/sections/SectionHeading";
 import SkillGroup from "../components/skills/SkillGroup";
 import SkillItem from "../components/skills/SkillItem";
 import SkillsSkeleton from "../components/skills/SkillsSkeleton";
-import type { Language } from "@shared/types/language";
-import type { SkillGroupData } from "@shared/types/skill";
+import type { Language } from "@shared/database/types/language";
+import type { SkillGroupData } from "@shared/database/types/skill";
 
 type SkillsSectionProps = {
   skillGroups?: SkillGroupData[];

@@ -2,7 +2,7 @@ import FooterIdentity from "./footer/FooterIdentity";
 import FooterLink from "./footer/FooterLink";
 import FooterLinksGroup from "./footer/FooterLinksGroup";
 import FooterSkeleton from "./footer/FooterSkeleton";
-import type { FooterData } from "@shared/types/footer";
+import type { FooterData } from "@shared/database/types/footer";
 
 type FooterProps = {
   footer?: FooterData;

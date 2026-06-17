@@ -18,8 +18,8 @@ import {
 } from "@admin/services/settingsContentService";
 import type { AdminFormProps } from "@admin/types/adminForms";
 import { ADMIN_NAME_MAX_LENGTH } from "@shared/constants/adminSettings";
-import type { FooterLinkData } from "@shared/types/link";
-import type { Skill, SkillGroupData } from "@shared/types/skill";
+import type { FooterLinkData } from "@shared/database/types/link";
+import type { Skill, SkillGroupData } from "@shared/database/types/skill";
 
 function toggleExpandedId(expandedIds: Set<string>, id: string) {
   const next = new Set(expandedIds);

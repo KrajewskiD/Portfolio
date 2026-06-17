@@ -16,7 +16,7 @@ import {
   saveAdminFooterLinks,
 } from "@admin/services/footerContentService";
 import type { AdminFormProps } from "@admin/types/adminForms";
-import type { FooterLinkData } from "@shared/types/link";
+import type { FooterLinkData } from "@shared/database/types/link";
 
 function FooterLinksForm({ language }: AdminFormProps) {
   const {

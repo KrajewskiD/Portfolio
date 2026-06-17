@@ -1,8 +1,8 @@
 import AdminTextarea from "@admin/components/ui/AdminTextarea";
 import AdminTranslatableField from "@admin/components/ui/AdminTranslatableField";
 import { projectTopicLabels } from "@shared/constants/projectTopics";
-import type { Language } from "@shared/types/language";
-import type { ProjectTopicContent } from "@shared/types/project";
+import type { Language } from "@shared/database/types/language";
+import type { ProjectTopicContent } from "@shared/database/types/project";
 
 export type ProjectTopicContentField = "contentPl" | "contentEn";
 

@@ -1,8 +1,8 @@
 import ProfileSkeleton from "../components/about/ProfileSkeleton";
 import ProfileContent from "../components/about/ProfileContent";
 import ProfileImage from "../components/about/ProfileImage";
-import type { Language } from "@shared/types/language";
-import type { Profile } from "@shared/types/profile";
+import type { Language } from "@shared/database/types/language";
+import type { Profile } from "@shared/database/types/profile";
 
 type AboutSectionProps = {
   profile?: Profile;

@@ -14,9 +14,10 @@ import {
   getAdminProfile,
   saveAdminProfile,
   uploadProfileImage,
+  deleteProfileImage,
 } from "@admin/services/profileContentService";
 import type { AdminFormProps } from "@admin/types/adminForms";
-import type { Profile } from "@shared/types/profile";
+import type { Profile } from "@shared/database/types/profile";
 import { useCallback, useState } from "react";
 
 type ProfileTextField =
@@ -34,23 +35,37 @@ function ProfileForm({ language }: AdminFormProps) {
   const [pendingProfileImage, setPendingProfileImage] = useState<File | null>(
     null,
   );
+  const [profileImageMarkedForRemoval, setProfileImageMarkedForRemoval] =
+    useState(false);
 
   const prepareBeforeSave = useCallback(
     async (currentProfile: Profile) => {
-      if (!pendingProfileImage) {
-        return currentProfile;
+      let nextProfile = currentProfile;
+
+      if (profileImageMarkedForRemoval && currentProfile.imagePath) {
+        await deleteProfileImage(currentProfile.imagePath);
+        nextProfile = {
+          ...currentProfile,
+          imagePath: undefined,
+          imageUrl: undefined,
+        };
       }
 
-      const imagePath = await uploadProfileImage(pendingProfileImage);
-      setPendingProfileImage(null);
+      if (pendingProfileImage) {
+        const imagePath = await uploadProfileImage(pendingProfileImage);
+        setPendingProfileImage(null);
 
-      return {
-        ...currentProfile,
-        imagePath,
-        imageUrl: getProfileImagePublicUrl(imagePath),
-      };
+        nextProfile = {
+          ...nextProfile,
+          imagePath,
+          imageUrl: getProfileImagePublicUrl(imagePath),
+        };
+      }
+
+      setProfileImageMarkedForRemoval(false);
+      return nextProfile;
     },
-    [pendingProfileImage],
+    [pendingProfileImage, profileImageMarkedForRemoval],
   );
 
   const {
@@ -131,10 +146,17 @@ function ProfileForm({ language }: AdminFormProps) {
               label="Zdjęcie profilowe"
               imageUrl={profile.imageUrl}
               selectedFile={pendingProfileImage}
+              imageMarkedForRemoval={profileImageMarkedForRemoval}
               previewAlt={profile[imageAltField]}
               emptyLabel="Brak zdjęcia profilowego"
               disabled={isLoading || isSaving}
-              onFileSelect={setPendingProfileImage}
+              onFileSelect={(file) => {
+                setPendingProfileImage(file);
+                if (file) {
+                  setProfileImageMarkedForRemoval(false);
+                }
+              }}
+              onImageMarkedForRemovalChange={setProfileImageMarkedForRemoval}
             />
 
             <AdminTranslatableField

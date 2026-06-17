@@ -5,8 +5,8 @@ import NavigationLinks from "./navigation/NavigationLinks";
 import NavigationName from "./navigation/NavigationName";
 import MobileNavigation from "./navigation/MobileNavigation";
 import MenuToggle from "./navigation/MenuToggle";
-import type { NavigationLinkData } from "@shared/types/link";
-import type { Language } from "@shared/types/language";
+import type { NavigationLinkData } from "@shared/database/types/link";
+import type { Language } from "@shared/database/types/language";
 import type { Translations } from "../locales/translations";
 
 type HeaderProps = {

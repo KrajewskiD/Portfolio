@@ -3,7 +3,7 @@ import { adminRoute, getAdminUrl } from "@shared/config/routes";
 
 import DashboardActions from "../components/DashboardActions";
 import DashboardTabs from "../components/DashboardTabs";
-import type { Language } from "@shared/types/language";
+import type { Language } from "@shared/database/types/language";
 import { dashboardTabs, type DashboardTabId } from "../config/dashboardTabs";
 import ProfileForm from "../forms/ProfileForm";
 import ProjectsForm from "../forms/ProjectsForm";

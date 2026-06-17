@@ -2,8 +2,8 @@ import AdminInput from "@admin/components/ui/AdminInput";
 import AdminImagePicker from "@admin/components/ui/AdminImagePicker";
 import AdminTranslatableField from "@admin/components/ui/AdminTranslatableField";
 import { projectTopicLabels } from "@shared/constants/projectTopics";
-import type { Language } from "@shared/types/language";
-import type { ProjectTopicContent } from "@shared/types/project";
+import type { Language } from "@shared/database/types/language";
+import type { ProjectTopicContent } from "@shared/database/types/project";
 
 export type ProjectTopicImageField = "imageAltPl" | "imageAltEn";
 
@@ -11,18 +11,22 @@ type ProjectTopicImagePanelProps = {
   topic: ProjectTopicContent;
   language: Language;
   selectedFile?: File | null;
+  imageMarkedForRemoval?: boolean;
   disabled?: boolean;
   onChange: (field: ProjectTopicImageField, value: string) => void;
   onFileSelect: (file: File | null) => void;
+  onImageMarkedForRemovalChange?: (marked: boolean) => void;
 };
 
 function ProjectTopicImagePanel({
   topic,
   language,
   selectedFile,
+  imageMarkedForRemoval = false,
   disabled = false,
   onChange,
   onFileSelect,
+  onImageMarkedForRemovalChange,
 }: ProjectTopicImagePanelProps) {
   const imageAltField = language === "pl" ? "imageAltPl" : "imageAltEn";
   const topicLabel = projectTopicLabels[topic.id][language];
@@ -34,10 +38,12 @@ function ProjectTopicImagePanel({
         label={`Zdjęcie: ${topicLabel}`}
         imageUrl={topic.imageUrl}
         selectedFile={selectedFile}
+        imageMarkedForRemoval={imageMarkedForRemoval}
         previewAlt={topic[imageAltField]}
         emptyLabel="Brak zdjęcia dla tej zakładki"
         disabled={disabled}
         onFileSelect={onFileSelect}
+        onImageMarkedForRemovalChange={onImageMarkedForRemovalChange}
       />
 
       <AdminTranslatableField

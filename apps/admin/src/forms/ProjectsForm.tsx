@@ -20,6 +20,8 @@ import AdminTranslatableField from "@admin/components/ui/AdminTranslatableField"
 import { projectDrafts } from "@admin/data/adminDrafts";
 import { useAdminFormSave } from "@admin/hooks/useAdminFormSave";
 import {
+  deleteAdminProject,
+  deleteProjectTopicImage,
   getAdminProjects,
   getProjectImagePublicUrl,
   saveAdminProjects,
@@ -31,8 +33,8 @@ import {
   createEmptyProjectTopic,
 } from "@shared/constants/projectTopics";
 import { PROJECT_TITLE_MAX_LENGTH } from "@shared/constants/project";
-import { DEFAULT_PROJECT_TOPIC_ID } from "@shared/types/projectTopic";
-import type { Project, ProjectTopicId } from "@shared/types/project";
+import { DEFAULT_PROJECT_TOPIC_ID } from "@shared/database/types/projectTopic";
+import type { Project, ProjectTopicId } from "@shared/database/types/project";
 
 type ProjectTextField = "code" | "titlePl" | "titleEn";
 type TopicTextField = ProjectTopicContentField | ProjectTopicImageField;
@@ -45,10 +47,20 @@ function ProjectsForm({ language }: AdminFormProps) {
   const [pendingTopicImages, setPendingTopicImages] = useState<
     Record<string, File>
   >({});
+  const [pendingTopicImageRemovals, setPendingTopicImageRemovals] = useState<
+    Record<string, boolean>
+  >({});
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string>();
 
   const prepareBeforeSave = useCallback(
     async (currentProjects: Project[]) => {
-      if (Object.keys(pendingTopicImages).length === 0) {
+      const hasPendingUploads = Object.keys(pendingTopicImages).length > 0;
+      const hasPendingRemovals = Object.values(pendingTopicImageRemovals).some(
+        Boolean,
+      );
+
+      if (!hasPendingUploads && !hasPendingRemovals) {
         return currentProjects;
       }
 
@@ -57,33 +69,45 @@ function ProjectsForm({ language }: AdminFormProps) {
           ...project,
           topics: await Promise.all(
             project.topics.map(async (topic) => {
-              const file =
-                pendingTopicImages[topicImageKey(project.id, topic.id)];
+              const key = topicImageKey(project.id, topic.id);
+              const file = pendingTopicImages[key];
+              const markedForRemoval = pendingTopicImageRemovals[key];
 
-              if (!file) {
-                return topic;
+              if (file) {
+                const imagePath = await uploadProjectTopicImage(
+                  project.id,
+                  topic.id,
+                  file,
+                );
+
+                return {
+                  ...topic,
+                  imagePath,
+                  imageUrl: getProjectImagePublicUrl(imagePath),
+                };
               }
 
-              const imagePath = await uploadProjectTopicImage(
-                project.id,
-                topic.id,
-                file,
-              );
+              if (markedForRemoval && topic.imagePath) {
+                await deleteProjectTopicImage(topic.imagePath);
 
-              return {
-                ...topic,
-                imagePath,
-                imageUrl: getProjectImagePublicUrl(imagePath),
-              };
+                return {
+                  ...topic,
+                  imagePath: undefined,
+                  imageUrl: undefined,
+                };
+              }
+
+              return topic;
             }),
           ),
         })),
       );
 
       setPendingTopicImages({});
+      setPendingTopicImageRemovals({});
       return updatedProjects;
     },
-    [pendingTopicImages],
+    [pendingTopicImages, pendingTopicImageRemovals],
   );
 
   const {
@@ -115,13 +139,19 @@ function ProjectsForm({ language }: AdminFormProps) {
     [activeProjectId, projects],
   );
 
-  const activeTopic =
-    activeProject.topics.find((topic) => topic.id === activeTopicId) ??
-    activeProject.topics[0];
+  const activeTopic = activeProject
+    ? (activeProject.topics.find((topic) => topic.id === activeTopicId) ??
+      activeProject.topics[0])
+    : undefined;
 
   const titleField = language === "pl" ? "titlePl" : "titleEn";
+  const isBusy = isLoading || isSaving || isDeleting;
 
   function updateProject(field: ProjectTextField, value: string) {
+    if (!activeProject) {
+      return;
+    }
+
     const nextValue =
       field === "titlePl" || field === "titleEn"
         ? value.slice(0, PROJECT_TITLE_MAX_LENGTH)
@@ -140,6 +170,10 @@ function ProjectsForm({ language }: AdminFormProps) {
   }
 
   function updateTechnologies(value: string) {
+    if (!activeProject) {
+      return;
+    }
+
     setProjects((currentProjects) =>
       currentProjects.map((project) =>
         project.id === activeProject.id
@@ -156,6 +190,10 @@ function ProjectsForm({ language }: AdminFormProps) {
   }
 
   function updateTopic(field: TopicTextField, value: string) {
+    if (!activeProject || !activeTopic) {
+      return;
+    }
+
     setProjects((currentProjects) =>
       currentProjects.map((project) =>
         project.id === activeProject.id
@@ -177,10 +215,9 @@ function ProjectsForm({ language }: AdminFormProps) {
 
   function addProject() {
     const nextIndex = projects.length + 1;
-    const nextId = `project-${String(nextIndex).padStart(2, "0")}`;
 
     const nextProject: Project = {
-      id: nextId,
+      id: crypto.randomUUID(),
       code: `PROJECT_${String(nextIndex).padStart(2, "0")}`,
       titlePl: "Nowy projekt PL",
       titleEn: "New project EN",
@@ -195,29 +232,51 @@ function ProjectsForm({ language }: AdminFormProps) {
     setActiveTopicId(DEFAULT_PROJECT_TOPIC_ID);
   }
 
-  function deleteProject() {
-    if (projects.length <= 1) {
+  async function deleteProject() {
+    if (!activeProject) {
       return;
     }
 
-    const remainingProjects = projects.filter(
-      (project) => project.id !== activeProject.id,
-    );
+    setDeleteError(undefined);
+    setIsDeleting(true);
 
-    setProjects(remainingProjects);
-    setPendingTopicImages((current) => {
-      const next = { ...current };
+    try {
+      await deleteAdminProject(activeProject.id);
 
-      for (const key of Object.keys(next)) {
-        if (key.startsWith(`${activeProject.id}:`)) {
-          delete next[key];
+      const remainingProjects = projects.filter(
+        (project) => project.id !== activeProject.id,
+      );
+
+      setProjects(remainingProjects);
+      setPendingTopicImages((current) => {
+        const next = { ...current };
+
+        for (const key of Object.keys(next)) {
+          if (key.startsWith(`${activeProject.id}:`)) {
+            delete next[key];
+          }
         }
-      }
 
-      return next;
-    });
-    setActiveProjectId(remainingProjects[0]?.id ?? "");
-    setActiveTopicId(DEFAULT_PROJECT_TOPIC_ID);
+        return next;
+      });
+      setPendingTopicImageRemovals((current) => {
+        const next = { ...current };
+
+        for (const key of Object.keys(next)) {
+          if (key.startsWith(`${activeProject.id}:`)) {
+            delete next[key];
+          }
+        }
+
+        return next;
+      });
+      setActiveProjectId(remainingProjects[0]?.id ?? "");
+      setActiveTopicId(DEFAULT_PROJECT_TOPIC_ID);
+    } catch {
+      setDeleteError("Nie udało się usunąć projektu. Spróbuj ponownie.");
+    } finally {
+      setIsDeleting(false);
+    }
   }
 
   return (
@@ -231,8 +290,8 @@ function ProjectsForm({ language }: AdminFormProps) {
               id="project-select"
               ariaLabel="Projekt"
               className="w-80 max-w-full"
-              value={activeProject.id}
-              disabled={isLoading}
+              value={activeProject?.id ?? ""}
+              disabled={isLoading || projects.length === 0}
               options={projects.map((project) => ({
                 value: project.id,
                 label: project[titleField],
@@ -244,14 +303,18 @@ function ProjectsForm({ language }: AdminFormProps) {
             />
             <AdminDeleteButton
               label="Usuń projekt"
-              disabled={isLoading || isSaving || projects.length <= 1}
-              onClick={deleteProject}
+              disabled={isBusy || !activeProject}
+              onClick={() => void deleteProject()}
             />
-            <AdminAddButton label="Dodaj projekt" onClick={addProject} />
+            <AdminAddButton
+              label="Dodaj projekt"
+              disabled={isBusy}
+              onClick={addProject}
+            />
             <AdminButton
               type="button"
               variant="secondary"
-              disabled={isLoading || isSaving}
+              disabled={isBusy || projects.length === 0}
               onClick={() => void save()}
             >
               {isSaving ? "Zapisywanie..." : "Zapisz"}
@@ -272,6 +335,12 @@ function ProjectsForm({ language }: AdminFormProps) {
         </p>
       ) : null}
 
+      {deleteError ? (
+        <p role="alert" className="text-sm text-red-300">
+          {deleteError}
+        </p>
+      ) : null}
+
       {saveSuccess ? (
         <p role="status" className="text-sm text-emerald-300">
           Zmiany zostały zapisane.
@@ -279,98 +348,150 @@ function ProjectsForm({ language }: AdminFormProps) {
       ) : null}
 
       <AdminPanel>
-        <p className="font-mono text-sm font-bold text-white/35">
-          Aktywny język edycji: {language.toUpperCase()}
-        </p>
-
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-stretch">
-          <div className="admin-stack min-w-0">
-            <AdminField id="project-code" label="Kod projektu">
-              <AdminInput
-                id="project-code"
-                value={activeProject.code ?? ""}
-                onChange={(event) => updateProject("code", event.target.value)}
-              />
-            </AdminField>
-
-            <ProjectTopicImagePanel
-              topic={activeTopic}
-              language={language}
-              disabled={isLoading || isSaving}
-              selectedFile={
-                pendingTopicImages[
-                  topicImageKey(activeProject.id, activeTopic.id)
-                ] ?? null
-              }
-              onFileSelect={(file) => {
-                const key = topicImageKey(activeProject.id, activeTopic.id);
-
-                setPendingTopicImages((current) => {
-                  if (!file) {
-                    const next = { ...current };
-                    delete next[key];
-                    return next;
-                  }
-
-                  return { ...current, [key]: file };
-                });
-              }}
-              onChange={updateTopic}
-            />
+        {!activeProject || !activeTopic ? (
+          <div className="flex min-h-60 items-center justify-center rounded-3xl border border-white/10 text-center text-white/50">
+            <p>Brak projektów. Dodaj pierwszy projekt, aby rozpocząć edycję.</p>
           </div>
+        ) : (
+          <>
+            <p className="font-mono text-sm font-bold text-white/35">
+              Aktywny język edycji: {language.toUpperCase()}
+            </p>
 
-          <div className="flex min-h-full flex-col gap-6">
-            <div className="admin-stack">
-              <AdminTranslatableField
-                id="project-title"
-                label="Nazwa projektu"
-                language={language}
-                hint={`Maksymalnie ${PROJECT_TITLE_MAX_LENGTH} znaków.`}
-              >
-                <AdminInput
-                  id="project-title"
-                  maxLength={PROJECT_TITLE_MAX_LENGTH}
-                  value={activeProject[titleField]}
-                  onChange={(event) =>
-                    updateProject(titleField, event.target.value)
-                  }
-                />
-              </AdminTranslatableField>
+            <div className="grid gap-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-stretch">
+              <div className="admin-stack min-w-0">
+                <AdminField id="project-code" label="Kod projektu">
+                  <AdminInput
+                    id="project-code"
+                    value={activeProject.code ?? ""}
+                    onChange={(event) =>
+                      updateProject("code", event.target.value)
+                    }
+                  />
+                </AdminField>
 
-              <AdminField
-                id="project-technologies"
-                label="Technologie"
-                hint="Wpisz technologie po przecinku, np. React, TypeScript, Supabase."
-              >
-                <AdminInput
-                  id="project-technologies"
-                  value={activeProject.technologies.join(", ")}
-                  onChange={(event) => updateTechnologies(event.target.value)}
-                />
-              </AdminField>
-
-              <AdminField
-                id="project-topic-tabs"
-                label="Zakładka projektu"
-                groupLabel
-              >
-                <ProjectTopicTabs
-                  activeTopicId={activeTopic.id}
+                <ProjectTopicImagePanel
+                  topic={activeTopic}
                   language={language}
-                  labelledBy="project-topic-tabs-label"
-                  onChange={setActiveTopicId}
-                />
-              </AdminField>
-            </div>
+                  disabled={isBusy}
+                  selectedFile={
+                    pendingTopicImages[
+                      topicImageKey(activeProject.id, activeTopic.id)
+                    ] ?? null
+                  }
+                  imageMarkedForRemoval={
+                    pendingTopicImageRemovals[
+                      topicImageKey(activeProject.id, activeTopic.id)
+                    ] ?? false
+                  }
+                  onFileSelect={(file) => {
+                    const key = topicImageKey(
+                      activeProject.id,
+                      activeTopic.id,
+                    );
 
-            <ProjectTopicContentPanel
-              topic={activeTopic}
-              language={language}
-              fillHeight
-              onChange={updateTopic}
-            />
-          </div>
-        </div>
+                    setPendingTopicImages((current) => {
+                      if (!file) {
+                        const next = { ...current };
+                        delete next[key];
+                        return next;
+                      }
+
+                      return { ...current, [key]: file };
+                    });
+
+                    if (file) {
+                      setPendingTopicImageRemovals((current) => {
+                        if (!current[key]) {
+                          return current;
+                        }
+
+                        const next = { ...current };
+                        delete next[key];
+                        return next;
+                      });
+                    }
+                  }}
+                  onImageMarkedForRemovalChange={(marked) => {
+                    const key = topicImageKey(
+                      activeProject.id,
+                      activeTopic.id,
+                    );
+
+                    setPendingTopicImageRemovals((current) => {
+                      if (marked) {
+                        return { ...current, [key]: true };
+                      }
+
+                      if (!current[key]) {
+                        return current;
+                      }
+
+                      const next = { ...current };
+                      delete next[key];
+                      return next;
+                    });
+                  }}
+                  onChange={updateTopic}
+                />
+              </div>
+
+              <div className="flex min-h-full flex-col gap-6">
+                <div className="admin-stack">
+                  <AdminTranslatableField
+                    id="project-title"
+                    label="Nazwa projektu"
+                    language={language}
+                    hint={`Maksymalnie ${PROJECT_TITLE_MAX_LENGTH} znaków.`}
+                  >
+                    <AdminInput
+                      id="project-title"
+                      maxLength={PROJECT_TITLE_MAX_LENGTH}
+                      value={activeProject[titleField]}
+                      onChange={(event) =>
+                        updateProject(titleField, event.target.value)
+                      }
+                    />
+                  </AdminTranslatableField>
+
+                  <AdminField
+                    id="project-technologies"
+                    label="Technologie"
+                    hint="Wpisz technologie po przecinku, np. React, TypeScript, Supabase."
+                  >
+                    <AdminInput
+                      id="project-technologies"
+                      value={activeProject.technologies.join(", ")}
+                      onChange={(event) =>
+                        updateTechnologies(event.target.value)
+                      }
+                    />
+                  </AdminField>
+
+                  <AdminField
+                    id="project-topic-tabs"
+                    label="Zakładka projektu"
+                    groupLabel
+                  >
+                    <ProjectTopicTabs
+                      activeTopicId={activeTopic.id}
+                      language={language}
+                      labelledBy="project-topic-tabs-label"
+                      onChange={setActiveTopicId}
+                    />
+                  </AdminField>
+                </div>
+
+                <ProjectTopicContentPanel
+                  topic={activeTopic}
+                  language={language}
+                  fillHeight
+                  onChange={updateTopic}
+                />
+              </div>
+            </div>
+          </>
+        )}
       </AdminPanel>
     </section>
   );
