@@ -1,10 +1,13 @@
-import { getProjectsFromDatabase } from "@shared/database/projects";
+import {
+  getProjectsFromDatabase,
+  PROJECT_IMAGES_BUCKET,
+  getStoragePublicUrl,
+} from "@shared/database";
 
 import { supabase } from "../lib/supabase";
 
 function getProjectImagePublicUrl(path: string): string {
-  return supabase.storage.from("project-images").getPublicUrl(path).data
-    .publicUrl;
+  return getStoragePublicUrl(supabase, PROJECT_IMAGES_BUCKET, path);
 }
 
 export function getProjects() {

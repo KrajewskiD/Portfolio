@@ -5,11 +5,12 @@ type AdminSegmentedControlItem<T extends string> = {
 
 type AdminSegmentedControlProps<T extends string> = {
   items: AdminSegmentedControlItem<T>[];
-  activeId: T;
+  activeId?: T;
   onChange: (id: T) => void;
   variant?: "tabs" | "toggle";
   borderless?: boolean;
   compact?: boolean;
+  disabled?: boolean;
 };
 
 function AdminSegmentedControl<T extends string>({
@@ -19,6 +20,7 @@ function AdminSegmentedControl<T extends string>({
   variant = "tabs",
   borderless = false,
   compact = false,
+  disabled = false,
 }: AdminSegmentedControlProps<T>) {
   const tabButtonClass = compact
     ? "flex-none cursor-pointer whitespace-nowrap rounded-full border px-3 py-1.5 text-sm font-bold transition"
@@ -33,9 +35,11 @@ function AdminSegmentedControl<T extends string>({
             <button
               key={item.id}
               type="button"
+              disabled={disabled}
               onClick={() => onChange(item.id)}
               className={[
                 "cursor-pointer rounded-full px-4 py-2 text-sm font-black transition",
+                disabled ? "cursor-not-allowed opacity-40" : "",
                 isActive
                   ? "bg-neutral-600 text-white"
                   : "text-white/50 hover:bg-neutral-700 hover:text-white",
@@ -56,9 +60,11 @@ function AdminSegmentedControl<T extends string>({
       <button
         key={item.id}
         type="button"
+        disabled={disabled}
         onClick={() => onChange(item.id)}
         className={[
           tabButtonClass,
+          disabled ? "cursor-not-allowed opacity-40" : "",
           isActive
             ? "border-white/30 bg-neutral-700 text-white"
             : "border-white/10 bg-neutral-800 text-white/60 hover:border-white/20 hover:bg-neutral-700 hover:text-white",

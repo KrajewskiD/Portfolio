@@ -6,6 +6,7 @@ import AdminButton from "./ui/AdminButton";
 type DashboardActionsProps = {
   language: Language;
   isSigningOut: boolean;
+  isNavigationLocked?: boolean;
   onLanguageChange: (language: Language) => void;
   onSignOut: () => void;
 };
@@ -13,14 +14,23 @@ type DashboardActionsProps = {
 function DashboardActions({
   language,
   isSigningOut,
+  isNavigationLocked = false,
   onLanguageChange,
   onSignOut,
 }: DashboardActionsProps) {
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <LanguageEditSwitch value={language} onChange={onLanguageChange} />
+      <LanguageEditSwitch
+        value={language}
+        disabled={isNavigationLocked || isSigningOut}
+        onChange={onLanguageChange}
+      />
 
-      <AdminButton type="button" onClick={onSignOut} disabled={isSigningOut}>
+      <AdminButton
+        type="button"
+        onClick={onSignOut}
+        disabled={isSigningOut || isNavigationLocked}
+      >
         {isSigningOut ? "Wylogowywanie..." : "Wyloguj"}
       </AdminButton>
     </div>

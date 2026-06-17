@@ -1,6 +1,7 @@
+import { deleteProjectImages } from "@admin/lib/imageStorage";
 import { supabase } from "@admin/lib/supabase";
+import { getOrCreateTechnologyId } from "@shared/database";
 import type { Project } from "@shared/database/types/project";
-import type { TechnologyIdRow } from "@shared/database/projects";
 
 function uniqueTechnologyNames(technologies: string[]): string[] {
   return technologies.filter(
@@ -11,36 +12,7 @@ function uniqueTechnologyNames(technologies: string[]): string[] {
   );
 }
 
-async function getOrCreateTechnologyId(name: string): Promise<string> {
-  const { data: technology, error: technologyLookupError } = await supabase
-    .from("technologies")
-    .select("id")
-    .eq("name", name)
-    .maybeSingle<TechnologyIdRow>();
-
-  if (technologyLookupError) {
-    throw technologyLookupError;
-  }
-
-  if (technology) {
-    return technology.id;
-  }
-
-  const { data: createdTechnology, error: technologyCreateError } =
-    await supabase
-      .from("technologies")
-      .insert({ name })
-      .select("id")
-      .single<TechnologyIdRow>();
-
-  if (technologyCreateError) {
-    throw technologyCreateError;
-  }
-
-  return createdTechnology.id;
-}
-
-export async function createProject(
+async function upsertProjectRow(
   project: Project,
   displayOrder: number,
 ): Promise<void> {
@@ -61,7 +33,7 @@ export async function updateProject(
   project: Project,
   displayOrder: number,
 ): Promise<void> {
-  await createProject(project, displayOrder);
+  await upsertProjectRow(project, displayOrder);
 }
 
 export async function saveProjectTopics(project: Project): Promise<void> {
@@ -85,9 +57,7 @@ export async function saveProjectTopics(project: Project): Promise<void> {
   }
 }
 
-export async function saveProjectTechnologies(
-  project: Project,
-): Promise<void> {
+export async function saveProjectTechnologies(project: Project): Promise<void> {
   const { error: deleteError } = await supabase
     .from("project_technologies")
     .delete()
@@ -106,7 +76,7 @@ export async function saveProjectTechnologies(
   const rows = await Promise.all(
     technologies.map(async (technology, index) => ({
       project_id: project.id,
-      technology_id: await getOrCreateTechnologyId(technology),
+      technology_id: await getOrCreateTechnologyId(supabase, technology),
       display_order: index + 1,
     })),
   );
@@ -121,6 +91,8 @@ export async function saveProjectTechnologies(
 }
 
 export async function deleteProject(projectId: string): Promise<void> {
+  await deleteProjectImages(projectId);
+
   const { error: technologiesError } = await supabase
     .from("project_technologies")
     .delete()

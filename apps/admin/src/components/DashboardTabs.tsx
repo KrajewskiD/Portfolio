@@ -13,10 +13,16 @@ type DashboardTab = {
 type DashboardTabsProps = {
   tabs: DashboardTab[];
   activeTabId: DashboardTabId;
+  isNavigationLocked?: boolean;
   onChange: (tabId: DashboardTabId) => void;
 };
 
-function DashboardTabs({ tabs, activeTabId, onChange }: DashboardTabsProps) {
+function DashboardTabs({
+  tabs,
+  activeTabId,
+  isNavigationLocked = false,
+  onChange,
+}: DashboardTabsProps) {
   const isSettingsActive = activeTabId === "settings";
 
   return (
@@ -24,9 +30,8 @@ function DashboardTabs({ tabs, activeTabId, onChange }: DashboardTabsProps) {
       <div className="min-w-0 flex-1 overflow-x-auto">
         <AdminSegmentedControl
           items={tabs}
-          activeId={
-            isSettingsActive ? ("" as DashboardContentTabId) : activeTabId
-          }
+          activeId={isSettingsActive ? undefined : activeTabId}
+          disabled={isNavigationLocked}
           onChange={onChange}
           borderless
         />
@@ -35,10 +40,12 @@ function DashboardTabs({ tabs, activeTabId, onChange }: DashboardTabsProps) {
       <button
         type="button"
         onClick={() => onChange("settings")}
+        disabled={isNavigationLocked}
         aria-label="Ustawienia"
         title="Ustawienia"
         className={[
           "flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full border transition",
+          isNavigationLocked ? "cursor-not-allowed opacity-40" : "",
           isSettingsActive
             ? "border-white/30 bg-neutral-700 text-white"
             : "border-white/10 bg-neutral-800 text-white/60 hover:border-white/20 hover:bg-neutral-700 hover:text-white",

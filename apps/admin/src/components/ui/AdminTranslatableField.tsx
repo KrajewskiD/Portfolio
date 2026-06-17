@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 
+import { useTranslationOverlay } from "@admin/context/TranslationOverlayContext";
+import { useTranslateField } from "@admin/hooks/useTranslateField";
 import type { Language } from "@shared/database/types/language";
 
 import AdminField from "./AdminField";
@@ -11,10 +13,9 @@ type AdminTranslatableFieldProps = {
   hint?: string;
   language: Language;
   children: ReactNode;
-  onTranslate?: () => void;
-  translateDisabled?: boolean;
-  isTranslating?: boolean;
-  translateError?: string;
+  sourceText: string;
+  onApply: (translatedText: string) => void;
+  disabled?: boolean;
   className?: string;
 };
 
@@ -24,29 +25,33 @@ function AdminTranslatableField({
   hint,
   language,
   children,
-  onTranslate,
-  translateDisabled,
-  isTranslating,
-  translateError,
+  sourceText,
+  onApply,
+  disabled = false,
   className,
 }: AdminTranslatableFieldProps) {
+  const { isOverlayOpen } = useTranslationOverlay();
+  const translate = useTranslateField({
+    language,
+    sourceText,
+    disabled: disabled || isOverlayOpen,
+    onApply,
+  });
+
   return (
     <AdminField
       id={id}
       label={label}
-      hint={translateError ?? hint}
-      className={[
-        className,
-        translateError ? "admin-field--error" : "",
-      ]
+      hint={translate.error ?? hint}
+      className={[className, translate.error ? "admin-field--error" : ""]
         .filter(Boolean)
         .join(" ")}
       action={
         <AdminTranslateButton
           language={language}
-          disabled={translateDisabled ?? !onTranslate}
-          isLoading={isTranslating}
-          onClick={onTranslate}
+          disabled={disabled || isOverlayOpen || translate.isTranslating}
+          isLoading={translate.isTranslating}
+          onClick={() => void translate.onTranslate()}
         />
       }
     >

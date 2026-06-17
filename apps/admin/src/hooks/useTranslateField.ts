@@ -1,6 +1,7 @@
-import { useState } from "react";
-
+import { useTranslationOverlay } from "@admin/context/TranslationOverlayContext";
+import { useTranslationRunner } from "@admin/hooks/useTranslationRunner";
 import { translateText } from "@admin/services/translationService";
+import { getOppositeLanguage } from "@shared/utils/localizedField";
 import type { Language } from "@shared/database/types/language";
 
 type UseTranslateFieldParams = {
@@ -16,37 +17,31 @@ export function useTranslateField({
   onApply,
   disabled = false,
 }: UseTranslateFieldParams) {
-  const [isTranslating, setIsTranslating] = useState(false);
-  const [error, setError] = useState<string>();
+  const { isOverlayOpen } = useTranslationOverlay();
+  const { run, isTranslating, error } = useTranslationRunner();
 
   async function onTranslate() {
-    if (disabled || isTranslating) {
-      return;
-    }
+    await run({
+      disabled: disabled || isOverlayOpen,
+      validate: () => {
+        if (!sourceText.trim()) {
+          return "Najpierw wpisz tekst w aktywnym języku.";
+        }
 
-    const trimmed = sourceText.trim();
-    if (!trimmed) {
-      setError("Najpierw wpisz tekst w aktywnym języku.");
-      return;
-    }
+        return undefined;
+      },
+      execute: async () => {
+        const translatedText = await translateText({
+          text: sourceText.trim(),
+          sourceLanguage: language,
+          targetLanguage: getOppositeLanguage(language),
+        });
 
-    setIsTranslating(true);
-    setError(undefined);
-
-    try {
-      const translatedText = await translateText({
-        text: trimmed,
-        sourceLanguage: language,
-        targetLanguage: language === "pl" ? "en" : "pl",
-      });
-      onApply(translatedText);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Nie udało się przetłumaczyć.",
-      );
-    } finally {
-      setIsTranslating(false);
-    }
+        onApply(translatedText);
+      },
+      successMessage: "Tłumaczenie zakończone pomyślnie.",
+      fallbackError: "Nie udało się przetłumaczyć.",
+    });
   }
 
   return { onTranslate, isTranslating, error };
