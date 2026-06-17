@@ -1,8 +1,12 @@
-import type { DashboardTabId } from "@admin/config/dashboardTabs";
+import type {
+  DashboardContentTabId,
+  DashboardTabId,
+} from "@admin/config/dashboardTabs";
 import AdminSegmentedControl from "@admin/components/ui/AdminSegmentedControl";
+import featuresIcon from "@shared/assets/icons/features.svg";
 
 type DashboardTab = {
-  id: DashboardTabId;
+  id: DashboardContentTabId;
   label: string;
 };
 
@@ -13,12 +17,44 @@ type DashboardTabsProps = {
 };
 
 function DashboardTabs({ tabs, activeTabId, onChange }: DashboardTabsProps) {
+  const isSettingsActive = activeTabId === "settings";
+
   return (
-    <AdminSegmentedControl
-      items={tabs}
-      activeId={activeTabId}
-      onChange={onChange}
-    />
+    <div className="flex w-full max-w-full items-center gap-3 border-b border-white/10 pb-4">
+      <div className="min-w-0 flex-1 overflow-x-auto">
+        <AdminSegmentedControl
+          items={tabs}
+          activeId={
+            isSettingsActive ? ("" as DashboardContentTabId) : activeTabId
+          }
+          onChange={onChange}
+          borderless
+        />
+      </div>
+
+      <button
+        type="button"
+        onClick={() => onChange("settings")}
+        aria-label="Ustawienia"
+        title="Ustawienia"
+        className={[
+          "flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full border transition",
+          isSettingsActive
+            ? "border-white/30 bg-neutral-700 text-white"
+            : "border-white/10 bg-neutral-800 text-white/60 hover:border-white/20 hover:bg-neutral-700 hover:text-white",
+        ].join(" ")}
+      >
+        <img
+          src={featuresIcon}
+          alt=""
+          aria-hidden
+          className={[
+            "h-5 w-5 brightness-0 invert",
+            isSettingsActive ? "opacity-100" : "opacity-70",
+          ].join(" ")}
+        />
+      </button>
+    </div>
   );
 }
 

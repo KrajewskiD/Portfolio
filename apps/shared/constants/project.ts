@@ -1,0 +1,1 @@
+export const PROJECT_TITLE_MAX_LENGTH = 64;

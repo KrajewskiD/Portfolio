@@ -19,9 +19,9 @@ function AdminDeleteButton({
       disabled={disabled}
       aria-label={label}
       title={label}
-      className="px-4 py-2 text-sm"
+      className="admin-icon-button"
     >
-      Usuń
+      ×
     </AdminButton>
   );
 }
