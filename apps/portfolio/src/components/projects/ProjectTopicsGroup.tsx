@@ -5,12 +5,12 @@ import {
   projectTopicLabels,
   projectTopicOrder,
 } from "@shared/constants/projectTopics";
-import type { Language } from "@shared/types/language";
+import type { Language } from "@shared/database/types/language";
 import type {
   ProjectTopicContent,
   ProjectTopicId,
   ProjectTopics,
-} from "@shared/types/project";
+} from "@shared/database/types/project";
 import ProjectTopic from "./ProjectTopic";
 
 type ProjectTopicsGroupProps = {

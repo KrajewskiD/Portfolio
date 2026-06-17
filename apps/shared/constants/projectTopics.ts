@@ -1,5 +1,5 @@
-import type { Project, ProjectTopicContent } from "../types/project";
-import type { ProjectTopicId } from "../types/projectTopic";
+import type { Project, ProjectTopicContent } from "../database/types/project";
+import type { ProjectTopicId } from "../database/types/projectTopic";
 
 import overviewIcon from "../assets/icons/overview.svg";
 import featuresIcon from "../assets/icons/features.svg";
@@ -7,7 +7,7 @@ import technologiesIcon from "../assets/icons/technologies.svg";
 import architectureIcon from "../assets/icons/architecture.svg";
 
 export type { ProjectTopicId };
-export { DEFAULT_PROJECT_TOPIC_ID } from "../types/projectTopic";
+export { DEFAULT_PROJECT_TOPIC_ID } from "../database/types/projectTopic";
 
 export const projectTopicDefinitions = {
   overview: {

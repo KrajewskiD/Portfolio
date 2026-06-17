@@ -1,5 +1,5 @@
 import { supabase } from "../lib/supabase";
-import type { SkillGroupData } from "@shared/types/skill";
+import type { SkillGroupData } from "@shared/database/types/skill";
 
 type SkillGroupRow = {
   id: string;

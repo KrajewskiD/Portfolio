@@ -1,5 +1,5 @@
 import { supabase } from "../lib/supabase";
-import type { Profile } from "@shared/types/profile";
+import type { Profile } from "@shared/database/types/profile";
 
 type ProfileRow = {
   name: string;

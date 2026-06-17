@@ -7,8 +7,8 @@ import {
   saveAdminSkillGroups,
 } from "@admin/services/skillContentService";
 import { supabase } from "@admin/lib/supabase";
-import type { FooterLinkData } from "@shared/types/link";
-import type { SkillGroupData } from "@shared/types/skill";
+import type { FooterLinkData } from "@shared/database/types/link";
+import type { SkillGroupData } from "@shared/database/types/skill";
 
 export type AdminSettingsData = {
   skillGroups: SkillGroupData[];

@@ -5,8 +5,8 @@ import ProjectTopicsGroup from "@portfolio/components/projects/ProjectTopicsGrou
 import TechnologyTag from "@portfolio/components/projects/TechnologyTag";
 import { useProjectTopic } from "@portfolio/hooks/useProjectTopic";
 import { getLocalizedField } from "@shared/utils/localizedField";
-import type { Language } from "@shared/types/language";
-import type { Project, ProjectTopicId } from "@shared/types/project";
+import type { Language } from "@shared/database/types/language";
+import type { Project, ProjectTopicId } from "@shared/database/types/project";
 
 type ProjectListItemProps = {
   project: Project;

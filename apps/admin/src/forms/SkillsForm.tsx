@@ -16,7 +16,7 @@ import {
   saveAdminSkillGroups,
 } from "@admin/services/skillContentService";
 import type { AdminFormProps } from "@admin/types/adminForms";
-import type { Skill, SkillGroupData } from "@shared/types/skill";
+import type { Skill, SkillGroupData } from "@shared/database/types/skill";
 
 function SkillsForm({ language }: AdminFormProps) {
   const {

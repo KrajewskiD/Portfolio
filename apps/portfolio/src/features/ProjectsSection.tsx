@@ -3,9 +3,9 @@ import { useState } from "react";
 import ProjectListItem from "@portfolio/components/projects/ProjectListItem";
 import ProjectSkeleton from "@portfolio/components/projects/ProjectSkeleton";
 import SectionHeading from "@portfolio/components/sections/SectionHeading";
-import { DEFAULT_PROJECT_TOPIC_ID } from "@shared/types/projectTopic";
-import type { Language } from "@shared/types/language";
-import type { Project, ProjectTopicId } from "@shared/types/project";
+import { DEFAULT_PROJECT_TOPIC_ID } from "@shared/database/types/projectTopic";
+import type { Language } from "@shared/database/types/language";
+import type { Project, ProjectTopicId } from "@shared/database/types/project";
 
 type ProjectsSectionProps = {
   projects?: Project[];

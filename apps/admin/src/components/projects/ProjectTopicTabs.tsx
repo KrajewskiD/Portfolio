@@ -2,8 +2,8 @@ import {
   projectTopicLabels,
   projectTopicOrder,
 } from "@shared/constants/projectTopics";
-import type { Language } from "@shared/types/language";
-import type { ProjectTopicId } from "@shared/types/projectTopic";
+import type { Language } from "@shared/database/types/language";
+import type { ProjectTopicId } from "@shared/database/types/projectTopic";
 
 type ProjectTopicTabsProps = {
   activeTopicId: ProjectTopicId;

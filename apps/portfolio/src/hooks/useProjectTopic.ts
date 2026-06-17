@@ -3,8 +3,8 @@ import { useMemo } from "react";
 import {
   DEFAULT_PROJECT_TOPIC_ID,
   type ProjectTopicId,
-} from "@shared/types/projectTopic";
-import type { ProjectTopics } from "@shared/types/project";
+} from "@shared/database/types/projectTopic";
+import type { ProjectTopics } from "@shared/database/types/project";
 
 type UseProjectTopicOptions = {
   topics: ProjectTopics;

@@ -1,7 +1,7 @@
-import type { Project } from "@shared/types/project";
-import type { Profile } from "@shared/types/profile";
-import type { FooterLinkData } from "@shared/types/link";
-import type { SkillGroupData } from "@shared/types/skill";
+import type { Project } from "@shared/database/types/project";
+import type { Profile } from "@shared/database/types/profile";
+import type { FooterLinkData } from "@shared/database/types/link";
+import type { SkillGroupData } from "@shared/database/types/skill";
 import { normalizeProjectTopics } from "@shared/constants/projectTopics";
 
 export const profileDraft: Profile = {

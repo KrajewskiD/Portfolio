@@ -1,5 +1,5 @@
 import { supabase } from "@admin/lib/supabase";
-import type { FooterLinkData } from "@shared/types/link";
+import type { FooterLinkData } from "@shared/database/types/link";
 
 type FooterLinkRow = {
   id: string;

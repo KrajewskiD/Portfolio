@@ -1,4 +1,4 @@
-import type { Language } from "@shared/types/language";
+import type { Language } from "@shared/database/types/language";
 
 import LanguageEditSwitch from "./LanguageEditSwitch";
 import AdminButton from "./ui/AdminButton";

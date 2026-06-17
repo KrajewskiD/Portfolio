@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { Language } from "@shared/types/language";
+import type { Language } from "@shared/database/types/language";
 
 import AdminField from "./AdminField";
 import AdminTranslateButton from "./AdminTranslateButton";

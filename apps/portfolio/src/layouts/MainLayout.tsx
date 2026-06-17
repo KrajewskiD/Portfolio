@@ -4,10 +4,10 @@ import Footer from "@portfolio/components/Footer";
 import Header from "@portfolio/components/Header";
 import TopToolbar from "@portfolio/components/toolbar/TopToolbar";
 import type { Translations } from "@portfolio/locales/translations";
-import type { FooterData } from "@shared/types/footer";
-import type { Language } from "@shared/types/language";
-import type { FooterLinkData, NavigationLinkData } from "@shared/types/link";
-import type { Profile } from "@shared/types/profile";
+import type { FooterData } from "@shared/database/types/footer";
+import type { Language } from "@shared/database/types/language";
+import type { FooterLinkData, NavigationLinkData } from "@shared/database/types/link";
+import type { Profile } from "@shared/database/types/profile";
 
 type MainLayoutProps = {
   children: ReactNode;
