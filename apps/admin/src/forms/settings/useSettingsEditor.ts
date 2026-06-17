@@ -2,10 +2,10 @@ import { useCallback } from "react";
 
 import {
   patchSettings,
+  patchSkillGroupInSettings,
+  patchSkillInSettings,
   updateFooterLink,
-  updateSkillGroup,
-  updateSkillInGroup,
-} from "@admin/forms/settingsFormUpdates";
+} from "@admin/forms/settings/settingsFormUpdates";
 import type { AdminSettingsData } from "@admin/services/settingsContentService";
 import { ADMIN_NAME_MAX_LENGTH } from "@shared/constants/adminSettings";
 import type { Language } from "@shared/database/types/language";
@@ -74,7 +74,7 @@ export function useSettingsEditor({
       const nextValue = value.slice(0, ADMIN_NAME_MAX_LENGTH);
 
       setSettings((current) =>
-        updateSkillGroup(current, groupId, (group) => ({
+        patchSkillGroupInSettings(current, groupId, (group) => ({
           ...group,
           [titleField]: nextValue,
         })),
@@ -88,7 +88,7 @@ export function useSettingsEditor({
       const nextValue = value.slice(0, ADMIN_NAME_MAX_LENGTH);
 
       setSettings((current) =>
-        updateSkillInGroup(current, groupId, skillId, (skill) => ({
+        patchSkillInSettings(current, groupId, skillId, (skill) => ({
           ...skill,
           name: nextValue,
         })),
@@ -154,7 +154,7 @@ export function useSettingsEditor({
   const deleteSkill = useCallback(
     (groupId: string, skillId: string) => {
       setSettings((current) =>
-        updateSkillGroup(current, groupId, (group) => ({
+        patchSkillGroupInSettings(current, groupId, (group) => ({
           ...group,
           skills: group.skills.filter((skill) => skill.id !== skillId),
         })),
@@ -207,7 +207,7 @@ export function useSettingsEditor({
       };
 
       setSettings((current) =>
-        updateSkillGroup(current, groupId, (group) => ({
+        patchSkillGroupInSettings(current, groupId, (group) => ({
           ...group,
           skills: [...group.skills, nextSkill],
         })),
@@ -250,7 +250,7 @@ export function useSettingsEditor({
   const reorderSkillsInGroup = useCallback(
     (groupId: string, nextSkills: Skill[]) => {
       setSettings((current) =>
-        updateSkillGroup(current, groupId, (group) => ({
+        patchSkillGroupInSettings(current, groupId, (group) => ({
           ...group,
           skills: nextSkills,
         })),

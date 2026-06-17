@@ -1,15 +1,16 @@
 import {
   getProfileFromDatabase,
   PROFILE_IMAGES_BUCKET,
-  getStoragePublicUrl,
+  createBucketUrlResolver,
 } from "@shared/database";
 import type { Profile } from "@shared/database/types/profile";
 
 import { supabase } from "../lib/supabase";
 
-function getProfileImagePublicUrl(path: string): string {
-  return getStoragePublicUrl(supabase, PROFILE_IMAGES_BUCKET, path);
-}
+const getProfileImagePublicUrl = createBucketUrlResolver(
+  supabase,
+  PROFILE_IMAGES_BUCKET,
+);
 
 export function getProfile(): Promise<Profile> {
   return getProfileFromDatabase(supabase, getProfileImagePublicUrl);

@@ -10,3 +10,13 @@ export function mapFooterLinkRow(link: FooterLinkRow): FooterLinkData {
     displayOrder: link.display_order,
   };
 }
+
+export function mapFooterLinkToRow(link: FooterLinkData) {
+  return {
+    id: link.id,
+    label: link.label,
+    url: link.href,
+    platform: link.platform,
+    display_order: link.displayOrder,
+  };
+}

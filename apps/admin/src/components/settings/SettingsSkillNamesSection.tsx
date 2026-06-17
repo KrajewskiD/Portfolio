@@ -1,6 +1,8 @@
 import AdminAddButton from "@admin/components/ui/AdminAddButton";
+import AdminEmptyMessage from "@admin/components/ui/AdminEmptyMessage";
 import AdminExpandableSettingRow from "@admin/components/ui/AdminExpandableSettingRow";
 import AdminSortableList from "@admin/components/ui/AdminSortableList";
+import SettingsSection from "@admin/components/settings/SettingsSection";
 import { ADMIN_NAME_MAX_LENGTH } from "@shared/constants/adminSettings";
 import type { Skill, SkillGroupData } from "@shared/database/types/skill";
 
@@ -30,17 +32,15 @@ function SettingsSkillNamesSection({
   onAddSkill,
 }: SettingsSkillNamesSectionProps) {
   return (
-    <div className="admin-stack border-t border-white/10 pt-6">
-      <div className="admin-stack">
-        <h3 className="text-lg font-bold">Nazwy umiejętności</h3>
-        <p className="text-sm text-white/40">
-          Kliknij nazwę, aby edytować. Rozwiń grupę, aby zarządzać
-          umiejętnościami.
-        </p>
-      </div>
-
+    <SettingsSection
+      bordered
+      title="Nazwy umiejętności"
+      description="Kliknij nazwę, aby edytować. Rozwiń grupę, aby zarządzać umiejętnościami."
+    >
       {skillGroups.length === 0 ? (
-        <p className="text-white/50">Najpierw dodaj grupę umiejętności.</p>
+        <AdminEmptyMessage inline>
+          Najpierw dodaj grupę umiejętności.
+        </AdminEmptyMessage>
       ) : (
         <div className="admin-stack">
           {skillGroups.map((group) => {
@@ -62,9 +62,9 @@ function SettingsSkillNamesSection({
               >
                 <div className="admin-stack">
                   {group.skills.length === 0 ? (
-                    <p className="text-white/50">
+                    <AdminEmptyMessage inline>
                       Brak umiejętności w tej grupie.
-                    </p>
+                    </AdminEmptyMessage>
                   ) : (
                     <AdminSortableList
                       items={group.skills}
@@ -107,7 +107,7 @@ function SettingsSkillNamesSection({
           })}
         </div>
       )}
-    </div>
+    </SettingsSection>
   );
 }
 

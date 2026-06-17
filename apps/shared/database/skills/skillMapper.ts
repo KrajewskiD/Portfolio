@@ -23,3 +23,32 @@ export function mapSkillGroupRow(group: SkillGroupRow): SkillGroupData {
       ),
   };
 }
+
+export function mapSkillGroupToRow(
+  group: SkillGroupData,
+  displayOrder: number,
+) {
+  return {
+    id: group.id,
+    title_pl: group.titlePl,
+    title_en: group.titleEn,
+    display_order: displayOrder,
+  };
+}
+
+export function mapSkillToRow(
+  skill: SkillGroupData["skills"][number],
+  groupId: string,
+  technologyId: string,
+  displayOrder: number,
+) {
+  return {
+    id: skill.id,
+    group_id: groupId,
+    technology_id: technologyId,
+    description_pl: skill.descriptionPl,
+    description_en: skill.descriptionEn,
+    level: skill.level,
+    display_order: displayOrder,
+  };
+}

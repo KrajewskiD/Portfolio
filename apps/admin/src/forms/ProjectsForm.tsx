@@ -8,30 +8,33 @@ import ProjectTopicImagePanel, {
 } from "@admin/components/projects/ProjectTopicImagePanel";
 import ProjectTopicTabs from "@admin/components/projects/ProjectTopicTabs";
 import AdminAddButton from "@admin/components/ui/AdminAddButton";
-import AdminCustomSelect from "@admin/components/ui/AdminCustomSelect";
 import AdminDeleteButton from "@admin/components/ui/AdminDeleteButton";
 import AdminEditLanguageBanner from "@admin/components/ui/AdminEditLanguageBanner";
+import AdminEmptyMessage from "@admin/components/ui/AdminEmptyMessage";
+import AdminEntitySelect from "@admin/components/ui/AdminEntitySelect";
 import AdminField from "@admin/components/ui/AdminField";
 import AdminFormActions from "@admin/components/ui/AdminFormActions";
-import AdminFormFeedback from "@admin/components/ui/AdminFormFeedback";
-import AdminFormHeader from "@admin/components/ui/AdminFormHeader";
 import AdminFormSaveActions from "@admin/components/ui/AdminFormSaveActions";
+import AdminFormShell from "@admin/components/ui/AdminFormShell";
 import AdminInput from "@admin/components/ui/AdminInput";
-import AdminPanel from "@admin/components/ui/AdminPanel";
 import AdminTranslatableField from "@admin/components/ui/AdminTranslatableField";
+import {
+  deleteAdminProject,
+  getAdminProjects,
+  saveAdminProjects,
+} from "@admin/database/projects/ProjectRepository";
 import { projectDrafts } from "@admin/data/adminDrafts";
+import { createProjectTranslateFields } from "@admin/forms/projectTranslatableFields";
+import { useActiveTopicImageHandlers } from "@admin/hooks/useActiveTopicImageHandlers";
 import { useAdminForm } from "@admin/hooks/useAdminForm";
 import { usePendingKeyedImages } from "@admin/hooks/usePendingKeyedImages";
 import { useTranslateFields } from "@admin/hooks/useTranslateFields";
 import { useTranslationOverlay } from "@admin/context/TranslationOverlayContext";
 import {
-  deleteAdminProject,
   deleteProjectTopicImage,
-  getAdminProjects,
   getProjectImagePublicUrl,
-  saveAdminProjects,
   uploadProjectTopicImage,
-} from "@admin/services/projectContentService";
+} from "@admin/lib/imageStorage";
 import type { AdminFormProps } from "@admin/types/adminForms";
 import {
   projectTopicOrder,
@@ -249,56 +252,17 @@ function ProjectsForm({ language }: AdminFormProps) {
     );
   }
 
-  const bulkTranslateFields = activeProject
-    ? [
-        {
-          id: "project-title",
-          sourceText: getLocalizedField(
-            activeProject,
-            language,
-            "titlePl",
-            "titleEn",
-          ),
-          onApply: (text: string) =>
-            updateProject(
-              getOppositeLocalizedKey(language, "titlePl", "titleEn"),
-              text,
-            ),
-        },
-        ...activeProject.topics.flatMap((topic) => [
-          {
-            id: `topic-${topic.id}-content`,
-            sourceText: getLocalizedField(
-              topic,
-              language,
-              "contentPl",
-              "contentEn",
-            ),
-            onApply: (text: string) =>
-              updateProjectTopic(
-                topic.id,
-                getOppositeLocalizedKey(language, "contentPl", "contentEn"),
-                text,
-              ),
-          },
-          {
-            id: `topic-${topic.id}-image-alt`,
-            sourceText: getLocalizedField(
-              topic,
-              language,
-              "imageAltPl",
-              "imageAltEn",
-            ),
-            onApply: (text: string) =>
-              updateProjectTopic(
-                topic.id,
-                getOppositeLocalizedKey(language, "imageAltPl", "imageAltEn"),
-                text,
-              ),
-          },
-        ]),
-      ]
-    : [];
+  const bulkTranslateFields = useMemo(
+    () =>
+      activeProject
+        ? createProjectTranslateFields(activeProject, language, {
+            onApplyTitle: (field, text) => updateProject(field, text),
+            onApplyTopic: (topicId, field, text) =>
+              updateProjectTopic(topicId, field, text),
+          })
+        : [],
+    [activeProject, language],
+  );
 
   const bulkTranslate = useTranslateFields({
     language,
@@ -358,218 +322,176 @@ function ProjectsForm({ language }: AdminFormProps) {
       )
     : "";
 
+  const { onFileSelect, onImageMarkedForRemovalChange } =
+    useActiveTopicImageHandlers(
+      activeTopicImageKey,
+      setPendingTopicImages,
+      setPendingTopicImageRemovals,
+    );
+
   return (
-    <section className="admin-stack">
-      <AdminFormHeader
-        title="Projekty"
-        description="Edytuj projekt, jego technologie oraz treści przypisane do konkretnych zakładek."
-        actions={
-          <AdminFormActions>
-            <AdminCustomSelect
-              id="project-select"
-              ariaLabel="Projekt"
-              className="w-80 max-w-full"
-              value={activeProject?.id ?? ""}
-              disabled={isLoading || projects.length === 0}
-              options={projects.map((project) => ({
-                value: project.id,
-                label: getLocalizedField(
-                  project,
-                  language,
-                  "titlePl",
-                  "titleEn",
-                ),
-              }))}
-              onChange={(projectId) => {
-                setActiveProjectId(projectId);
-                setActiveTopicId(DEFAULT_PROJECT_TOPIC_ID);
-              }}
-            />
-            <AdminDeleteButton
-              label="Usuń projekt"
-              disabled={isBusy || !activeProject}
-              onClick={() => void deleteProject()}
-            />
-            <AdminAddButton
-              label="Dodaj projekt"
-              disabled={isBusy}
-              onClick={addProject}
-            />
-            <AdminFormSaveActions
-              language={language}
-              saveDisabled={isBusy || projects.length === 0}
-              isSaving={isSaving}
-              onSave={save}
-              translateDisabled={isBusy || !activeProject}
-              isBulkTranslating={bulkTranslate.isTranslating}
-              translateTitle="Przetłumacz wszystkie pola projektu przez Gemini AI"
-              onTranslateAll={bulkTranslate.onTranslateAll}
-            />
-          </AdminFormActions>
-        }
-      />
+    <AdminFormShell
+      title="Projekty"
+      description="Edytuj projekt, jego technologie oraz treści przypisane do konkretnych zakładek."
+      loadError={loadError}
+      saveError={saveError}
+      saveSuccess={saveSuccess}
+      extraErrors={[
+        ...(bulkTranslate.error ? [bulkTranslate.error] : []),
+        ...(deleteError ? [deleteError] : []),
+      ]}
+      actions={
+        <AdminFormActions>
+          <AdminEntitySelect
+            id="project-select"
+            ariaLabel="Projekt"
+            className="w-80 max-w-full"
+            value={activeProject?.id ?? ""}
+            disabled={isLoading || projects.length === 0}
+            items={projects}
+            getItemId={(project) => project.id}
+            getItemLabel={(project) =>
+              getLocalizedField(project, language, "titlePl", "titleEn")
+            }
+            onChange={(projectId) => {
+              setActiveProjectId(projectId);
+              setActiveTopicId(DEFAULT_PROJECT_TOPIC_ID);
+            }}
+          />
+          <AdminDeleteButton
+            label="Usuń projekt"
+            disabled={isBusy || !activeProject}
+            onClick={() => void deleteProject()}
+          />
+          <AdminAddButton
+            label="Dodaj projekt"
+            disabled={isBusy}
+            onClick={addProject}
+          />
+          <AdminFormSaveActions
+            language={language}
+            saveDisabled={isBusy || projects.length === 0}
+            isSaving={isSaving}
+            onSave={save}
+            translateDisabled={isBusy || !activeProject}
+            isBulkTranslating={bulkTranslate.isTranslating}
+            translateTitle="Przetłumacz wszystkie pola projektu przez Gemini AI"
+            onTranslateAll={bulkTranslate.onTranslateAll}
+          />
+        </AdminFormActions>
+      }
+    >
+      {!activeProject || !activeTopic ? (
+        <AdminEmptyMessage>
+          Brak projektów. Dodaj pierwszy projekt, aby rozpocząć edycję.
+        </AdminEmptyMessage>
+      ) : (
+        <>
+          <AdminEditLanguageBanner language={language} />
 
-      <AdminFormFeedback
-        loadError={loadError}
-        saveError={saveError}
-        saveSuccess={saveSuccess}
-        extraErrors={[
-          ...(bulkTranslate.error ? [bulkTranslate.error] : []),
-          ...(deleteError ? [deleteError] : []),
-        ]}
-      />
-
-      <AdminPanel>
-        {!activeProject || !activeTopic ? (
-          <div className="flex min-h-60 items-center justify-center rounded-3xl border border-white/10 text-center text-white/50">
-            <p>Brak projektów. Dodaj pierwszy projekt, aby rozpocząć edycję.</p>
-          </div>
-        ) : (
-          <>
-            <AdminEditLanguageBanner language={language} />
-
-            <div className="grid gap-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-stretch">
-              <div className="admin-stack min-w-0">
-                <AdminField id="project-code" label="Kod projektu">
-                  <AdminInput
-                    id="project-code"
-                    value={activeProject.code ?? ""}
-                    onChange={(event) =>
-                      updateProject("code", event.target.value)
-                    }
-                  />
-                </AdminField>
-
-                <ProjectTopicImagePanel
-                  topic={activeTopic}
-                  language={language}
-                  disabled={isBusy}
-                  selectedFile={pendingTopicImages[activeTopicImageKey] ?? null}
-                  imageMarkedForRemoval={
-                    pendingTopicImageRemovals[activeTopicImageKey] ?? false
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-stretch">
+            <div className="admin-stack min-w-0">
+              <AdminField id="project-code" label="Kod projektu">
+                <AdminInput
+                  id="project-code"
+                  value={activeProject.code ?? ""}
+                  onChange={(event) =>
+                    updateProject("code", event.target.value)
                   }
-                  onFileSelect={(file) => {
-                    setPendingTopicImages((current) => {
-                      if (!file) {
-                        const next = { ...current };
-                        delete next[activeTopicImageKey];
-                        return next;
-                      }
-
-                      return { ...current, [activeTopicImageKey]: file };
-                    });
-
-                    if (file) {
-                      setPendingTopicImageRemovals((current) => {
-                        if (!current[activeTopicImageKey]) {
-                          return current;
-                        }
-
-                        const next = { ...current };
-                        delete next[activeTopicImageKey];
-                        return next;
-                      });
-                    }
-                  }}
-                  onImageMarkedForRemovalChange={(marked) => {
-                    setPendingTopicImageRemovals((current) => {
-                      if (marked) {
-                        return { ...current, [activeTopicImageKey]: true };
-                      }
-
-                      if (!current[activeTopicImageKey]) {
-                        return current;
-                      }
-
-                      const next = { ...current };
-                      delete next[activeTopicImageKey];
-                      return next;
-                    });
-                  }}
-                  onChange={updateTopic}
                 />
-              </div>
+              </AdminField>
 
-              <div className="flex min-h-full flex-col gap-6">
-                <div className="admin-stack">
-                  <AdminTranslatableField
+              <ProjectTopicImagePanel
+                topic={activeTopic}
+                language={language}
+                disabled={isBusy}
+                selectedFile={pendingTopicImages[activeTopicImageKey] ?? null}
+                imageMarkedForRemoval={
+                  pendingTopicImageRemovals[activeTopicImageKey] ?? false
+                }
+                onFileSelect={onFileSelect}
+                onImageMarkedForRemovalChange={onImageMarkedForRemovalChange}
+                onChange={updateTopic}
+              />
+            </div>
+
+            <div className="flex min-h-full flex-col gap-6">
+              <div className="admin-stack">
+                <AdminTranslatableField
+                  id="project-title"
+                  label="Nazwa projektu"
+                  language={language}
+                  hint={`Maksymalnie ${PROJECT_TITLE_MAX_LENGTH} znaków.`}
+                  disabled={isBusy}
+                  sourceText={getLocalizedField(
+                    activeProject,
+                    language,
+                    "titlePl",
+                    "titleEn",
+                  )}
+                  onApply={(text) =>
+                    updateProject(
+                      getOppositeLocalizedKey(language, "titlePl", "titleEn"),
+                      text,
+                    )
+                  }
+                >
+                  <AdminInput
                     id="project-title"
-                    label="Nazwa projektu"
-                    language={language}
-                    hint={`Maksymalnie ${PROJECT_TITLE_MAX_LENGTH} znaków.`}
-                    disabled={isBusy}
-                    sourceText={getLocalizedField(
+                    maxLength={PROJECT_TITLE_MAX_LENGTH}
+                    value={getLocalizedField(
                       activeProject,
                       language,
                       "titlePl",
                       "titleEn",
                     )}
-                    onApply={(text) =>
+                    onChange={(event) =>
                       updateProject(
-                        getOppositeLocalizedKey(language, "titlePl", "titleEn"),
-                        text,
+                        getLocalizedKey(language, "titlePl", "titleEn"),
+                        event.target.value,
                       )
                     }
-                  >
-                    <AdminInput
-                      id="project-title"
-                      maxLength={PROJECT_TITLE_MAX_LENGTH}
-                      value={getLocalizedField(
-                        activeProject,
-                        language,
-                        "titlePl",
-                        "titleEn",
-                      )}
-                      onChange={(event) =>
-                        updateProject(
-                          getLocalizedKey(language, "titlePl", "titleEn"),
-                          event.target.value,
-                        )
-                      }
-                    />
-                  </AdminTranslatableField>
+                  />
+                </AdminTranslatableField>
 
-                  <AdminField
+                <AdminField
+                  id="project-technologies"
+                  label="Technologie"
+                  hint="Wpisz technologie po przecinku, np. React, TypeScript, Supabase."
+                >
+                  <AdminInput
                     id="project-technologies"
-                    label="Technologie"
-                    hint="Wpisz technologie po przecinku, np. React, TypeScript, Supabase."
-                  >
-                    <AdminInput
-                      id="project-technologies"
-                      value={activeProject.technologies.join(", ")}
-                      onChange={(event) =>
-                        updateTechnologies(event.target.value)
-                      }
-                    />
-                  </AdminField>
+                    value={activeProject.technologies.join(", ")}
+                    onChange={(event) => updateTechnologies(event.target.value)}
+                  />
+                </AdminField>
 
-                  <AdminField
-                    id="project-topic-tabs"
-                    label="Zakładka projektu"
-                    groupLabel
-                  >
-                    <ProjectTopicTabs
-                      activeTopicId={activeTopic.id}
-                      language={language}
-                      labelledBy="project-topic-tabs-label"
-                      onChange={setActiveTopicId}
-                    />
-                  </AdminField>
-                </div>
-
-                <ProjectTopicContentPanel
-                  topic={activeTopic}
-                  language={language}
-                  fillHeight
-                  disabled={isBusy}
-                  onChange={updateTopic}
-                />
+                <AdminField
+                  id="project-topic-tabs"
+                  label="Zakładka projektu"
+                  groupLabel
+                >
+                  <ProjectTopicTabs
+                    activeTopicId={activeTopic.id}
+                    language={language}
+                    labelledBy="project-topic-tabs-label"
+                    onChange={setActiveTopicId}
+                  />
+                </AdminField>
               </div>
+
+              <ProjectTopicContentPanel
+                topic={activeTopic}
+                language={language}
+                fillHeight
+                disabled={isBusy}
+                onChange={updateTopic}
+              />
             </div>
-          </>
-        )}
-      </AdminPanel>
-    </section>
+          </div>
+        </>
+      )}
+    </AdminFormShell>
   );
 }
 

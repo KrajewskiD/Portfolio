@@ -10,3 +10,10 @@ export function getStoragePublicUrl(
 
 export const PROFILE_IMAGES_BUCKET = "profile-images";
 export const PROJECT_IMAGES_BUCKET = "project-images";
+
+export function createBucketUrlResolver(
+  supabase: SupabaseClient,
+  bucket: string,
+): (path: string) => string {
+  return (path: string) => getStoragePublicUrl(supabase, bucket, path);
+}

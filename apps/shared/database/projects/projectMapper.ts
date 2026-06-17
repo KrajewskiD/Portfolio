@@ -54,3 +54,28 @@ export function mapProjectRow(
     topics,
   });
 }
+
+export function mapProjectToRow(project: Project, displayOrder: number) {
+  return {
+    id: project.id,
+    code: project.code ?? null,
+    title_pl: project.titlePl,
+    title_en: project.titleEn,
+    display_order: displayOrder,
+  };
+}
+
+export function mapProjectTopicToRow(
+  projectId: string,
+  topic: ProjectTopicContent,
+) {
+  return {
+    project_id: projectId,
+    topic_type_id: topic.id,
+    content_pl: topic.contentPl,
+    content_en: topic.contentEn,
+    image_path: topic.imagePath ?? null,
+    image_alt_pl: topic.imageAltPl,
+    image_alt_en: topic.imageAltEn,
+  };
+}

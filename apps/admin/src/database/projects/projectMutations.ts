@@ -1,6 +1,10 @@
 import { deleteProjectImages } from "@admin/lib/imageStorage";
 import { supabase } from "@admin/lib/supabase";
 import { getOrCreateTechnologyId } from "@shared/database";
+import {
+  mapProjectToRow,
+  mapProjectTopicToRow,
+} from "@shared/database/projects/projectMapper";
 import type { Project } from "@shared/database/types/project";
 
 function uniqueTechnologyNames(technologies: string[]): string[] {
@@ -16,13 +20,9 @@ async function upsertProjectRow(
   project: Project,
   displayOrder: number,
 ): Promise<void> {
-  const { error } = await supabase.from("projects").upsert({
-    id: project.id,
-    code: project.code ?? null,
-    title_pl: project.titlePl,
-    title_en: project.titleEn,
-    display_order: displayOrder,
-  });
+  const { error } = await supabase
+    .from("projects")
+    .upsert(mapProjectToRow(project, displayOrder));
 
   if (error) {
     throw error;
@@ -38,18 +38,11 @@ export async function updateProject(
 
 export async function saveProjectTopics(project: Project): Promise<void> {
   for (const topic of project.topics) {
-    const { error } = await supabase.from("project_topics").upsert(
-      {
-        project_id: project.id,
-        topic_type_id: topic.id,
-        content_pl: topic.contentPl,
-        content_en: topic.contentEn,
-        image_path: topic.imagePath ?? null,
-        image_alt_pl: topic.imageAltPl,
-        image_alt_en: topic.imageAltEn,
-      },
-      { onConflict: "project_id,topic_type_id" },
-    );
+    const { error } = await supabase
+      .from("project_topics")
+      .upsert(mapProjectTopicToRow(project.id, topic), {
+        onConflict: "project_id,topic_type_id",
+      });
 
     if (error) {
       throw error;

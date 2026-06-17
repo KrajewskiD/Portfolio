@@ -1,6 +1,8 @@
 import AdminAddButton from "@admin/components/ui/AdminAddButton";
+import AdminEmptyMessage from "@admin/components/ui/AdminEmptyMessage";
 import AdminExpandableSettingRow from "@admin/components/ui/AdminExpandableSettingRow";
 import AdminSortableList from "@admin/components/ui/AdminSortableList";
+import SettingsSection from "@admin/components/settings/SettingsSection";
 import { ADMIN_NAME_MAX_LENGTH } from "@shared/constants/adminSettings";
 import type { SkillGroupData } from "@shared/database/types/skill";
 
@@ -24,26 +26,21 @@ function SettingsSkillGroupsSection({
   onDeleteGroup,
 }: SettingsSkillGroupsSectionProps) {
   return (
-    <div className="admin-stack">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="admin-stack">
-          <h3 className="text-lg font-bold">Nazwy grup umiejętności</h3>
-          <p className="text-sm text-white/40">
-            Kliknij nazwę, aby edytować. Przeciągnij uchwyt, aby zmienić
-            kolejność grup.
-          </p>
-        </div>
+    <SettingsSection
+      title="Nazwy grup umiejętności"
+      description="Kliknij nazwę, aby edytować. Przeciągnij uchwyt, aby zmienić kolejność grup."
+      action={
         <AdminAddButton
           label="Dodaj grupę"
           disabled={disabled}
           onClick={onAddGroup}
         />
-      </div>
-
+      }
+    >
       {skillGroups.length === 0 ? (
-        <p className="text-white/50">
+        <AdminEmptyMessage inline>
           Brak grup umiejętności. Kliknij +, aby dodać pierwszą grupę.
-        </p>
+        </AdminEmptyMessage>
       ) : (
         <AdminSortableList
           items={skillGroups}
@@ -68,7 +65,7 @@ function SettingsSkillGroupsSection({
           )}
         </AdminSortableList>
       )}
-    </div>
+    </SettingsSection>
   );
 }
 
