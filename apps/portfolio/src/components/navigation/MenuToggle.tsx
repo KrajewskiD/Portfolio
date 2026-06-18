@@ -14,7 +14,7 @@ function MenuToggle({
   return (
     <button
       type="button"
-      className="flex h-12 w-12 items-center justify-center sm:hidden"
+      className="site-island__menu-toggle sm:hidden"
       aria-label={isOpen ? closeLabel : openLabel}
       aria-expanded={isOpen}
       aria-controls="mobile-menu"

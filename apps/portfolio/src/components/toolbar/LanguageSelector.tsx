@@ -7,7 +7,7 @@ type LanguageSelectorProps = {
 
 function LanguageSelector({ language, onChange }: LanguageSelectorProps) {
   return (
-    <div className="site-lang-toggle">
+    <div className="site-lang-toggle" role="group" aria-label="Language">
       <button
         type="button"
         lang="pl"
@@ -21,8 +21,6 @@ function LanguageSelector({ language, onChange }: LanguageSelectorProps) {
       >
         PL
       </button>
-
-      <span aria-hidden="true">/</span>
 
       <button
         type="button"

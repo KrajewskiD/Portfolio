@@ -3,7 +3,7 @@ type NavigationNameProps = {
 };
 
 function NavigationName({ children }: NavigationNameProps) {
-  return <span className="px-3 py-2 font-semibold">{children}</span>;
+  return <span className="site-island__name">{children}</span>;
 }
 
 export default NavigationName;

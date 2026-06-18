@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import LanguageSelector from "./toolbar/LanguageSelector";
 import NavigationItem from "./navigation/NavigationItem";
 import NavigationLinks from "./navigation/NavigationLinks";
 import NavigationName from "./navigation/NavigationName";
@@ -13,28 +14,36 @@ type HeaderProps = {
   navigationItems: NavigationLinkData[];
   language: Language;
   navigationText: Translations["navigation"];
+  onLanguageChange: (language: Language) => void;
 };
 
-function Header({ navigationItems, language, navigationText }: HeaderProps) {
+function Header({
+  navigationItems,
+  language,
+  navigationText,
+  onLanguageChange,
+}: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const getLabel = (item: NavigationLinkData) =>
     language === "pl" ? item.labelPl : item.labelEn;
 
   return (
-    <header className="site-header">
-      <div className="relative mr-auto w-fit sm:mx-auto">
-        <nav aria-label={navigationText.mainLabel} className="site-pill--nav">
-          <MenuToggle
-            isOpen={isMenuOpen}
-            openLabel={navigationText.openMenu}
-            closeLabel={navigationText.closeMenu}
-            onToggle={() => setIsMenuOpen((current) => !current)}
-          />
+    <header className="site-chrome">
+      <div className="site-island">
+        <nav aria-label={navigationText.mainLabel} className="site-island__nav">
+          <div className="site-island__brand">
+            <MenuToggle
+              isOpen={isMenuOpen}
+              openLabel={navigationText.openMenu}
+              closeLabel={navigationText.closeMenu}
+              onToggle={() => setIsMenuOpen((current) => !current)}
+            />
 
-          <NavigationName>Krajewski</NavigationName>
+            <NavigationName>Krajewski</NavigationName>
+          </div>
 
-          <NavigationLinks>
+          <NavigationLinks className="site-island__links">
             {navigationItems.map((item) => (
               <NavigationItem
                 key={item.id}
@@ -43,9 +52,14 @@ function Header({ navigationItems, language, navigationText }: HeaderProps) {
               />
             ))}
           </NavigationLinks>
+
+          <LanguageSelector
+            language={language}
+            onChange={onLanguageChange}
+          />
         </nav>
 
-        {isMenuOpen && (
+        {isMenuOpen ? (
           <MobileNavigation label={navigationText.mobileLabel}>
             <NavigationLinks mobile>
               {navigationItems.map((item) => (
@@ -59,7 +73,7 @@ function Header({ navigationItems, language, navigationText }: HeaderProps) {
               ))}
             </NavigationLinks>
           </MobileNavigation>
-        )}
+        ) : null}
       </div>
     </header>
   );

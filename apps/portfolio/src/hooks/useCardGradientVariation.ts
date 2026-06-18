@@ -8,7 +8,6 @@ const CARD_SURFACE_SELECTOR = [
   ".site-panel--alert",
   ".site-panel--empty",
   ".site-panel--empty-lg",
-  ".site-pill--nav",
 ].join(", ");
 
 function randomBetween(min: number, max: number): number {

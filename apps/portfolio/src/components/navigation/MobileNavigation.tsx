@@ -10,7 +10,7 @@ function MobileNavigation({ label, children }: MobileNavigationProps) {
     <nav
       id="mobile-menu"
       aria-label={label}
-      className="absolute top-full left-0 mt-2 w-48 rounded-xl border bg-white p-2 shadow-sm sm:hidden"
+      className="site-island__menu-panel sm:hidden"
     >
       {children}
     </nav>
