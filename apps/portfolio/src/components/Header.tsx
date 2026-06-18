@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import LanguageSelector from "./toolbar/LanguageSelector";
 import NavigationItem from "./navigation/NavigationItem";
@@ -6,6 +6,7 @@ import NavigationLinks from "./navigation/NavigationLinks";
 import NavigationName from "./navigation/NavigationName";
 import MobileNavigation from "./navigation/MobileNavigation";
 import MenuToggle from "./navigation/MenuToggle";
+import useAnimatedWidth from "@portfolio/hooks/useAnimatedWidth";
 import type { NavigationLinkData } from "@shared/database/types/link";
 import type { Language } from "@shared/database/types/language";
 import type { Translations } from "../locales/translations";
@@ -24,13 +25,16 @@ function Header({
   onLanguageChange,
 }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const islandRef = useRef<HTMLDivElement>(null);
 
   const getLabel = (item: NavigationLinkData) =>
     language === "pl" ? item.labelPl : item.labelEn;
 
+  useAnimatedWidth(islandRef, [language, navigationItems, isMenuOpen]);
+
   return (
     <header className="site-chrome">
-      <div className="site-island">
+      <div ref={islandRef} className="site-island">
         <nav aria-label={navigationText.mainLabel} className="site-island__nav">
           <div className="site-island__brand">
             <MenuToggle

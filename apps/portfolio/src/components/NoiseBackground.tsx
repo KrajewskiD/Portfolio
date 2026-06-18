@@ -50,9 +50,9 @@ function NoiseBackground() {
             />
             <feColorMatrix
               type="matrix"
-              values="0 0 0 0 0.35
-                      0 0 0 0 0.38
-                      0 0 0 0 0.41
+              values="0 0 0 0 0.035
+                      0 0 0 0 0.039
+                      0 0 0 0 0.047
                       0 0 0 0 0.55 0"
             />
           </filter>

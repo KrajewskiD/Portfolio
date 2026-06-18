@@ -158,6 +158,11 @@
     transform: translateY(-2px);
   }
 
+  .site-project-thumb:hover:not(.site-project-thumb--active) {
+    border-color: var(--color-accent-soft);
+    box-shadow: 0 0 0 1px var(--color-accent-soft);
+  }
+
   .site-project-thumb--active {
     border-color: var(--color-accent);
     box-shadow: 0 0 0 1px var(--color-accent);
@@ -289,11 +294,11 @@
   }
 
   .site-nav-link {
-    @apply px-3 py-1.5 text-sm text-subtle transition-colors hover:text-foreground;
+    @apply px-3 py-1.5 text-sm text-subtle transition-colors hover:text-accent;
   }
 
   .site-nav-link--mobile {
-    @apply block rounded-xl px-3 py-2 text-foreground hover:bg-foreground/8;
+    @apply block rounded-xl px-3 py-2 text-foreground transition-colors hover:bg-accent/12 hover:text-accent;
   }
 
   .site-chrome {
@@ -315,6 +320,10 @@
     border-radius: 0 0 1.5rem 1.5rem;
     background-color: var(--island-bg);
     box-shadow: var(--shadow-card);
+  }
+
+  .site-island--resizing {
+    overflow-x: clip;
   }
 
   .site-island::before,
@@ -350,6 +359,7 @@
     align-items: center;
     gap: 0.75rem;
     padding: 0.625rem 1rem 0.875rem;
+    white-space: nowrap;
   }
 
   @media (min-width: 640px) {
@@ -398,7 +408,7 @@
   }
 
   .site-island__menu-toggle:hover {
-    background-color: rgb(247 247 245 / 0.08);
+    background-color: color-mix(in srgb, var(--color-foreground) 8%, transparent);
   }
 
   .site-island__menu-panel {
@@ -415,22 +425,23 @@
 
   .site-island .site-lang-toggle {
     flex-shrink: 0;
-    display: flex;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.125rem;
     border-radius: 9999px;
     border: 1px solid var(--color-border);
-    background-color: rgb(247 247 245 / 0.04);
+    background-color: color-mix(in srgb, var(--color-foreground) 4%, transparent);
     padding: 0.1875rem;
   }
 
   .site-island .site-lang-button {
-    min-width: auto;
+    min-width: 0;
     border-radius: 9999px;
     padding: 0.3125rem 0.625rem;
     font-size: 0.75rem;
     font-weight: 600;
     line-height: 1;
+    text-align: center;
     transition:
       color 0.2s ease,
       background-color 0.2s ease;
@@ -448,7 +459,7 @@
 
   .site-island .site-lang-button--inactive:hover {
     color: var(--color-foreground);
-    background-color: rgb(247 247 245 / 0.08);
+    background-color: color-mix(in srgb, var(--color-foreground) 8%, transparent);
   }
 
   .site-footer {

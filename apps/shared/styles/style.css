@@ -1,13 +1,18 @@
 @theme {
   /* Colors */
-  --color-background: #2b2d31;
-  --color-foreground: #f7f7f5;
-  --color-surface: #5a6068;
-  --color-muted: #d8dadd;
-  --color-subtle: rgb(216 218 221 / 0.72);
-  --color-border: rgb(247 247 245 / 0.12);
-  --color-skeleton: rgb(247 247 245 / 0.1);
+  --color-background: #090a0c;
+  --color-foreground: #e4e5e8;
+  --color-surface: #1e2024;
+  --color-muted: #8a8d93;
+  --color-subtle: #8a8d93;
+  --color-border: #2a2c31;
+  --color-skeleton: rgb(228 229 232 / 0.08);
   --color-accent: #ff6b4a;
+  --color-accent-soft: color-mix(
+    in srgb,
+    var(--color-accent) 32%,
+    var(--color-background)
+  );
 
   /* Shadows */
   --shadow-card: 0 12px 32px rgb(0 0 0 / 0.28), 0 4px 10px rgb(0 0 0 / 0.16);
