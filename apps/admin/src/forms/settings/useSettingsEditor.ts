@@ -202,8 +202,6 @@ export function useSettingsEditor({
         id: nextId,
         name: "Nowa umiejętność",
         level: 1,
-        descriptionPl: "",
-        descriptionEn: "",
       };
 
       setSettings((current) =>

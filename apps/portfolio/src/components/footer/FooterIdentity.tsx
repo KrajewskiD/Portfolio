@@ -6,8 +6,10 @@ type FooterIdentityProps = {
 function FooterIdentity({ name, description }: FooterIdentityProps) {
   return (
     <div>
-      <p className="font-semibold text-foreground">{name}</p>
-      <p className="site-body--compact mt-2 text-muted">{description}</p>
+      {name ? <p className="font-semibold text-foreground">{name}</p> : null}
+      {description ? (
+        <p className="site-body--compact mt-2 text-muted">{description}</p>
+      ) : null}
     </div>
   );
 }

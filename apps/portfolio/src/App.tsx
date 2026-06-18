@@ -60,8 +60,10 @@ function App() {
               <HomePage
                 language={language}
                 profile={profile}
+                footerLinks={footerLinks}
                 isProfileLoading={isProfileLoading}
                 isProfileError={isProfileError}
+                socialLinksLabel={translation.footer.socialLinksLabel}
               />
             }
           />

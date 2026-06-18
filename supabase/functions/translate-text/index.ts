@@ -152,8 +152,8 @@ async function callGemini(
           parts: [{
             text:
               `Translate each object's "text" field from ${sourceLanguage} to ${targetLanguage}. ` +
-              `Keep every "id" unchanged. Return ONLY a JSON array of objects ` +
-              `{"id":"...","text":"..."} with the same ids. No markdown.\n\n` +
+              `Keep every "id" unchanged. Return ONLY a raw JSON array: ` +
+              `[{"id":"...","text":"..."}]. No markdown, no code fences, no commentary.\n\n` +
               `Input:\n${inputJson}`,
           }],
         }],
@@ -166,8 +166,44 @@ async function callGemini(
   );
 }
 
-function parseGeminiTranslations(raw: string): TranslationItem[] {
-  const parsed = JSON.parse(raw) as unknown;
+function extractJsonPayload(raw: string): string {
+  const trimmed = raw.trim();
+  const fenced = trimmed.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
+
+  if (fenced) {
+    return fenced[1].trim();
+  }
+
+  const arrayStart = trimmed.indexOf("[");
+  const arrayEnd = trimmed.lastIndexOf("]");
+
+  if (arrayStart !== -1 && arrayEnd > arrayStart) {
+    return trimmed.slice(arrayStart, arrayEnd + 1);
+  }
+
+  const objectStart = trimmed.indexOf("{");
+  const objectEnd = trimmed.lastIndexOf("}");
+
+  if (objectStart !== -1 && objectEnd > objectStart) {
+    return trimmed.slice(objectStart, objectEnd + 1);
+  }
+
+  return trimmed;
+}
+
+function normalizeGeminiTranslationArray(parsed: unknown): TranslationItem[] {
+  if (
+    !Array.isArray(parsed) &&
+    typeof parsed === "object" &&
+    parsed !== null
+  ) {
+    const record = parsed as Record<string, unknown>;
+    const nested = record.translations ?? record.items ?? record.data;
+
+    if (Array.isArray(nested)) {
+      parsed = nested;
+    }
+  }
 
   if (!Array.isArray(parsed)) {
     throw new Error("Invalid Gemini JSON shape");
@@ -188,6 +224,22 @@ function parseGeminiTranslations(raw: string): TranslationItem[] {
       text: (item as TranslationItem).text.trim(),
     };
   });
+}
+
+function parseGeminiTranslations(raw: string): TranslationItem[] {
+  const payload = extractJsonPayload(raw);
+
+  try {
+    return normalizeGeminiTranslationArray(JSON.parse(payload));
+  } catch (error) {
+    console.error(
+      "Failed to parse Gemini JSON:",
+      error,
+      "raw:",
+      raw.slice(0, 500),
+    );
+    throw new Error("Invalid Gemini JSON");
+  }
 }
 
 async function translateBatchWithGemini(
@@ -321,6 +373,10 @@ Deno.serve(async (req) => {
     }
 
     if (e instanceof Error && e.message === "Empty translation") {
+      return json({ error: "Translation failed" }, 502, req);
+    }
+
+    if (e instanceof Error && e.message === "Invalid Gemini JSON") {
       return json({ error: "Translation failed" }, 502, req);
     }
 

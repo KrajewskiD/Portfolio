@@ -53,11 +53,6 @@ function SkillsSection({
                 <SkillItem
                   key={skill.id}
                   name={skill.name}
-                  description={
-                    language === "pl"
-                      ? skill.descriptionPl
-                      : skill.descriptionEn
-                  }
                   level={skill.level}
                   levelLabel={levelLabel}
                 />
