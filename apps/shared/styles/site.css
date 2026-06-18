@@ -408,7 +408,11 @@
   }
 
   .site-island__menu-toggle:hover {
-    background-color: color-mix(in srgb, var(--color-foreground) 8%, transparent);
+    background-color: color-mix(
+      in srgb,
+      var(--color-foreground) 8%,
+      transparent
+    );
   }
 
   .site-island__menu-panel {
@@ -430,7 +434,11 @@
     gap: 0.125rem;
     border-radius: 9999px;
     border: 1px solid var(--color-border);
-    background-color: color-mix(in srgb, var(--color-foreground) 4%, transparent);
+    background-color: color-mix(
+      in srgb,
+      var(--color-foreground) 4%,
+      transparent
+    );
     padding: 0.1875rem;
   }
 
@@ -459,7 +467,11 @@
 
   .site-island .site-lang-button--inactive:hover {
     color: var(--color-foreground);
-    background-color: color-mix(in srgb, var(--color-foreground) 8%, transparent);
+    background-color: color-mix(
+      in srgb,
+      var(--color-foreground) 8%,
+      transparent
+    );
   }
 
   .site-footer {
@@ -503,19 +515,30 @@
   }
 
   .site-topic-tab {
-    @apply border-l-2 p-3 sm:shrink-0 sm:whitespace-nowrap sm:border-b-2 sm:border-l-0 sm:px-4 sm:py-3;
+    @apply cursor-pointer border-l-2 p-3 sm:shrink-0 sm:whitespace-nowrap sm:border-b-2 sm:border-l-0 sm:px-4 sm:py-3;
+    transition:
+      border-color 0.2s ease,
+      opacity 0.2s ease,
+      color 0.2s ease;
   }
 
   .site-topic-tab--active {
-    @apply border-accent font-semibold text-foreground;
+    border-color: var(--color-accent);
+    @apply font-semibold text-foreground;
   }
 
   .site-topic-tab--inactive {
     @apply border-transparent opacity-60;
   }
 
+  .site-topic-tab--inactive:hover {
+    border-color: var(--color-accent-soft);
+    @apply opacity-100;
+  }
+
   .site-topic-panel {
-    @apply rounded-xl border-l-2 border-border p-4 sm:mt-5;
+    @apply rounded-xl border-l-2 p-4 sm:mt-5;
+    border-left-color: var(--color-accent-soft);
   }
 
   .site-topic-list {

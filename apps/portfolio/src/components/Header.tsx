@@ -57,10 +57,7 @@ function Header({
             ))}
           </NavigationLinks>
 
-          <LanguageSelector
-            language={language}
-            onChange={onLanguageChange}
-          />
+          <LanguageSelector language={language} onChange={onLanguageChange} />
         </nav>
 
         {isMenuOpen ? (
