@@ -1,4 +1,5 @@
 import AboutSection from "../features/AboutSection";
+import ProjectShowcaseSection from "../features/ProjectShowcaseSection";
 import ProjectsSection from "../features/ProjectsSection";
 import SkillsSection from "../features/SkillsSection";
 import { translations } from "../locales";
@@ -49,6 +50,14 @@ function HomePage({
         label={translation.about.label}
         noImage={translation.about.noImage}
         socialLinksLabel={socialLinksLabel}
+        language={language}
+      />
+
+      <ProjectShowcaseSection
+        projects={projects}
+        isLoading={areProjectsPending}
+        isError={areProjectsError}
+        errorMessage={translation.showcase.loadError}
         language={language}
       />
 

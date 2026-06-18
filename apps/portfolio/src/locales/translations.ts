@@ -4,6 +4,9 @@ export type Translations = {
     noImage: string;
     loadError: string;
   };
+  showcase: {
+    loadError: string;
+  };
   projects: {
     label: string;
     title: string;

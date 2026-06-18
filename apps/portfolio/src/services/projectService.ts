@@ -1,6 +1,7 @@
 import {
   getProjectsFromDatabase,
   PROJECT_IMAGES_BUCKET,
+  PROJECT_VIDEOS_BUCKET,
   createBucketUrlResolver,
 } from "@shared/database";
 
@@ -11,6 +12,15 @@ const getProjectImagePublicUrl = createBucketUrlResolver(
   PROJECT_IMAGES_BUCKET,
 );
 
+const getProjectVideoPublicUrl = createBucketUrlResolver(
+  supabase,
+  PROJECT_VIDEOS_BUCKET,
+);
+
 export function getProjects() {
-  return getProjectsFromDatabase(supabase, getProjectImagePublicUrl);
+  return getProjectsFromDatabase(
+    supabase,
+    getProjectImagePublicUrl,
+    getProjectVideoPublicUrl,
+  );
 }

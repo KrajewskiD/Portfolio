@@ -6,6 +6,9 @@ export const pl: Translations = {
     noImage: "Brak zdjęcia",
     loadError: "Nie udało się wczytać profilu.",
   },
+  showcase: {
+    loadError: "Nie udało się wczytać prezentacji projektów.",
+  },
   projects: {
     label: "projekty",
     title: "Wybrane projekty",

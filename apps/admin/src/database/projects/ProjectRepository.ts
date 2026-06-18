@@ -1,4 +1,4 @@
-import { getProjectImagePublicUrl } from "@admin/lib/imageStorage";
+import { getProjectImagePublicUrl, getProjectVideoPublicUrl } from "@admin/lib/imageStorage";
 import { supabase } from "@admin/lib/supabase";
 import { getProjectsFromDatabase } from "@shared/database";
 import type { Project } from "@shared/database/types/project";
@@ -11,7 +11,11 @@ import {
 } from "./projectMutations";
 
 export function getAdminProjects(): Promise<Project[]> {
-  return getProjectsFromDatabase(supabase, getProjectImagePublicUrl);
+  return getProjectsFromDatabase(
+    supabase,
+    getProjectImagePublicUrl,
+    getProjectVideoPublicUrl,
+  );
 }
 
 export async function saveAdminProjects(projects: Project[]): Promise<void> {

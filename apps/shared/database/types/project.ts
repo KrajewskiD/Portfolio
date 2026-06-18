@@ -20,5 +20,7 @@ export type Project = {
   titlePl: string;
   titleEn: string;
   technologies: string[];
+  videoPath?: string;
+  videoUrl?: string;
   topics: ProjectTopics;
 };

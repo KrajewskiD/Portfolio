@@ -6,6 +6,9 @@ export const en: Translations = {
     noImage: "No profile image",
     loadError: "The profile could not be loaded.",
   },
+  showcase: {
+    loadError: "The project showcase could not be loaded.",
+  },
   projects: {
     label: "projects",
     title: "Selected Work",

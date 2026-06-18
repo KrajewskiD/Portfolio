@@ -16,6 +16,7 @@ function isProjectTopicId(value: string): value is ProjectTopicId {
 export function mapProjectRow(
   project: ProjectRow,
   getProjectImagePublicUrl: (path: string) => string,
+  getProjectVideoPublicUrl: (path: string) => string = getProjectImagePublicUrl,
 ): Project {
   const topics: ProjectTopicContent[] = project.project_topics
     .filter((topic) => isProjectTopicId(topic.topic_type_id))
@@ -45,12 +46,19 @@ export function mapProjectRow(
     .toSorted((first, second) => first.display_order - second.display_order)
     .flatMap((item) => (item.technologies ? [item.technologies.name] : []));
 
+  const videoPath = project.video_path ?? undefined;
+  const videoUrl = videoPath
+    ? getProjectVideoPublicUrl(videoPath)
+    : undefined;
+
   return normalizeProjectTopics({
     id: project.id,
     code: project.code ?? undefined,
     titlePl: project.title_pl,
     titleEn: project.title_en,
     technologies,
+    videoPath,
+    videoUrl,
     topics,
   });
 }
@@ -62,6 +70,7 @@ export function mapProjectToRow(project: Project, displayOrder: number) {
     title_pl: project.titlePl,
     title_en: project.titleEn,
     display_order: displayOrder,
+    video_path: project.videoPath ?? null,
   };
 }
 

@@ -7,6 +7,7 @@ import type { ProjectRow } from "./projectRows";
 export async function getProjectsFromDatabase(
   supabase: SupabaseClient,
   getProjectImagePublicUrl: (path: string) => string,
+  getProjectVideoPublicUrl: (path: string) => string = getProjectImagePublicUrl,
 ): Promise<Project[]> {
   const { data, error } = await supabase
     .from("projects")
@@ -17,6 +18,7 @@ export async function getProjectsFromDatabase(
       title_pl,
       title_en,
       display_order,
+      video_path,
       project_topics (
         topic_type_id,
         content_pl,
@@ -41,6 +43,6 @@ export async function getProjectsFromDatabase(
   }
 
   return data.map((project) =>
-    mapProjectRow(project, getProjectImagePublicUrl),
+    mapProjectRow(project, getProjectImagePublicUrl, getProjectVideoPublicUrl),
   );
 }

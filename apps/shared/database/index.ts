@@ -12,6 +12,7 @@ export { getSkillGroupsFromDatabase } from "./skills";
 export {
   PROFILE_IMAGES_BUCKET,
   PROJECT_IMAGES_BUCKET,
+  PROJECT_VIDEOS_BUCKET,
   createBucketUrlResolver,
   getStoragePublicUrl,
 } from "./storage/storageUrls";

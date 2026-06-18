@@ -6,6 +6,7 @@ import ProjectTopicContentPanel, {
 import ProjectTopicImagePanel, {
   type ProjectTopicImageField,
 } from "@admin/components/projects/ProjectTopicImagePanel";
+import ProjectVideoPanel from "@admin/components/projects/ProjectVideoPanel";
 import ProjectTopicTabs from "@admin/components/projects/ProjectTopicTabs";
 import AdminAddButton from "@admin/components/ui/AdminAddButton";
 import AdminDeleteButton from "@admin/components/ui/AdminDeleteButton";
@@ -32,8 +33,11 @@ import { useTranslateFields } from "@admin/hooks/useTranslateFields";
 import { useTranslationOverlay } from "@admin/context/TranslationOverlayContext";
 import {
   deleteProjectTopicImage,
+  deleteProjectVideo,
   getProjectImagePublicUrl,
+  getProjectVideoPublicUrl,
   uploadProjectTopicImage,
+  uploadProjectVideo,
 } from "@admin/lib/imageStorage";
 import type { AdminFormProps } from "@admin/types/adminForms";
 import {
@@ -57,6 +61,10 @@ function topicImageKey(projectId: string, topicId: ProjectTopicId) {
   return `${projectId}:${topicId}`;
 }
 
+function projectVideoKey(projectId: string) {
+  return `${projectId}:video`;
+}
+
 function ProjectsForm({ language }: AdminFormProps) {
   const {
     pendingFiles: pendingTopicImages,
@@ -67,67 +75,109 @@ function ProjectsForm({ language }: AdminFormProps) {
     discardPending: discardPendingImages,
     clearKeysForPrefix,
   } = usePendingKeyedImages();
+  const {
+    pendingFiles: pendingProjectVideos,
+    setPendingFiles: setPendingProjectVideos,
+    markedForRemovals: pendingProjectVideoRemovals,
+    setMarkedForRemovals: setPendingProjectVideoRemovals,
+    hasPendingEdits: hasPendingVideoEdits,
+    discardPending: discardPendingVideos,
+  } = usePendingKeyedImages();
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string>();
 
   const prepareBeforeSave = useCallback(
     async (currentProjects: Project[]) => {
       const normalizedProjects = normalizeProjectIds(currentProjects);
-      const hasPendingUploads = Object.keys(pendingTopicImages).length > 0;
-      const hasPendingRemovals = Object.values(pendingTopicImageRemovals).some(
-        Boolean,
-      );
+      const hasPendingImageUploads = Object.keys(pendingTopicImages).length > 0;
+      const hasPendingImageRemovals = Object.values(
+        pendingTopicImageRemovals,
+      ).some(Boolean);
+      const hasPendingVideoUploads = Object.keys(pendingProjectVideos).length > 0;
+      const hasPendingVideoRemovals = Object.values(
+        pendingProjectVideoRemovals,
+      ).some(Boolean);
 
-      if (!hasPendingUploads && !hasPendingRemovals) {
+      if (
+        !hasPendingImageUploads &&
+        !hasPendingImageRemovals &&
+        !hasPendingVideoUploads &&
+        !hasPendingVideoRemovals
+      ) {
         return normalizedProjects;
       }
 
       const updatedProjects = await Promise.all(
-        normalizedProjects.map(async (project) => ({
-          ...project,
-          topics: await Promise.all(
-            project.topics.map(async (topic) => {
-              const key = topicImageKey(project.id, topic.id);
-              const file = pendingTopicImages[key];
-              const markedForRemoval = pendingTopicImageRemovals[key];
+        normalizedProjects.map(async (project) => {
+          const videoKey = projectVideoKey(project.id);
+          const pendingVideoFile = pendingProjectVideos[videoKey];
+          const pendingVideoRemoval = pendingProjectVideoRemovals[videoKey];
+          let nextVideoPath = project.videoPath;
+          let nextVideoUrl = project.videoUrl;
 
-              if (file) {
-                const imagePath = await uploadProjectTopicImage(
-                  project.id,
-                  topic.id,
-                  file,
-                );
+          if (pendingVideoFile) {
+            nextVideoPath = await uploadProjectVideo(project.id, pendingVideoFile);
+            nextVideoUrl = getProjectVideoPublicUrl(nextVideoPath);
+          } else if (pendingVideoRemoval && project.videoPath) {
+            await deleteProjectVideo(project.videoPath);
+            nextVideoPath = undefined;
+            nextVideoUrl = undefined;
+          }
 
-                return {
-                  ...topic,
-                  imagePath,
-                  imageUrl: getProjectImagePublicUrl(imagePath),
-                };
-              }
+          return {
+            ...project,
+            videoPath: nextVideoPath,
+            videoUrl: nextVideoUrl,
+            topics: await Promise.all(
+              project.topics.map(async (topic) => {
+                const key = topicImageKey(project.id, topic.id);
+                const file = pendingTopicImages[key];
+                const markedForRemoval = pendingTopicImageRemovals[key];
 
-              if (markedForRemoval && topic.imagePath) {
-                await deleteProjectTopicImage(topic.imagePath);
+                if (file) {
+                  const imagePath = await uploadProjectTopicImage(
+                    project.id,
+                    topic.id,
+                    file,
+                  );
 
-                return {
-                  ...topic,
-                  imagePath: undefined,
-                  imageUrl: undefined,
-                };
-              }
+                  return {
+                    ...topic,
+                    imagePath,
+                    imageUrl: getProjectImagePublicUrl(imagePath),
+                  };
+                }
 
-              return topic;
-            }),
-          ),
-        })),
+                if (markedForRemoval && topic.imagePath) {
+                  await deleteProjectTopicImage(topic.imagePath);
+
+                  return {
+                    ...topic,
+                    imagePath: undefined,
+                    imageUrl: undefined,
+                  };
+                }
+
+                return topic;
+              }),
+            ),
+          };
+        }),
       );
 
       setPendingTopicImages({});
       setPendingTopicImageRemovals({});
+      setPendingProjectVideos({});
+      setPendingProjectVideoRemovals({});
       return updatedProjects;
     },
     [
+      pendingProjectVideoRemovals,
+      pendingProjectVideos,
       pendingTopicImageRemovals,
       pendingTopicImages,
+      setPendingProjectVideoRemovals,
+      setPendingProjectVideos,
       setPendingTopicImageRemovals,
       setPendingTopicImages,
     ],
@@ -148,8 +198,11 @@ function ProjectsForm({ language }: AdminFormProps) {
     loadValue: getAdminProjects,
     saveValue: saveAdminProjects,
     prepareBeforeSave,
-    extraDirty: hasPendingImageEdits,
-    onDiscard: discardPendingImages,
+    extraDirty: hasPendingImageEdits || hasPendingVideoEdits,
+    onDiscard: () => {
+      discardPendingImages();
+      discardPendingVideos();
+    },
   });
 
   const { isOverlayOpen } = useTranslationOverlay();
@@ -322,12 +375,25 @@ function ProjectsForm({ language }: AdminFormProps) {
       )
     : "";
 
+  const activeProjectVideoKey = activeProject
+    ? projectVideoKey(activeProject.id)
+    : "";
+
   const { onFileSelect, onImageMarkedForRemovalChange } =
     useActiveTopicImageHandlers(
       activeTopicImageKey,
       setPendingTopicImages,
       setPendingTopicImageRemovals,
     );
+
+  const {
+    onFileSelect: onVideoFileSelect,
+    onImageMarkedForRemovalChange: onVideoMarkedForRemovalChange,
+  } = useActiveTopicImageHandlers(
+    activeProjectVideoKey,
+    setPendingProjectVideos,
+    setPendingProjectVideoRemovals,
+  );
 
   return (
     <AdminFormShell
@@ -412,6 +478,17 @@ function ProjectsForm({ language }: AdminFormProps) {
                 onFileSelect={onFileSelect}
                 onImageMarkedForRemovalChange={onImageMarkedForRemovalChange}
                 onChange={updateTopic}
+              />
+
+              <ProjectVideoPanel
+                videoUrl={activeProject.videoUrl}
+                selectedFile={pendingProjectVideos[activeProjectVideoKey] ?? null}
+                videoMarkedForRemoval={
+                  pendingProjectVideoRemovals[activeProjectVideoKey] ?? false
+                }
+                disabled={isBusy}
+                onFileSelect={onVideoFileSelect}
+                onVideoMarkedForRemovalChange={onVideoMarkedForRemovalChange}
               />
             </div>
 

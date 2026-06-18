@@ -4,6 +4,7 @@ export type ProjectRow = {
   title_pl: string;
   title_en: string;
   display_order: number;
+  video_path: string | null;
   project_topics: {
     topic_type_id: string;
     content_pl: string;
