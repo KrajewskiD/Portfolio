@@ -32,7 +32,7 @@ function ProjectTopic({
         src={iconSrc}
         alt=""
         aria-hidden="true"
-        className="h-5 w-5 sm:hidden"
+        className="site-topic-tab__icon h-5 w-5 sm:hidden"
       />
 
       <span className="hidden sm:inline">{label}</span>

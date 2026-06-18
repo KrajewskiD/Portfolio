@@ -522,6 +522,10 @@
       color 0.2s ease;
   }
 
+  .site-topic-tab__icon {
+    filter: brightness(0) invert(1);
+  }
+
   .site-topic-tab--active {
     border-color: var(--color-accent);
     @apply font-semibold text-foreground;
