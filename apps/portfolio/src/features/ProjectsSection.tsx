@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import ProjectListItem from "@portfolio/components/projects/ProjectListItem";
 import ProjectSkeleton from "@portfolio/components/projects/ProjectSkeleton";
+import ProjectThumbnail from "@portfolio/components/projects/ProjectThumbnail";
 import SectionHeading from "@portfolio/components/sections/SectionHeading";
 import { DEFAULT_PROJECT_TOPIC_ID } from "@shared/database/types/projectTopic";
 import type { Language } from "@shared/database/types/language";
@@ -30,9 +31,26 @@ function ProjectsSection({
   emptyMessage,
   language,
 }: ProjectsSectionProps) {
+  const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   const [activeTopics, setActiveTopics] = useState<
     Record<string, ProjectTopicId>
   >({});
+
+  useEffect(() => {
+    if (!projects?.length) {
+      return;
+    }
+
+    setActiveProjectId((current) =>
+      current && projects.some((project) => project.id === current)
+        ? current
+        : projects[0].id,
+    );
+  }, [projects]);
+
+  const activeProject = projects?.find(
+    (project) => project.id === activeProjectId,
+  );
 
   return (
     <section id="projects" className="site-section--projects">
@@ -49,23 +67,39 @@ function ProjectsSection({
           <p>{emptyMessage}</p>
         </div>
       ) : (
-        projects.map((project) => (
-          <ProjectListItem
-            key={project.id}
-            project={project}
-            language={language}
-            noImage={noImage}
-            selectedTopicId={
-              activeTopics[project.id] ?? DEFAULT_PROJECT_TOPIC_ID
-            }
-            onTopicChange={(topicId) =>
-              setActiveTopics((current) => ({
-                ...current,
-                [project.id]: topicId,
-              }))
-            }
-          />
-        ))
+        <>
+          <div className="site-project-layout">
+            <div className="site-project-grid">
+              {projects.map((project) => (
+                <ProjectThumbnail
+                  key={project.id}
+                  project={project}
+                  language={language}
+                  isActive={project.id === activeProjectId}
+                  onSelect={() => setActiveProjectId(project.id)}
+                />
+              ))}
+            </div>
+
+            {activeProject ? (
+              <ProjectListItem
+                key={activeProject.id}
+                project={activeProject}
+                language={language}
+                noImage={noImage}
+                selectedTopicId={
+                  activeTopics[activeProject.id] ?? DEFAULT_PROJECT_TOPIC_ID
+                }
+                onTopicChange={(topicId) =>
+                  setActiveTopics((current) => ({
+                    ...current,
+                    [activeProject.id]: topicId,
+                  }))
+                }
+              />
+            ) : null}
+          </div>
+        </>
       )}
     </section>
   );
