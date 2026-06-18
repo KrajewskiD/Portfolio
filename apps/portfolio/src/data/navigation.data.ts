@@ -1,4 +1,4 @@
-import type { NavigationLinkData } from "@shared/types/link";
+import type { NavigationLinkData } from "@shared/database/types/link";
 
 export const navigationData: NavigationLinkData[] = [
   {

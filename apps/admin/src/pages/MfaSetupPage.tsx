@@ -7,6 +7,7 @@ import {
 } from "../services/mfaService";
 import AuthLayout from "../layouts/AuthLayout";
 import MfaCodeInput from "../components/MfaCodeInput";
+import AuthButton from "../components/AuthButton";
 
 function MfaSetupPage() {
   const [enrollment, setEnrollment] = useState<MfaEnrollment | null>(null);
@@ -87,14 +88,13 @@ function MfaSetupPage() {
             autoFocus
           />
 
-          <button
+          <AuthButton
             type="button"
             onClick={handleVerify}
             disabled={isLoading || code.length !== 6}
-            className="rounded-full border border-white/30 px-5 py-3 font-bold transition hover:bg-white hover:text-black disabled:cursor-not-allowed disabled:opacity-40"
           >
-            {isLoading ? "Weryfikowanie..." : "Potwierdź"}
-          </button>
+            {isLoading ? "Weryfikowanie..." : "Zweryfikuj i przejdz dalej"}
+          </AuthButton>
         </>
       )}
 

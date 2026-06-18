@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import MainLayout from "./layouts/MainLayout";
 import HomePage from "./pages/HomePage";
 import NotFoundPage from "./pages/NotFoundPage";
-import type { Language } from "@shared/types/language";
+import type { Language } from "@shared/database/types/language";
 import { translations } from "./locales";
 import { navigationData } from "./data/navigation.data";
 import { useProfile } from "./hooks/useProfile";
@@ -43,8 +43,10 @@ function App() {
       <MainLayout
         profile={profile}
         footerLinks={footerLinks}
-        isFooterLoading={isProfileLoading || areFooterLinksLoading}
-        isFooterError={isProfileError || areFooterLinksError}
+        isProfileLoading={isProfileLoading}
+        isProfileError={isProfileError}
+        areFooterLinksLoading={areFooterLinksLoading}
+        areFooterLinksError={areFooterLinksError}
         footerText={translation.footer}
         navigationItems={navigationData}
         navigationText={translation.navigation}

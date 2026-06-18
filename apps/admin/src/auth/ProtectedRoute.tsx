@@ -1,12 +1,12 @@
 import { Navigate, Outlet } from "react-router";
-import { useAuth } from "./AuthProvider";
+import { useAuth } from "./useAuth";
 import AuthErrorPage from "../pages/AuthErrorPage";
 
 function ProtectedRoute() {
   const { session, authStatus, isLoading } = useAuth();
 
   if (isLoading) {
-    return <p>Sprawdzanie uprawnień...</p>;
+    return null;
   }
 
   if (authStatus === "error") {

@@ -1,0 +1,1 @@
+export { getOrCreateTechnologyId } from "./getOrCreateTechnologyId";

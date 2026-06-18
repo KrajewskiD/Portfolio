@@ -2,6 +2,7 @@ import { useState } from "react";
 import { adminRoute, getAdminUrl } from "@shared/config/routes";
 import { verifyExistingMfa } from "../services/mfaService";
 import AuthLayout from "../layouts/AuthLayout";
+import AuthButton from "../components/AuthButton";
 import MfaCodeInput from "../components/MfaCodeInput";
 
 function MfaVerifyPage() {
@@ -43,14 +44,13 @@ function MfaVerifyPage() {
         autoFocus
       />
 
-      <button
+      <AuthButton
         type="button"
         onClick={handleVerify}
         disabled={isLoading || code.length !== 6}
-        className="rounded-full border border-white/30 px-5 py-3 font-bold transition hover:bg-white hover:text-black disabled:cursor-not-allowed disabled:opacity-40"
       >
         {isLoading ? "Weryfikowanie..." : "Potwierdź"}
-      </button>
+      </AuthButton>
 
       {errorMessage && (
         <p role="alert" className="text-sm text-red-300">

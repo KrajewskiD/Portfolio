@@ -10,12 +10,6 @@ export type Translations = {
     noImage: string;
     loadError: string;
     emptyMessage: string;
-    topics: {
-      overview: string;
-      features: string;
-      technologies: string;
-      architecture: string;
-    };
   };
   skills: {
     label: string;

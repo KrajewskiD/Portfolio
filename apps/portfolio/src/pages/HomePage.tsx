@@ -2,10 +2,10 @@ import AboutSection from "../features/AboutSection";
 import ProjectsSection from "../features/ProjectsSection";
 import SkillsSection from "../features/SkillsSection";
 import { translations } from "../locales";
-import type { Language } from "@shared/types/language";
+import type { Language } from "@shared/database/types/language";
 import { useProjects } from "../hooks/useProjects";
 import { useSkillGroups } from "../hooks/useSkillGroups";
-import type { Profile } from "@shared/types/profile";
+import type { Profile } from "@shared/database/types/profile";
 
 type HomePageProps = {
   language: Language;
@@ -53,7 +53,6 @@ function HomePage({
         emptyMessage={translation.projects.emptyMessage}
         label={translation.projects.label}
         title={translation.projects.title}
-        topicLabels={translation.projects.topics}
         noImage={translation.projects.noImage}
         language={language}
       />

@@ -1,4 +1,4 @@
-import type { Language } from "@shared/types/language";
+import type { Language } from "@shared/database/types/language";
 
 type LanguageSelectorProps = {
   language: Language;
