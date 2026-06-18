@@ -46,7 +46,7 @@ function ProjectTopicsGroup({
       <div
         role="tablist"
         aria-orientation="horizontal"
-        className="col-start-2 row-start-1 flex translate-x-3 flex-col border-l sm:translate-x-0 sm:flex-row sm:overflow-x-auto sm:border-b sm:border-l-0"
+        className="site-topic-list"
       >
         {orderedTopics.map((topic) => (
           <ProjectTopic
@@ -65,13 +65,13 @@ function ProjectTopicsGroup({
         id={panelId}
         role="tabpanel"
         aria-labelledby={`${groupId}-${activeTopic.id}-tab`}
-        className="col-start-1 row-start-1 rounded-xl border-l-2 p-4 sm:mt-5"
+        className="site-topic-panel col-start-1 row-start-1"
       >
-        <p className="font-mono text-sm">
+        <p className="site-label text-sm">
           {projectTopicLabels[activeTopic.id][language]}
         </p>
 
-        <p className="mt-2 leading-7">
+        <p className="site-body--panel">
           {language === "pl" ? activeTopic.contentPl : activeTopic.contentEn}
         </p>
       </div>

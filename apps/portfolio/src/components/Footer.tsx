@@ -13,11 +13,11 @@ type FooterProps = {
 
 function Footer({ footer, isLoading, isError, socialLinksLabel }: FooterProps) {
   return (
-    <footer className="border-t" aria-busy={isLoading}>
+    <footer className="site-footer" aria-busy={isLoading}>
       {isLoading ? (
         <FooterSkeleton />
       ) : isError || !footer?.links.length ? null : (
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-12 sm:flex-row sm:items-center sm:justify-between">
+        <div className="site-footer__inner">
           {footer.name || footer.description ? (
             <FooterIdentity
               name={footer.name}

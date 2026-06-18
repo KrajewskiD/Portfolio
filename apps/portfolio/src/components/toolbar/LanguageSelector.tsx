@@ -7,13 +7,15 @@ type LanguageSelectorProps = {
 
 function LanguageSelector({ language, onChange }: LanguageSelectorProps) {
   return (
-    <div className="pointer-events-auto flex items-center gap-2">
+    <div className="site-lang-toggle">
       <button
         type="button"
         lang="pl"
         aria-pressed={language === "pl"}
-        className={`min-w-10 text-center ${
-          language === "pl" ? "font-bold" : "font-normal"
+        className={`site-lang-button ${
+          language === "pl"
+            ? "site-lang-button--active"
+            : "site-lang-button--inactive"
         }`}
         onClick={() => onChange("pl")}
       >
@@ -26,8 +28,10 @@ function LanguageSelector({ language, onChange }: LanguageSelectorProps) {
         type="button"
         lang="en"
         aria-pressed={language === "en"}
-        className={`min-w-10 text-center ${
-          language === "en" ? "font-bold" : "font-normal"
+        className={`site-lang-button ${
+          language === "en"
+            ? "site-lang-button--active"
+            : "site-lang-button--inactive"
         }`}
         onClick={() => onChange("en")}
       >

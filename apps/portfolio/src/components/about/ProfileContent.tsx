@@ -9,14 +9,14 @@ type ProfileContentProps = {
 
 function ProfileContent({ name, role, label, children }: ProfileContentProps) {
   return (
-    <div className="max-w-2xl">
-      <p className="mb-6 font-mono">{label}</p>
+    <div className="site-profile">
+      <p className="site-label mb-6">{label}</p>
 
-      <h1 className="text-4xl font-bold sm:text-5xl lg:text-6xl">{name}</h1>
+      <h1 className="site-title--hero">{name}</h1>
 
-      <p className="mt-4 text-xl">{role}</p>
+      <p className="site-subtitle">{role}</p>
 
-      <div className="mt-8 text-lg leading-8">{children}</div>
+      <div className="site-body mt-8">{children}</div>
     </div>
   );
 }

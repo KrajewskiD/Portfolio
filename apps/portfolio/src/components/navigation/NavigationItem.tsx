@@ -15,11 +15,7 @@ function NavigationItem({
     <a
       href={href}
       onClick={onNavigate}
-      className={
-        mobile
-          ? "block rounded-lg px-3 py-2 text-base hover:bg-black/5"
-          : "px-3 py-2"
-      }
+      className={mobile ? "site-nav-link--mobile" : "site-nav-link"}
     >
       {label}
     </a>

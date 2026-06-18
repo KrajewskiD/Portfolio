@@ -22,12 +22,9 @@ function Header({ navigationItems, language, navigationText }: HeaderProps) {
     language === "pl" ? item.labelPl : item.labelEn;
 
   return (
-    <header className="sticky top-4 z-50 px-4">
+    <header className="site-header">
       <div className="relative mr-auto w-fit sm:mx-auto">
-        <nav
-          aria-label={navigationText.mainLabel}
-          className="flex items-center gap-1 sm:rounded-full sm:border sm:bg-white sm:px-2 sm:py-1"
-        >
+        <nav aria-label={navigationText.mainLabel} className="site-pill--nav">
           <MenuToggle
             isOpen={isMenuOpen}
             openLabel={navigationText.openMenu}

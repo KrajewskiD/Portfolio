@@ -6,11 +6,11 @@ type ProfileImageProps = {
 
 function ProfileImage({ imageUrl, alt, fallbackLabel }: ProfileImageProps) {
   return (
-    <div className="mx-auto flex aspect-square w-64 items-center justify-center overflow-hidden rounded-full border sm:w-full sm:max-w-sm lg:max-w-md">
+    <div className="site-avatar">
       {imageUrl ? (
-        <img src={imageUrl} alt={alt} className="h-full w-full object-cover" />
+        <img src={imageUrl} alt={alt} className="site-avatar__image" />
       ) : (
-        <p>{fallbackLabel}</p>
+        <span className="site-text-muted">{fallbackLabel}</span>
       )}
     </div>
   );

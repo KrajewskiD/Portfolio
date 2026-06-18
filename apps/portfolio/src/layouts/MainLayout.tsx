@@ -1,8 +1,11 @@
-import type { ReactNode } from "react";
+import { type ReactNode, useRef } from "react";
 
 import Footer from "@portfolio/components/Footer";
 import Header from "@portfolio/components/Header";
+import NoiseBackground from "@portfolio/components/NoiseBackground";
+import ParchmentScroll from "@portfolio/components/ParchmentScroll";
 import TopToolbar from "@portfolio/components/toolbar/TopToolbar";
+import useCardGradientVariation from "@portfolio/hooks/useCardGradientVariation";
 import type { Translations } from "@portfolio/locales/translations";
 import type { FooterData } from "@shared/database/types/footer";
 import type { Language } from "@shared/database/types/language";
@@ -41,6 +44,10 @@ function MainLayout({
   navigationText,
   onLanguageChange,
 }: MainLayoutProps) {
+  const tiltRef = useRef<HTMLDivElement>(null);
+
+  useCardGradientVariation();
+
   const footer: FooterData | undefined =
     profile || footerLinks?.length
       ? {
@@ -55,23 +62,33 @@ function MainLayout({
       : undefined;
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <TopToolbar language={language} onLanguageChange={onLanguageChange} />
+    <div className="site-layout">
+      <NoiseBackground />
 
-      <Header
-        navigationItems={navigationItems}
-        language={language}
-        navigationText={navigationText}
-      />
+      <div className="site-chrome">
+        <div className="site-chrome__row">
+          <TopToolbar language={language} onLanguageChange={onLanguageChange} />
 
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4">{children}</main>
+          <Header
+            navigationItems={navigationItems}
+            language={language}
+            navigationText={navigationText}
+          />
+        </div>
+      </div>
 
-      <Footer
-        footer={footer}
-        isLoading={isProfileLoading || areFooterLinksLoading}
-        isError={isProfileError && areFooterLinksError}
-        socialLinksLabel={footerText.socialLinksLabel}
-      />
+      <ParchmentScroll tiltRef={tiltRef}>
+        <div ref={tiltRef} className="site-parchment-tilt">
+          <main className="site-main">{children}</main>
+
+          <Footer
+            footer={footer}
+            isLoading={isProfileLoading || areFooterLinksLoading}
+            isError={isProfileError && areFooterLinksError}
+            socialLinksLabel={footerText.socialLinksLabel}
+          />
+        </div>
+      </ParchmentScroll>
     </div>
   );
 }

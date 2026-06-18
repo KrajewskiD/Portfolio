@@ -1,5 +1,11 @@
 @import "tailwindcss";
+@import "@shared/styles/style.css";
+@import "@shared/styles/site.css";
 
 html {
   scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-background text-foreground antialiased;
 }

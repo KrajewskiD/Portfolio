@@ -13,14 +13,14 @@ function SkillItem({ name, description, level, levelLabel }: SkillItemProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="border-t">
+    <div className="site-skill-row">
       <button
         type="button"
-        className="flex w-full items-center justify-between gap-4 py-3 text-left"
+        className="site-skill-trigger"
         aria-expanded={isOpen}
         onClick={() => setIsOpen((current) => !current)}
       >
-        <span className="font-semibold">{name}</span>
+        <span className="site-skill-name">{name}</span>
         <SkillLevel level={level} levelLabel={levelLabel} />
       </button>
 
@@ -30,7 +30,7 @@ function SkillItem({ name, description, level, levelLabel }: SkillItemProps) {
         }`}
       >
         <div className="overflow-hidden">
-          <p className="pb-4 text-sm leading-6">{description}</p>
+          <p className="site-body--compact pb-4">{description}</p>
         </div>
       </div>
     </div>

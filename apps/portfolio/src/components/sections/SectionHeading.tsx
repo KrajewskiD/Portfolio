@@ -6,8 +6,8 @@ type SectionHeadingProps = {
 function SectionHeading({ label, title }: SectionHeadingProps) {
   return (
     <header>
-      <p className="font-mono">// {label}</p>
-      <h2 className="mt-4 text-4xl font-bold sm:text-5xl">{title}</h2>
+      <p className="site-label">// {label}</p>
+      <h2 className="site-title mt-4">{title}</h2>
     </header>
   );
 }

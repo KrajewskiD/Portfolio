@@ -35,20 +35,17 @@ function ProjectsSection({
   >({});
 
   return (
-    <section id="projects" className="scroll-mt-0 pt-4 pb-8 sm:pt-6 sm:pb-10">
+    <section id="projects" className="site-section--projects">
       <SectionHeading label={label} title={title} />
 
       {isLoading ? (
         <ProjectSkeleton />
       ) : isError ? (
-        <div
-          role="alert"
-          className="mt-8 flex min-h-96 items-center justify-center rounded-3xl border text-center"
-        >
-          <p className="text-lg">{errorMessage}</p>
+        <div role="alert" className="site-panel--alert">
+          <p className="site-text-error">{errorMessage}</p>
         </div>
       ) : !projects?.length ? (
-        <div className="mt-8 flex min-h-64 items-center justify-center rounded-3xl border text-center">
+        <div className="site-panel--empty-lg">
           <p>{emptyMessage}</p>
         </div>
       ) : (

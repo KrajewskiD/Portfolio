@@ -42,12 +42,8 @@ function AboutSection({
     : "";
 
   return (
-    <section
-      id="about"
-      className="flex scroll-mt-24 items-center py-16"
-      aria-busy={isLoading}
-    >
-      <div className="grid w-full items-center gap-12 rounded-3xl border p-6 sm:p-10 lg:grid-cols-2 lg:p-16">
+    <section id="about" className="site-section--hero" aria-busy={isLoading}>
+      <div className="site-card--hero">
         {isLoading ? (
           <ProfileSkeleton />
         ) : isError || !profile ? (
@@ -55,7 +51,7 @@ function AboutSection({
             role="alert"
             className="col-span-full flex min-h-96 items-center justify-center text-center"
           >
-            <p className="text-lg">{errorMessage}</p>
+            <p className="site-text-error">{errorMessage}</p>
           </div>
         ) : (
           <>

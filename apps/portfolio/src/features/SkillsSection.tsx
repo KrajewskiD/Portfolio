@@ -29,20 +29,17 @@ function SkillsSection({
   language,
 }: SkillsSectionProps) {
   return (
-    <section id="skills" className="scroll-mt-24 py-8 sm:py-10">
+    <section id="skills" className="site-section--default">
       <SectionHeading label={label} title={title} />
 
       {isLoading ? (
         <SkillsSkeleton />
       ) : isError ? (
-        <div
-          role="alert"
-          className="mt-6 flex min-h-64 items-center justify-center rounded-3xl border text-center"
-        >
-          <p className="text-lg">{errorMessage}</p>
+        <div role="alert" className="site-panel--empty">
+          <p className="site-text-error">{errorMessage}</p>
         </div>
       ) : !skillGroups?.length ? (
-        <div className="mt-6 flex min-h-64 items-center justify-center rounded-3xl border text-center">
+        <div className="site-panel--empty">
           <p>{emptyMessage}</p>
         </div>
       ) : (

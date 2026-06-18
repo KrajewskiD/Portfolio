@@ -6,16 +6,12 @@ type ProjectImageProps = {
 
 function ProjectImage({ imageUrl, alt, fallbackLabel }: ProjectImageProps) {
   return (
-    <div className="flex p-4 lg:border-r">
-      <div className="flex h-56 w-full items-center justify-center overflow-hidden rounded-2xl border border-dashed sm:h-72 lg:h-full">
+    <div className="site-project-image">
+      <div className="site-project-image__frame">
         {imageUrl ? (
-          <img
-            src={imageUrl}
-            alt={alt}
-            className="h-full w-full object-cover"
-          />
+          <img src={imageUrl} alt={alt} className="site-project-image__media" />
         ) : (
-          <p>{fallbackLabel}</p>
+          <p className="site-text-muted">{fallbackLabel}</p>
         )}
       </div>
     </div>

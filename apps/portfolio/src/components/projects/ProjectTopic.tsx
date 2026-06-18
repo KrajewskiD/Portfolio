@@ -24,8 +24,8 @@ function ProjectTopic({
       aria-selected={active}
       aria-controls={panelId}
       onClick={onSelect}
-      className={`border-l-2 p-3 sm:shrink-0 sm:whitespace-nowrap sm:border-b-2 sm:border-l-0 sm:px-4 sm:py-3 ${
-        active ? "border-black font-semibold" : "border-transparent opacity-60"
+      className={`site-topic-tab ${
+        active ? "site-topic-tab--active" : "site-topic-tab--inactive"
       }`}
     >
       <img
