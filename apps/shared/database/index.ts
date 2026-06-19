@@ -12,8 +12,23 @@ export { getSkillGroupsFromDatabase } from "./skills";
 export {
   PROFILE_IMAGES_BUCKET,
   PROJECT_IMAGES_BUCKET,
+  PROJECT_MINIATURES_BUCKET,
   PROJECT_VIDEOS_BUCKET,
   createBucketUrlResolver,
   getStoragePublicUrl,
 } from "./storage/storageUrls";
+export {
+  PROFILE_IMAGE_STORAGE_PATH,
+  LEGACY_PROFILE_IMAGE_STORAGE_PATH,
+  assertValidProfileImagePath,
+  getProjectMiniatureStoragePath,
+  isProjectMiniatureStoragePath,
+  isProfileImageStoragePath,
+  normalizeProfileImagePath,
+} from "./storage/imagePaths";
+export {
+  appendCacheBust,
+  resolveStorageImageUrl,
+} from "./storage/resolveStorageImageUrl";
+export { hydrateProjectImages } from "./projects/hydrateProjectImages";
 export { getOrCreateTechnologyId } from "./technologies";

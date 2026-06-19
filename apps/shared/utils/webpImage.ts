@@ -68,6 +68,31 @@ export async function validateWebpImageSignature(
   return { valid: true };
 }
 
+export async function isAnimatedWebpFile(file: File): Promise<boolean> {
+  const buffer = await file.slice(0, 64).arrayBuffer();
+
+  if (buffer.byteLength < 21) {
+    return false;
+  }
+
+  const bytes = new Uint8Array(buffer);
+  const header = String.fromCharCode(bytes[0], bytes[1], bytes[2], bytes[3]);
+  const format = String.fromCharCode(bytes[8], bytes[9], bytes[10], bytes[11]);
+
+  if (header !== "RIFF" || format !== "WEBP") {
+    return false;
+  }
+
+  const chunkType = String.fromCharCode(bytes[12], bytes[13], bytes[14], bytes[15]);
+
+  if (chunkType === "VP8X") {
+    return (bytes[20] & 0x02) !== 0;
+  }
+
+  const chunkText = new TextDecoder().decode(bytes.slice(12, 64));
+  return chunkText.includes("ANIM") || chunkText.includes("ANMF");
+}
+
 export async function validateWebpImageFile(
   file: File,
 ): Promise<WebpImageValidationResult> {

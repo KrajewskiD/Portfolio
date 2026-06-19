@@ -6,12 +6,14 @@ import AdminImagePreviewRemoveButton from "./AdminImagePreviewRemoveButton";
 import AdminImagePreviewSelectButton from "./AdminImagePreviewSelectButton";
 import AdminImagePreviewSelectCorner from "./AdminImagePreviewSelectCorner";
 import {
+  isAnimatedWebpFile,
   validateWebpImageFile,
   WEBP_IMAGE_ACCEPT,
 } from "@shared/utils/webpImage";
 
 type AdminImagePickerProps = {
   label: string;
+  hint?: string;
   imageUrl?: string;
   selectedFile?: File | null;
   imageMarkedForRemoval?: boolean;
@@ -24,6 +26,7 @@ type AdminImagePickerProps = {
 
 function AdminImagePicker({
   label,
+  hint,
   imageUrl,
   selectedFile,
   imageMarkedForRemoval = false,
@@ -36,6 +39,7 @@ function AdminImagePicker({
   const fieldId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [fileError, setFileError] = useState<string>();
+  const [isAnimatedWebp, setIsAnimatedWebp] = useState<boolean | null>(null);
   const localPreviewUrl = useMemo(() => {
     if (!selectedFile) {
       return undefined;
@@ -54,6 +58,25 @@ function AdminImagePicker({
     };
   }, [localPreviewUrl]);
 
+  useEffect(() => {
+    if (!selectedFile) {
+      setIsAnimatedWebp(null);
+      return;
+    }
+
+    let isCancelled = false;
+
+    void isAnimatedWebpFile(selectedFile).then((isAnimated) => {
+      if (!isCancelled) {
+        setIsAnimatedWebp(isAnimated);
+      }
+    });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [selectedFile]);
+
   const previewUrl = imageMarkedForRemoval
     ? undefined
     : (localPreviewUrl ?? imageUrl);
@@ -65,7 +88,7 @@ function AdminImagePicker({
     onImageMarkedForRemovalChange;
 
   return (
-    <AdminField id={fieldId} label={label}>
+    <AdminField id={fieldId} label={label} hint={hint}>
       <AdminImagePreview
         imageUrl={previewUrl}
         previewAlt={previewAlt}
@@ -140,6 +163,17 @@ function AdminImagePicker({
       {selectedFile ? (
         <p className="text-center text-sm text-white/50">
           Wybrany plik: {selectedFile.name} (zapisze się po kliknięciu „Zapisz”)
+          {isAnimatedWebp === true ? (
+            <span className="mt-1 block text-emerald-300/90">
+              Wykryto animowany WebP — na stronie odtworzy się w przeglądarce.
+            </span>
+          ) : null}
+          {isAnimatedWebp === false ? (
+            <span className="mt-1 block text-amber-300/90">
+              To jest statyczny WebP (bez animacji). Jeśli oczekujesz ruchu,
+              wyeksportuj ponownie jako animated WebP albo użyj WebM.
+            </span>
+          ) : null}
         </p>
       ) : null}
 

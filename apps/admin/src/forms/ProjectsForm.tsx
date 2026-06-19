@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 
+import ProjectMiniaturePanel from "@admin/components/projects/ProjectMiniaturePanel";
 import ProjectTechnologiesField from "@admin/components/projects/ProjectTechnologiesField";
 import ProjectTopicContentPanel, {
   type ProjectTopicContentField,
@@ -33,10 +34,13 @@ import { usePendingKeyedImages } from "@admin/hooks/usePendingKeyedImages";
 import { useTranslateFields } from "@admin/hooks/useTranslateFields";
 import { useTranslationOverlay } from "@admin/context/TranslationOverlayContext";
 import {
+  deleteProjectMiniature,
   deleteProjectTopicImage,
   deleteProjectVideo,
-  getProjectImagePublicUrl,
   getProjectVideoPublicUrl,
+  getVersionedProjectImageUrl,
+  getVersionedProjectMiniatureUrl,
+  uploadProjectMiniature,
   uploadProjectTopicImage,
   uploadProjectVideo,
 } from "@admin/lib/imageStorage";
@@ -46,7 +50,7 @@ import {
   createEmptyProjectTopic,
 } from "@shared/constants/projectTopics";
 import { PROJECT_TITLE_MAX_LENGTH } from "@shared/constants/project";
-import { normalizeProjectIds } from "@shared/database";
+import { ensureUuid } from "@shared/database";
 import { DEFAULT_PROJECT_TOPIC_ID } from "@shared/database/types/projectTopic";
 import type { Project, ProjectTopicId } from "@shared/database/types/project";
 import { createEmptyProjectTechnology } from "@shared/database/types/project";
@@ -67,6 +71,10 @@ function projectVideoKey(projectId: string) {
   return `${projectId}:video`;
 }
 
+function projectMiniatureKey(projectId: string) {
+  return `${projectId}:miniature`;
+}
+
 function ProjectsForm({ language }: AdminFormProps) {
   const {
     pendingFiles: pendingTopicImages,
@@ -85,12 +93,19 @@ function ProjectsForm({ language }: AdminFormProps) {
     hasPendingEdits: hasPendingVideoEdits,
     discardPending: discardPendingVideos,
   } = usePendingKeyedImages();
+  const {
+    pendingFiles: pendingProjectMiniatures,
+    setPendingFiles: setPendingProjectMiniatures,
+    markedForRemovals: pendingProjectMiniatureRemovals,
+    setMarkedForRemovals: setPendingProjectMiniatureRemovals,
+    hasPendingEdits: hasPendingMiniatureEdits,
+    discardPending: discardPendingMiniatures,
+  } = usePendingKeyedImages();
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string>();
 
   const prepareBeforeSave = useCallback(
     async (currentProjects: Project[]) => {
-      const normalizedProjects = normalizeProjectIds(currentProjects);
       const hasPendingImageUploads = Object.keys(pendingTopicImages).length > 0;
       const hasPendingImageRemovals = Object.values(
         pendingTopicImageRemovals,
@@ -99,26 +114,47 @@ function ProjectsForm({ language }: AdminFormProps) {
       const hasPendingVideoRemovals = Object.values(
         pendingProjectVideoRemovals,
       ).some(Boolean);
+      const hasPendingMiniatureUploads =
+        Object.keys(pendingProjectMiniatures).length > 0;
+      const hasPendingMiniatureRemovals = Object.values(
+        pendingProjectMiniatureRemovals,
+      ).some(Boolean);
 
       if (
         !hasPendingImageUploads &&
         !hasPendingImageRemovals &&
         !hasPendingVideoUploads &&
-        !hasPendingVideoRemovals
+        !hasPendingVideoRemovals &&
+        !hasPendingMiniatureUploads &&
+        !hasPendingMiniatureRemovals
       ) {
-        return normalizedProjects;
+        return currentProjects.map((project) => ({
+          ...project,
+          id: ensureUuid(project.id),
+        }));
       }
 
       const updatedProjects = await Promise.all(
-        normalizedProjects.map(async (project) => {
-          const videoKey = projectVideoKey(project.id);
+        currentProjects.map(async (project) => {
+          const originalId = project.id;
+          const normalizedId = ensureUuid(project.id);
+          const videoKey = projectVideoKey(originalId);
+          const miniatureKey = projectMiniatureKey(originalId);
           const pendingVideoFile = pendingProjectVideos[videoKey];
           const pendingVideoRemoval = pendingProjectVideoRemovals[videoKey];
+          const pendingMiniatureFile = pendingProjectMiniatures[miniatureKey];
+          const pendingMiniatureRemoval =
+            pendingProjectMiniatureRemovals[miniatureKey];
           let nextVideoPath = project.videoPath;
           let nextVideoUrl = project.videoUrl;
+          let nextMiniaturePath = project.miniaturePath;
+          let nextMiniatureUrl = project.miniatureUrl;
 
           if (pendingVideoFile) {
-            nextVideoPath = await uploadProjectVideo(project.id, pendingVideoFile);
+            nextVideoPath = await uploadProjectVideo(
+              normalizedId,
+              pendingVideoFile,
+            );
             nextVideoUrl = getProjectVideoPublicUrl(nextVideoPath);
           } else if (pendingVideoRemoval && project.videoPath) {
             await deleteProjectVideo(project.videoPath);
@@ -126,19 +162,40 @@ function ProjectsForm({ language }: AdminFormProps) {
             nextVideoUrl = undefined;
           }
 
+          if (pendingMiniatureFile) {
+            if (project.miniaturePath && normalizedId !== originalId) {
+              await deleteProjectMiniature(project.miniaturePath);
+            }
+
+            nextMiniaturePath = await uploadProjectMiniature(
+              normalizedId,
+              pendingMiniatureFile,
+            );
+            nextMiniatureUrl = await getVersionedProjectMiniatureUrl(
+              nextMiniaturePath,
+            );
+          } else if (pendingMiniatureRemoval && project.miniaturePath) {
+            await deleteProjectMiniature(project.miniaturePath);
+            nextMiniaturePath = undefined;
+            nextMiniatureUrl = undefined;
+          }
+
           return {
             ...project,
+            id: normalizedId,
             videoPath: nextVideoPath,
             videoUrl: nextVideoUrl,
+            miniaturePath: nextMiniaturePath,
+            miniatureUrl: nextMiniatureUrl,
             topics: await Promise.all(
               project.topics.map(async (topic) => {
-                const key = topicImageKey(project.id, topic.id);
+                const key = topicImageKey(originalId, topic.id);
                 const file = pendingTopicImages[key];
                 const markedForRemoval = pendingTopicImageRemovals[key];
 
                 if (file) {
                   const imagePath = await uploadProjectTopicImage(
-                    project.id,
+                    normalizedId,
                     topic.id,
                     file,
                   );
@@ -146,7 +203,7 @@ function ProjectsForm({ language }: AdminFormProps) {
                   return {
                     ...topic,
                     imagePath,
-                    imageUrl: getProjectImagePublicUrl(imagePath),
+                    imageUrl: await getVersionedProjectImageUrl(imagePath),
                   };
                 }
 
@@ -171,13 +228,19 @@ function ProjectsForm({ language }: AdminFormProps) {
       setPendingTopicImageRemovals({});
       setPendingProjectVideos({});
       setPendingProjectVideoRemovals({});
+      setPendingProjectMiniatures({});
+      setPendingProjectMiniatureRemovals({});
       return updatedProjects;
     },
     [
+      pendingProjectMiniatureRemovals,
+      pendingProjectMiniatures,
       pendingProjectVideoRemovals,
       pendingProjectVideos,
       pendingTopicImageRemovals,
       pendingTopicImages,
+      setPendingProjectMiniatureRemovals,
+      setPendingProjectMiniatures,
       setPendingProjectVideoRemovals,
       setPendingProjectVideos,
       setPendingTopicImageRemovals,
@@ -200,10 +263,11 @@ function ProjectsForm({ language }: AdminFormProps) {
     loadValue: getAdminProjects,
     saveValue: saveAdminProjects,
     prepareBeforeSave,
-    extraDirty: hasPendingImageEdits || hasPendingVideoEdits,
+    extraDirty: hasPendingImageEdits || hasPendingVideoEdits || hasPendingMiniatureEdits,
     onDiscard: () => {
       discardPendingImages();
       discardPendingVideos();
+      discardPendingMiniatures();
     },
   });
 
@@ -428,6 +492,10 @@ function ProjectsForm({ language }: AdminFormProps) {
     ? projectVideoKey(activeProject.id)
     : "";
 
+  const activeProjectMiniatureKey = activeProject
+    ? projectMiniatureKey(activeProject.id)
+    : "";
+
   const { onFileSelect, onImageMarkedForRemovalChange } =
     useActiveTopicImageHandlers(
       activeTopicImageKey,
@@ -443,6 +511,19 @@ function ProjectsForm({ language }: AdminFormProps) {
     setPendingProjectVideos,
     setPendingProjectVideoRemovals,
   );
+
+  const {
+    onFileSelect: onMiniatureFileSelect,
+    onImageMarkedForRemovalChange: onMiniatureMarkedForRemovalChange,
+  } = useActiveTopicImageHandlers(
+    activeProjectMiniatureKey,
+    setPendingProjectMiniatures,
+    setPendingProjectMiniatureRemovals,
+  );
+
+  const activeProjectTitle = activeProject
+    ? getLocalizedField(activeProject, language, "titlePl", "titleEn")
+    : "";
 
   return (
     <AdminFormShell
@@ -532,6 +613,21 @@ function ProjectsForm({ language }: AdminFormProps) {
                   }
                 />
               </AdminField>
+
+              <ProjectMiniaturePanel
+                miniatureUrl={activeProject.miniatureUrl}
+                projectTitle={activeProjectTitle}
+                selectedFile={
+                  pendingProjectMiniatures[activeProjectMiniatureKey] ?? null
+                }
+                imageMarkedForRemoval={
+                  pendingProjectMiniatureRemovals[activeProjectMiniatureKey] ??
+                  false
+                }
+                disabled={isBusy}
+                onFileSelect={onMiniatureFileSelect}
+                onImageMarkedForRemovalChange={onMiniatureMarkedForRemovalChange}
+              />
 
               <ProjectTopicImagePanel
                 topic={activeTopic}

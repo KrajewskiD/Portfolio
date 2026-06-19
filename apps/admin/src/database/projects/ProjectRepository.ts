@@ -1,6 +1,6 @@
-import { getProjectImagePublicUrl, getProjectVideoPublicUrl } from "@admin/lib/imageStorage";
+import { getProjectImagePublicUrl, getProjectMiniaturePublicUrl, getProjectVideoPublicUrl } from "@admin/lib/imageStorage";
 import { supabase } from "@admin/lib/supabase";
-import { getProjectsFromDatabase } from "@shared/database";
+import { getProjectsFromDatabase, hydrateProjectImages } from "@shared/database";
 import type { Project } from "@shared/database/types/project";
 
 import {
@@ -10,12 +10,18 @@ import {
   updateProject,
 } from "./projectMutations";
 
-export function getAdminProjects(): Promise<Project[]> {
-  return getProjectsFromDatabase(
+export async function getAdminProjects(): Promise<Project[]> {
+  const projects = await getProjectsFromDatabase(
     supabase,
     getProjectImagePublicUrl,
     getProjectVideoPublicUrl,
+    getProjectMiniaturePublicUrl,
   );
+
+  return hydrateProjectImages(supabase, projects, {
+    getProjectImagePublicUrl,
+    getProjectMiniaturePublicUrl,
+  });
 }
 
 export async function saveAdminProjects(projects: Project[]): Promise<void> {

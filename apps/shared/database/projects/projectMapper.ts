@@ -17,6 +17,9 @@ export function mapProjectRow(
   project: ProjectRow,
   getProjectImagePublicUrl: (path: string) => string,
   getProjectVideoPublicUrl: (path: string) => string = getProjectImagePublicUrl,
+  getProjectMiniaturePublicUrl: (
+    path: string,
+  ) => string = getProjectImagePublicUrl,
 ): Project {
   const topics: ProjectTopicContent[] = project.project_topics
     .filter((topic) => isProjectTopicId(topic.topic_type_id))
@@ -59,6 +62,10 @@ export function mapProjectRow(
   const videoUrl = videoPath
     ? getProjectVideoPublicUrl(videoPath)
     : undefined;
+  const miniaturePath = project.miniature_path ?? undefined;
+  const miniatureUrl = miniaturePath
+    ? getProjectMiniaturePublicUrl(miniaturePath)
+    : undefined;
 
   return normalizeProjectTopics({
     id: project.id,
@@ -67,6 +74,8 @@ export function mapProjectRow(
     titlePl: project.title_pl,
     titleEn: project.title_en,
     technologies,
+    miniaturePath,
+    miniatureUrl,
     videoPath,
     videoUrl,
     topics,
@@ -81,6 +90,7 @@ export function mapProjectToRow(project: Project, displayOrder: number) {
     title_pl: project.titlePl,
     title_en: project.titleEn,
     display_order: displayOrder,
+    miniature_path: project.miniaturePath ?? null,
     video_path: project.videoPath ?? null,
   };
 }

@@ -8,6 +8,9 @@ export async function getProjectsFromDatabase(
   supabase: SupabaseClient,
   getProjectImagePublicUrl: (path: string) => string,
   getProjectVideoPublicUrl: (path: string) => string = getProjectImagePublicUrl,
+  getProjectMiniaturePublicUrl: (
+    path: string,
+  ) => string = getProjectImagePublicUrl,
 ): Promise<Project[]> {
   const { data, error } = await supabase
     .from("projects")
@@ -19,6 +22,7 @@ export async function getProjectsFromDatabase(
       title_pl,
       title_en,
       display_order,
+      miniature_path,
       video_path,
       project_topics (
         topic_type_id,
@@ -45,6 +49,11 @@ export async function getProjectsFromDatabase(
   }
 
   return data.map((project) =>
-    mapProjectRow(project, getProjectImagePublicUrl, getProjectVideoPublicUrl),
+    mapProjectRow(
+      project,
+      getProjectImagePublicUrl,
+      getProjectVideoPublicUrl,
+      getProjectMiniaturePublicUrl,
+    ),
   );
 }

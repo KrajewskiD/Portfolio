@@ -1,4 +1,5 @@
-import { getProfileFromDatabase } from "@shared/database";
+import { assertValidProfileImagePath, getProfileFromDatabase } from "@shared/database";
+import { hydrateProfileImage } from "@shared/database/profile/hydrateProfileImage";
 import { mapProfileToRow } from "@shared/database/profile/profileMapper";
 import { supabase } from "@admin/lib/supabase";
 import {
@@ -9,12 +10,21 @@ import {
 import type { Profile } from "@shared/database/types/profile";
 
 export async function getAdminProfile(): Promise<Profile> {
-  return getProfileFromDatabase(supabase, getProfileImagePublicUrl, {
+  const profile = await getProfileFromDatabase(supabase, getProfileImagePublicUrl, {
     includeEmail: true,
+  });
+
+  return hydrateProfileImage(supabase, profile, {
+    getProfileImagePublicUrl,
+    syncDatabase: true,
   });
 }
 
 export async function saveAdminProfile(profile: Profile): Promise<void> {
+  if (profile.imagePath) {
+    assertValidProfileImagePath(profile.imagePath);
+  }
+
   const { error } = await supabase
     .from("profiles")
     .update(mapProfileToRow(profile))
@@ -25,4 +35,9 @@ export async function saveAdminProfile(profile: Profile): Promise<void> {
   }
 }
 
-export { uploadProfileImage, getProfileImagePublicUrl, deleteProfileImage };
+export {
+  uploadProfileImage,
+  getProfileImagePublicUrl,
+  getVersionedProfileImageUrl,
+  deleteProfileImage,
+} from "@admin/lib/imageStorage";

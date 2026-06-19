@@ -1,11 +1,12 @@
 import type { Profile } from "../types/profile";
 import type { ProfileRow } from "./profileRows";
+import { normalizeProfileImagePath } from "../storage/imagePaths";
 
 export function mapProfileRow(
   data: ProfileRow,
   getProfileImagePublicUrl: (path: string) => string,
 ): Profile {
-  const imagePath = data.image_path ?? undefined;
+  const imagePath = normalizeProfileImagePath(data.image_path);
   const imageUrl = imagePath ? getProfileImagePublicUrl(imagePath) : undefined;
 
   return {

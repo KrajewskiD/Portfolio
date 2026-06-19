@@ -16,7 +16,7 @@ import { useTranslationOverlay } from "@admin/context/TranslationOverlayContext"
 import {
   deleteProfileImage,
   getAdminProfile,
-  getProfileImagePublicUrl,
+  getVersionedProfileImageUrl,
   saveAdminProfile,
   uploadProfileImage,
 } from "@admin/services/profileContentService";
@@ -44,6 +44,7 @@ type ProfileTextField =
 function ProfileForm({ language }: AdminFormProps) {
   const {
     pendingFile: pendingProfileImage,
+    pendingFileRef: pendingProfileImageRef,
     setPendingFile: setPendingProfileImage,
     markedForRemoval: profileImageMarkedForRemoval,
     setMarkedForRemoval: setProfileImageMarkedForRemoval,
@@ -64,14 +65,16 @@ function ProfileForm({ language }: AdminFormProps) {
         };
       }
 
-      if (pendingProfileImage) {
-        const imagePath = await uploadProfileImage(pendingProfileImage);
+      if (pendingProfileImageRef.current) {
+        const imagePath = await uploadProfileImage(
+          pendingProfileImageRef.current,
+        );
         setPendingProfileImage(null);
 
         nextProfile = {
           ...nextProfile,
           imagePath,
-          imageUrl: getProfileImagePublicUrl(imagePath),
+          imageUrl: await getVersionedProfileImageUrl(imagePath),
         };
       }
 
@@ -79,7 +82,7 @@ function ProfileForm({ language }: AdminFormProps) {
       return nextProfile;
     },
     [
-      pendingProfileImage,
+      pendingProfileImageRef,
       profileImageMarkedForRemoval,
       setPendingProfileImage,
       setProfileImageMarkedForRemoval,
@@ -95,6 +98,7 @@ function ProfileForm({ language }: AdminFormProps) {
     saveError,
     saveSuccess,
     save,
+    isDirty,
   } = useAdminForm<Profile>({
     initialValue: profileDraft,
     loadValue: getAdminProfile,
@@ -145,7 +149,7 @@ function ProfileForm({ language }: AdminFormProps) {
         <AdminFormActions>
           <AdminFormSaveActions
             language={language}
-            saveDisabled={formDisabled}
+            saveDisabled={formDisabled || !isDirty}
             isSaving={isSaving}
             onSave={save}
             translateDisabled={formDisabled}
@@ -162,6 +166,7 @@ function ProfileForm({ language }: AdminFormProps) {
         <div className="admin-image-column admin-image-column--fluid">
           <AdminImagePicker
             label="Zdjęcie profilowe"
+            hint="Zapisuje się wyłącznie w buckecie profile-images jako profile/avatar.webp. Nie ma związku z miniaturami projektów."
             imageUrl={profile.imageUrl}
             selectedFile={pendingProfileImage}
             imageMarkedForRemoval={profileImageMarkedForRemoval}

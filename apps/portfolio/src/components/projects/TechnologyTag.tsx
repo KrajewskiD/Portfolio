@@ -1,5 +1,6 @@
 import { isValidTechnologyIconSlug } from "@portfolio/scripts/fetchTechnologyIcon";
 
+import SiteTooltip from "../SiteTooltip";
 import TechnologyIcon from "./TechnologyIcon";
 
 type TechnologyTagProps = {
@@ -19,9 +20,11 @@ function TechnologyTag({ label, iconSlug }: TechnologyTagProps) {
   }
 
   return (
-    <span className="site-tag">
-      <TechnologyIcon iconSlug={trimmedSlug} label={label} />
-    </span>
+    <SiteTooltip message={label}>
+      <span className="site-tag">
+        <TechnologyIcon iconSlug={trimmedSlug} label={label} />
+      </span>
+    </SiteTooltip>
   );
 }
 

@@ -170,17 +170,22 @@
     text-underline-offset: 0.15em;
   }
 
-  .site-hero-email-reveal__message {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--color-subtle);
+  .site-tooltip {
+    position: relative;
+    display: inline-flex;
+    max-width: 100%;
   }
 
-  .site-hero-email-reveal__copy-toast {
+  .site-tooltip--field {
+    display: flex;
+    width: max-content;
+    min-width: 100%;
+  }
+
+  .site-tooltip__bubble {
     position: absolute;
     top: calc(100% + 0.5rem);
     bottom: auto;
-    right: 0;
     z-index: 20;
     padding: 0.4375rem 0.75rem;
     border: 1px solid var(--color-border);
@@ -193,29 +198,70 @@
     line-height: 1.2;
     white-space: nowrap;
     pointer-events: none;
-    opacity: 0.5;
-    animation: site-hero-email-copy-toast-in 0.2s ease;
   }
 
-  .site-hero-email-reveal__copy-toast::before {
+  .site-tooltip__bubble--center {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* Separator padding sits on the tooltip wrapper — nudge bubble to icon center only */
+  .site-project-technologies__card > :not(:first-child) .site-tooltip__bubble--center {
+    left: calc(50% + 0.4375rem);
+  }
+
+  .site-tooltip__bubble--end {
+    right: 0;
+  }
+
+  .site-tooltip__bubble::before {
     content: "";
     position: absolute;
     bottom: 100%;
-    right: 1rem;
     border: 0.4rem solid transparent;
     border-bottom-color: var(--color-border);
   }
 
-  .site-hero-email-reveal__copy-toast::after {
+  .site-tooltip__bubble::after {
     content: "";
     position: absolute;
     bottom: calc(100% - 1px);
-    right: 1rem;
     border: 0.4rem solid transparent;
     border-bottom-color: color-mix(in srgb, var(--color-surface) 92%, var(--color-background));
   }
 
-  @keyframes site-hero-email-copy-toast-in {
+  .site-tooltip__bubble--center::before,
+  .site-tooltip__bubble--center::after {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+  }
+
+  .site-tooltip__bubble--end::before,
+  .site-tooltip__bubble--end::after {
+    right: 1rem;
+  }
+
+  .site-tooltip__bubble--hover {
+    top: calc(100% + 0.875rem);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.15s ease,
+      visibility 0.15s ease;
+  }
+
+  .site-tooltip:hover .site-tooltip__bubble--hover {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .site-tooltip__bubble--visible {
+    opacity: 0.5;
+    animation: site-tooltip-in 0.2s ease;
+  }
+
+  @keyframes site-tooltip-in {
     from {
       opacity: 0;
       margin-top: -0.25rem;
@@ -225,6 +271,12 @@
       opacity: 0.5;
       margin-top: 0;
     }
+  }
+
+  .site-hero-email-reveal__message {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-subtle);
   }
 
   .site-hero-email-reveal__copy {
@@ -741,12 +793,7 @@
     cursor: pointer;
     transition:
       border-color 0.2s ease,
-      box-shadow 0.2s ease,
-      transform 0.2s ease;
-  }
-
-  .site-project-thumb:hover {
-    transform: translateY(-2px);
+      box-shadow 0.2s ease;
   }
 
   .site-project-thumb:hover:not(.site-project-thumb--active) {
@@ -776,6 +823,22 @@
     height: 100%;
     width: 100%;
     object-fit: cover;
+    transform: scale(1);
+    transition: transform 0.5s ease;
+  }
+
+  .site-project-thumb:hover .site-project-thumb__image {
+    transform: scale(1.08);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-project-thumb__image {
+      transition: none;
+    }
+
+    .site-project-thumb:hover .site-project-thumb__image {
+      transform: none;
+    }
   }
 
   .site-project-thumb__placeholder {
@@ -805,10 +868,16 @@
   .site-project-thumb__name {
     width: 100%;
     text-align: left;
-    font-size: 0.8125rem;
+    font-size: 0.9375rem;
     font-weight: 600;
+    letter-spacing: 0.03em;
     line-height: 1.3;
     color: var(--color-foreground);
+    transition: color 0.2s ease;
+  }
+
+  .site-project-thumb:hover .site-project-thumb__name {
+    color: var(--color-accent);
   }
 
   .site-card--skill {

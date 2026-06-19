@@ -3,6 +3,7 @@ import {
   PROFILE_IMAGES_BUCKET,
   createBucketUrlResolver,
 } from "@shared/database";
+import { hydrateProfileImage } from "@shared/database/profile/hydrateProfileImage";
 import type { Profile } from "@shared/database/types/profile";
 
 import { supabase } from "../lib/supabase";
@@ -12,6 +13,13 @@ const getProfileImagePublicUrl = createBucketUrlResolver(
   PROFILE_IMAGES_BUCKET,
 );
 
-export function getProfile(): Promise<Profile> {
-  return getProfileFromDatabase(supabase, getProfileImagePublicUrl);
+export async function getProfile(): Promise<Profile> {
+  const profile = await getProfileFromDatabase(
+    supabase,
+    getProfileImagePublicUrl,
+  );
+
+  return hydrateProfileImage(supabase, profile, {
+    getProfileImagePublicUrl,
+  });
 }

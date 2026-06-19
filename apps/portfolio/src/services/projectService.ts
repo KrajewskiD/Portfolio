@@ -1,6 +1,8 @@
 import {
   getProjectsFromDatabase,
+  hydrateProjectImages,
   PROJECT_IMAGES_BUCKET,
+  PROJECT_MINIATURES_BUCKET,
   PROJECT_VIDEOS_BUCKET,
   createBucketUrlResolver,
 } from "@shared/database";
@@ -17,10 +19,21 @@ const getProjectVideoPublicUrl = createBucketUrlResolver(
   PROJECT_VIDEOS_BUCKET,
 );
 
-export function getProjects() {
-  return getProjectsFromDatabase(
+const getProjectMiniaturePublicUrl = createBucketUrlResolver(
+  supabase,
+  PROJECT_MINIATURES_BUCKET,
+);
+
+export async function getProjects() {
+  const projects = await getProjectsFromDatabase(
     supabase,
     getProjectImagePublicUrl,
     getProjectVideoPublicUrl,
+    getProjectMiniaturePublicUrl,
   );
+
+  return hydrateProjectImages(supabase, projects, {
+    getProjectImagePublicUrl,
+    getProjectMiniaturePublicUrl,
+  });
 }

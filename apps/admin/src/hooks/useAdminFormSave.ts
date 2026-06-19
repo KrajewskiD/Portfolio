@@ -28,6 +28,15 @@ export function useAdminFormSave<T>({
     [isLoading, savedValue, value],
   );
 
+  const loadFromDatabase = useCallback(async (): Promise<T> => {
+    return loadValue();
+  }, [loadValue]);
+
+  const applyLoadedValue = useCallback((loadedValue: T) => {
+    setValue(loadedValue);
+    setSavedValue(loadedValue);
+  }, []);
+
   useEffect(() => {
     let isMounted = true;
 
@@ -36,11 +45,10 @@ export function useAdminFormSave<T>({
       setLoadError(undefined);
 
       try {
-        const loadedValue = await loadValue();
+        const loadedValue = await loadFromDatabase();
 
         if (isMounted) {
-          setValue(loadedValue);
-          setSavedValue(loadedValue);
+          applyLoadedValue(loadedValue);
         }
       } catch (error) {
         console.error("Failed to load admin form data:", error);
@@ -62,7 +70,20 @@ export function useAdminFormSave<T>({
     return () => {
       isMounted = false;
     };
-  }, [loadValue]);
+  }, [applyLoadedValue, loadFromDatabase]);
+
+  const reload = useCallback(async (): Promise<boolean> => {
+    try {
+      const loadedValue = await loadFromDatabase();
+      applyLoadedValue(loadedValue);
+      setLoadError(undefined);
+      return true;
+    } catch (error) {
+      console.error("Failed to reload admin form data:", error);
+      setLoadError("Nie udało się odświeżyć danych z bazy.");
+      return false;
+    }
+  }, [applyLoadedValue, loadFromDatabase]);
 
   const discard = useCallback(() => {
     setValue(savedValue);
@@ -88,8 +109,19 @@ export function useAdminFormSave<T>({
         : value;
 
       await saveValue(preparedValue);
-      setValue(preparedValue);
-      setSavedValue(preparedValue);
+
+      try {
+        const loadedValue = await loadFromDatabase();
+        applyLoadedValue(loadedValue);
+      } catch (reloadError) {
+        console.error("Save succeeded but failed to reload:", reloadError);
+        applyLoadedValue(preparedValue);
+        setSaveError(
+          "Zapisano zmiany, ale nie udało się odświeżyć danych z bazy. Odśwież stronę.",
+        );
+        return true;
+      }
+
       setSaveSuccess(true);
       return true;
     } catch (error) {
@@ -108,7 +140,7 @@ export function useAdminFormSave<T>({
     } finally {
       setIsSaving(false);
     }
-  }, [prepareBeforeSave, saveValue, value]);
+  }, [applyLoadedValue, loadFromDatabase, prepareBeforeSave, saveValue, value]);
 
   return {
     value,
@@ -120,6 +152,7 @@ export function useAdminFormSave<T>({
     saveError,
     saveSuccess,
     save,
+    reload,
     discard,
     syncSavedValue,
   };
