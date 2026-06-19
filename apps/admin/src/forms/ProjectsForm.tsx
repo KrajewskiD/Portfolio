@@ -85,6 +85,9 @@ function ProjectsForm({ language }: AdminFormProps) {
   } = usePendingKeyedImages();
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string>();
+  const [technologyInputs, setTechnologyInputs] = useState<
+    Record<string, string>
+  >({});
 
   const prepareBeforeSave = useCallback(
     async (currentProjects: Project[]) => {
@@ -202,6 +205,7 @@ function ProjectsForm({ language }: AdminFormProps) {
     onDiscard: () => {
       discardPendingImages();
       discardPendingVideos();
+      setTechnologyInputs({});
     },
   });
 
@@ -253,6 +257,11 @@ function ProjectsForm({ language }: AdminFormProps) {
     if (!activeProject) {
       return;
     }
+
+    setTechnologyInputs((currentInputs) => ({
+      ...currentInputs,
+      [activeProject.id]: value,
+    }));
 
     setProjects((currentProjects) =>
       currentProjects.map((project) =>
@@ -538,7 +547,10 @@ function ProjectsForm({ language }: AdminFormProps) {
                 >
                   <AdminInput
                     id="project-technologies"
-                    value={activeProject.technologies.join(", ")}
+                    value={
+                      technologyInputs[activeProject.id] ??
+                      activeProject.technologies.join(", ")
+                    }
                     onChange={(event) => updateTechnologies(event.target.value)}
                   />
                 </AdminField>

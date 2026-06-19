@@ -6,6 +6,7 @@ import NavigationLinks from "./navigation/NavigationLinks";
 import NavigationName from "./navigation/NavigationName";
 import MobileNavigation from "./navigation/MobileNavigation";
 import MenuToggle from "./navigation/MenuToggle";
+import useActiveNavSection from "@portfolio/hooks/useActiveNavSection";
 import useAnimatedWidth from "@portfolio/hooks/useAnimatedWidth";
 import type { NavigationLinkData } from "@shared/database/types/link";
 import type { Language } from "@shared/database/types/language";
@@ -26,6 +27,7 @@ function Header({
 }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const islandRef = useRef<HTMLDivElement>(null);
+  const activeSectionId = useActiveNavSection(navigationItems);
 
   const getLabel = (item: NavigationLinkData) =>
     language === "pl" ? item.labelPl : item.labelEn;
@@ -44,7 +46,7 @@ function Header({
               onToggle={() => setIsMenuOpen((current) => !current)}
             />
 
-            <NavigationName>Krajewski</NavigationName>
+            <NavigationName>DK</NavigationName>
           </div>
 
           <NavigationLinks className="site-island__links">
@@ -53,6 +55,7 @@ function Header({
                 key={item.id}
                 label={getLabel(item)}
                 href={item.href}
+                isActive={item.id === activeSectionId}
               />
             ))}
           </NavigationLinks>
@@ -69,6 +72,7 @@ function Header({
                   label={getLabel(item)}
                   href={item.href}
                   mobile
+                  isActive={item.id === activeSectionId}
                   onNavigate={() => setIsMenuOpen(false)}
                 />
               ))}

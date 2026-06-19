@@ -4,7 +4,7 @@ import { fetchProfileContactEmail } from "@portfolio/services/profileEmailServic
 
 export type EmailPanelState = "hidden" | "loading" | "success" | "empty" | "error";
 
-const COPY_TOAST_MS = 3000;
+const COPY_TOAST_MS = 2500;
 
 async function copyTextToClipboard(value: string): Promise<boolean> {
   try {

@@ -42,17 +42,6 @@ function ProfileSocialLinks({
 }: ProfileSocialLinksProps) {
   return (
     <div className="site-hero-card__social">
-      <ProfileEmailReveal
-        panelState={panelState}
-        email={email}
-        copyEmailLabel={copyEmailLabel}
-        emailCopiedMessage={emailCopiedMessage}
-        emailEmptyMessage={emailEmptyMessage}
-        emailLoadErrorMessage={emailLoadErrorMessage}
-        isCopied={isCopied}
-        onCopyEmail={onCopyEmail}
-      />
-
       <nav aria-label={socialLinksLabel} className="site-hero-card__links">
         <button
           type="button"
@@ -81,6 +70,17 @@ function ProfileSocialLinks({
           <ProfileLink key={link.id} label={link.label} href={link.href} />
         ))}
       </nav>
+
+      <ProfileEmailReveal
+        panelState={panelState}
+        email={email}
+        copyEmailLabel={copyEmailLabel}
+        emailCopiedMessage={emailCopiedMessage}
+        emailEmptyMessage={emailEmptyMessage}
+        emailLoadErrorMessage={emailLoadErrorMessage}
+        isCopied={isCopied}
+        onCopyEmail={onCopyEmail}
+      />
     </div>
   );
 }

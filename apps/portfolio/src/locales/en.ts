@@ -7,7 +7,7 @@ export const en: Translations = {
     loadError: "The profile could not be loaded.",
     emailLabel: "Show email",
     copyEmailLabel: "Copy",
-    emailCopiedMessage: "Email address copied",
+    emailCopiedMessage: "Copied",
     emailEmptyMessage: "No email address in the profile.",
     emailLoadErrorMessage: "Could not load the email address.",
   },

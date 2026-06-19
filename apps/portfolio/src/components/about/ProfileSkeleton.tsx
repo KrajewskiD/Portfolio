@@ -1,13 +1,15 @@
 function ProfileSkeleton() {
   return (
     <div className="site-hero-card" aria-hidden="true">
-      <div className="site-hero-card__visual">
-        <div className="site-hero-card__photo">
-          <div className="site-skeleton h-4/5 w-4/5 rounded-3xl" />
+      <div className="site-hero-card__trapezoid">
+        <div className="site-hero-card__trapezoid-shape">
+          <div className="site-hero-card__photo">
+            <div className="site-skeleton h-4/5 w-4/5 rounded-3xl" />
+          </div>
         </div>
       </div>
 
-      <div className="site-hero-card__content">
+      <div className="site-hero-card__panel">
         <div className="site-skeleton h-5 w-24" />
 
         <div className="site-hero-card__name-row">

@@ -47,28 +47,28 @@ function ProfileContent({
   children,
 }: ProfileContentProps) {
   return (
-    <div className="site-hero-card__content">
-      <p className="site-label">{label}</p>
+    <div className="site-hero-card__panel">
+      <ProfileSocialLinks
+        links={links}
+        socialLinksLabel={socialLinksLabel}
+        emailLabel={emailLabel}
+        copyEmailLabel={copyEmailLabel}
+        emailCopiedMessage={emailCopiedMessage}
+        emailEmptyMessage={emailEmptyMessage}
+        emailLoadErrorMessage={emailLoadErrorMessage}
+        panelState={panelState}
+        email={email}
+        isCopied={isCopied}
+        isMailExpanded={isMailExpanded}
+        isMailLoading={isMailLoading}
+        onMailClick={onMailClick}
+        onCopyEmail={onCopyEmail}
+      />
+
+      <p className="site-label site-hero-card__label">{label}</p>
 
       <div className="site-hero-card__name-row">
         <h1 className="site-hero-card__name">{name}</h1>
-
-        <ProfileSocialLinks
-          links={links}
-          socialLinksLabel={socialLinksLabel}
-          emailLabel={emailLabel}
-          copyEmailLabel={copyEmailLabel}
-          emailCopiedMessage={emailCopiedMessage}
-          emailEmptyMessage={emailEmptyMessage}
-          emailLoadErrorMessage={emailLoadErrorMessage}
-          panelState={panelState}
-          email={email}
-          isCopied={isCopied}
-          isMailExpanded={isMailExpanded}
-          isMailLoading={isMailLoading}
-          onMailClick={onMailClick}
-          onCopyEmail={onCopyEmail}
-        />
       </div>
 
       {role ? (

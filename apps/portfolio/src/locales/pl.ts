@@ -7,7 +7,7 @@ export const pl: Translations = {
     loadError: "Nie udało się wczytać profilu.",
     emailLabel: "Pokaż e-mail",
     copyEmailLabel: "Kopiuj",
-    emailCopiedMessage: "Adres e-mail skopiowany",
+    emailCopiedMessage: "Skopiowano",
     emailEmptyMessage: "Brak adresu e-mail w profilu.",
     emailLoadErrorMessage: "Nie udało się wczytać adresu e-mail.",
   },

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 const CARD_SURFACE_SELECTOR = [
-  ".site-card--hero",
+  ".site-hero-card",
   ".site-card--project",
   ".site-card--skeleton",
   ".site-card--skill",

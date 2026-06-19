@@ -69,48 +69,43 @@ function AboutSection({
 
   return (
     <section id="about" className="site-section--hero" aria-busy={isLoading}>
-      <div className="site-card--hero">
-        {isLoading ? (
-          <ProfileSkeleton />
-        ) : isError || !profile ? (
-          <div
-            role="alert"
-            className="flex min-h-72 items-center justify-center p-8 text-center"
-          >
-            <p className="site-text-error">{errorMessage}</p>
-          </div>
-        ) : (
-          <div className="site-hero-card">
-            <ProfileImage
-              imageUrl={profile.imageUrl}
-              alt={imageAlt}
-              fallbackLabel={noImage}
-            />
+      {isLoading ? (
+        <ProfileSkeleton />
+      ) : isError || !profile ? (
+        <div className="site-hero-card site-hero-card--error" role="alert">
+          <p className="site-text-error">{errorMessage}</p>
+        </div>
+      ) : (
+        <div className="site-hero-card">
+          <ProfileImage
+            imageUrl={profile.imageUrl}
+            alt={imageAlt}
+            fallbackLabel={noImage}
+          />
 
-            <ProfileContent
-              name={profile.name}
-              role={role}
-              label={label}
-              links={footerLinks}
-              socialLinksLabel={socialLinksLabel}
-              emailLabel={emailLabel}
-              copyEmailLabel={copyEmailLabel}
-              emailCopiedMessage={emailCopiedMessage}
-              emailEmptyMessage={emailEmptyMessage}
-              emailLoadErrorMessage={emailLoadErrorMessage}
-              panelState={panelState}
-              email={email}
-              isCopied={isCopied}
-              isMailExpanded={isMailExpanded}
-              isMailLoading={isMailLoading}
-              onMailClick={() => void handleMailClick()}
-              onCopyEmail={() => void handleCopyEmail()}
-            >
-              <p>{description}</p>
-            </ProfileContent>
-          </div>
-        )}
-      </div>
+          <ProfileContent
+            name={profile.name}
+            role={role}
+            label={label}
+            links={footerLinks}
+            socialLinksLabel={socialLinksLabel}
+            emailLabel={emailLabel}
+            copyEmailLabel={copyEmailLabel}
+            emailCopiedMessage={emailCopiedMessage}
+            emailEmptyMessage={emailEmptyMessage}
+            emailLoadErrorMessage={emailLoadErrorMessage}
+            panelState={panelState}
+            email={email}
+            isCopied={isCopied}
+            isMailExpanded={isMailExpanded}
+            isMailLoading={isMailLoading}
+            onMailClick={() => void handleMailClick()}
+            onCopyEmail={() => void handleCopyEmail()}
+          >
+            <p>{description}</p>
+          </ProfileContent>
+        </div>
+      )}
     </section>
   );
 }

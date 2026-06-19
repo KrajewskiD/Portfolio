@@ -6,13 +6,15 @@ type ProfileImageProps = {
 
 function ProfileImage({ imageUrl, alt, fallbackLabel }: ProfileImageProps) {
   return (
-    <div className="site-hero-card__visual">
-      <div className="site-hero-card__photo">
-        {imageUrl ? (
-          <img src={imageUrl} alt={alt} className="site-hero-card__image" />
-        ) : (
-          <span className="site-hero-card__placeholder">{fallbackLabel}</span>
-        )}
+    <div className="site-hero-card__trapezoid">
+      <div className="site-hero-card__trapezoid-shape">
+        <div className="site-hero-card__photo">
+          {imageUrl ? (
+            <img src={imageUrl} alt={alt} className="site-hero-card__image" />
+          ) : (
+            <span className="site-hero-card__placeholder">{fallbackLabel}</span>
+          )}
+        </div>
       </div>
     </div>
   );
