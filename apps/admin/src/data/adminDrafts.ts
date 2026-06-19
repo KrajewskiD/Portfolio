@@ -24,9 +24,9 @@ export const projectDrafts: Project[] = [
     titlePl: "Nazwa projektu PL",
     titleEn: "Project name EN",
     technologies: [
-      { name: "React", iconSlug: "react" },
-      { name: "TypeScript", iconSlug: "typescript" },
-      { name: "Supabase", iconSlug: "supabase" },
+      { name: "React", iconSlug: "logos/react" },
+      { name: "TypeScript", iconSlug: "logos/typescript-icon" },
+      { name: "Supabase", iconSlug: "logos/supabase-icon" },
     ],
     topics: [
       {
@@ -65,10 +65,10 @@ export const projectDrafts: Project[] = [
     titlePl: "Panel administratora PL",
     titleEn: "Admin panel EN",
     technologies: [
-      { name: "React", iconSlug: "react" },
-      { name: "TypeScript", iconSlug: "typescript" },
-      { name: "Supabase", iconSlug: "supabase" },
-      { name: "PostgreSQL", iconSlug: "postgresql" },
+      { name: "React", iconSlug: "logos/react" },
+      { name: "TypeScript", iconSlug: "logos/typescript-icon" },
+      { name: "Supabase", iconSlug: "logos/supabase-icon" },
+      { name: "PostgreSQL", iconSlug: "logos/postgresql" },
     ],
     topics: [
       {

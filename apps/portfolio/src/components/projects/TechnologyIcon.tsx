@@ -1,52 +1,33 @@
-import { useEffect, useRef } from "react";
+import { useState } from "react";
 
-import useTechnologyIcon from "@portfolio/hooks/useTechnologyIcon";
+import {
+  createTechnologyIconAltText,
+  getTechnologyIconUrl,
+} from "@portfolio/scripts/fetchTechnologyIcon";
 
 type TechnologyIconProps = {
   iconSlug: string;
-  className?: string;
+  label: string;
 };
 
-function TechnologyIcon({ iconSlug, className = "" }: TechnologyIconProps) {
-  const hostRef = useRef<HTMLSpanElement>(null);
-  const { data: svgMarkup } = useTechnologyIcon(iconSlug);
+function TechnologyIcon({ iconSlug, label }: TechnologyIconProps) {
+  const [hasError, setHasError] = useState(false);
+  const trimmedSlug = iconSlug.trim();
 
-  useEffect(() => {
-    const host = hostRef.current;
-
-    if (!host) {
-      return;
-    }
-
-    host.replaceChildren();
-
-    if (!svgMarkup) {
-      return;
-    }
-
-    const document = new DOMParser().parseFromString(svgMarkup, "image/svg+xml");
-    const parseError = document.querySelector("parsererror");
-
-    if (parseError) {
-      return;
-    }
-
-    const svg = document.querySelector("svg");
-
-    if (!svg) {
-      return;
-    }
-
-    svg.setAttribute("aria-hidden", "true");
-    svg.setAttribute("focusable", "false");
-    host.append(svg);
-  }, [svgMarkup]);
+  if (hasError) {
+    return <span className="site-tag__label">{label}</span>;
+  }
 
   return (
-    <span
-      ref={hostRef}
-      className={["site-tag__icon", className].filter(Boolean).join(" ")}
-      aria-hidden
+    <img
+      src={getTechnologyIconUrl(trimmedSlug)}
+      alt={createTechnologyIconAltText(label)}
+      className="site-tag__icon-image"
+      width={32}
+      height={32}
+      loading="lazy"
+      decoding="async"
+      onError={() => setHasError(true)}
     />
   );
 }

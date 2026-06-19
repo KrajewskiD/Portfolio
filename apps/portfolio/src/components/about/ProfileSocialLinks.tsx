@@ -45,8 +45,8 @@ function ProfileSocialLinks({
       <nav aria-label={socialLinksLabel} className="site-hero-card__links">
         <button
           type="button"
-          className={`site-hero-card__link site-hero-card__link--icon${
-            isMailLoading ? " site-hero-card__link--icon--loading" : ""
+          className={`site-icon-link${
+            isMailLoading ? " site-icon-link--loading" : ""
           }`}
           aria-label={emailLabel}
           aria-busy={isMailLoading}
@@ -61,7 +61,7 @@ function ProfileSocialLinks({
               src={mailIcon}
               alt=""
               aria-hidden
-              className="site-hero-card__link-icon"
+              className="site-icon-link__icon"
             />
           )}
         </button>

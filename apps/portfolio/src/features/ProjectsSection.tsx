@@ -18,6 +18,7 @@ type ProjectsSectionProps = {
   language: Language;
   noImage: string;
   emptyMessage: string;
+  openProjectLinkLabel: string;
 };
 
 function ProjectsSection({
@@ -29,6 +30,7 @@ function ProjectsSection({
   title,
   noImage,
   emptyMessage,
+  openProjectLinkLabel,
   language,
 }: ProjectsSectionProps) {
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
@@ -87,6 +89,7 @@ function ProjectsSection({
                 project={activeProject}
                 language={language}
                 noImage={noImage}
+                openProjectLinkLabel={openProjectLinkLabel}
                 selectedTopicId={
                   activeTopics[activeProject.id] ?? DEFAULT_PROJECT_TOPIC_ID
                 }

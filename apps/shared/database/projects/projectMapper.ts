@@ -63,6 +63,7 @@ export function mapProjectRow(
   return normalizeProjectTopics({
     id: project.id,
     code: project.code ?? undefined,
+    projectUrl: project.project_url ?? undefined,
     titlePl: project.title_pl,
     titleEn: project.title_en,
     technologies,
@@ -76,6 +77,7 @@ export function mapProjectToRow(project: Project, displayOrder: number) {
   return {
     id: project.id,
     code: project.code ?? null,
+    project_url: project.projectUrl?.trim() || null,
     title_pl: project.titlePl,
     title_en: project.titleEn,
     display_order: displayOrder,

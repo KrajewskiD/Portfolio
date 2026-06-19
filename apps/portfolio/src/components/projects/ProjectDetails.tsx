@@ -18,7 +18,9 @@ function ProjectDetails({
       <p className="site-code">{code}</p>
 
       <h3 className="site-title--project">{title}</h3>
-      <div className="mt-5 flex flex-wrap gap-2">{technologies}</div>
+      <div className="site-project-technologies">
+        <div className="site-project-technologies__card">{technologies}</div>
+      </div>
       {topics}
     </div>
   );

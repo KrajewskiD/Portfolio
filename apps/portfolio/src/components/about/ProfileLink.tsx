@@ -1,3 +1,4 @@
+import IconLinkButton from "@portfolio/components/IconLinkButton";
 import githubIcon from "@shared/assets/icons/github.svg";
 import linkedinIcon from "@shared/assets/icons/linkedin.svg";
 import youtubeIcon from "@shared/assets/icons/youtube.svg";
@@ -19,20 +20,11 @@ function ProfileLink({ label, href }: ProfileLinkProps) {
 
   if (platform) {
     return (
-      <a
+      <IconLinkButton
         href={href}
-        className="site-hero-card__link site-hero-card__link--icon"
-        aria-label={label}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <img
-          src={socialIcons[platform]}
-          alt=""
-          aria-hidden
-          className="site-hero-card__link-icon"
-        />
-      </a>
+        label={label}
+        iconSrc={socialIcons[platform]}
+      />
     );
   }
 

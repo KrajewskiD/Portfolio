@@ -1,6 +1,7 @@
 export type ProjectRow = {
   id: string;
   code: string | null;
+  project_url: string | null;
   title_pl: string;
   title_en: string;
   display_order: number;

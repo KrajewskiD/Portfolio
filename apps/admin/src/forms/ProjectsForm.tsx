@@ -56,7 +56,7 @@ import {
   getOppositeLocalizedKey,
 } from "@shared/utils/localizedField";
 
-type ProjectTextField = "code" | "titlePl" | "titleEn";
+type ProjectTextField = "code" | "projectUrl" | "titlePl" | "titleEn";
 type TopicTextField = ProjectTopicContentField | ProjectTopicImageField;
 
 function topicImageKey(projectId: string, topicId: ProjectTopicId) {
@@ -512,6 +512,23 @@ function ProjectsForm({ language }: AdminFormProps) {
                   value={activeProject.code ?? ""}
                   onChange={(event) =>
                     updateProject("code", event.target.value)
+                  }
+                />
+              </AdminField>
+
+              <AdminField
+                id="project-url"
+                label="Link do projektu"
+                hint="Bezpośredni adres URL do projektu, np. repozytorium, demo lub strona produktu."
+              >
+                <AdminInput
+                  id="project-url"
+                  type="url"
+                  value={activeProject.projectUrl ?? ""}
+                  placeholder="https://"
+                  disabled={isBusy}
+                  onChange={(event) =>
+                    updateProject("projectUrl", event.target.value)
                   }
                 />
               </AdminField>

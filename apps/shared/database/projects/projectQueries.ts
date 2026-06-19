@@ -15,6 +15,7 @@ export async function getProjectsFromDatabase(
       `
       id,
       code,
+      project_url,
       title_pl,
       title_en,
       display_order,

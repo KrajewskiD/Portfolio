@@ -75,6 +75,7 @@ function HomePage({
         label={translation.projects.label}
         title={translation.projects.title}
         noImage={translation.projects.noImage}
+        openProjectLinkLabel={translation.projects.openProjectLink}
         language={language}
       />
 

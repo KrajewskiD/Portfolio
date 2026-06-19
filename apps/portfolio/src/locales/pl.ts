@@ -20,6 +20,7 @@ export const pl: Translations = {
     noImage: "Brak zdjęcia projektu",
     loadError: "Nie udało się wczytać projektów.",
     emptyMessage: "Brak projektów.",
+    openProjectLink: "Otwórz projekt na GitHubie",
   },
   skills: {
     label: "umiejętności",

@@ -1,3 +1,5 @@
+import { isValidTechnologyIconSlug } from "@portfolio/scripts/fetchTechnologyIcon";
+
 import TechnologyIcon from "./TechnologyIcon";
 
 type TechnologyTagProps = {
@@ -6,10 +8,19 @@ type TechnologyTagProps = {
 };
 
 function TechnologyTag({ label, iconSlug }: TechnologyTagProps) {
+  const trimmedSlug = iconSlug?.trim() ?? "";
+
+  if (!isValidTechnologyIconSlug(trimmedSlug)) {
+    return (
+      <span className="site-tag">
+        <span className="site-tag__label">{label}</span>
+      </span>
+    );
+  }
+
   return (
     <span className="site-tag">
-      {iconSlug ? <TechnologyIcon iconSlug={iconSlug} /> : null}
-      <span>{label}</span>
+      <TechnologyIcon iconSlug={trimmedSlug} label={label} />
     </span>
   );
 }

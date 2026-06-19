@@ -32,7 +32,7 @@ function ProjectTechnologiesField({
     <AdminField
       id={id}
       label="Technologie"
-      hint="Dodaj technologię przyciskiem +. Icon slug np. react, unity, csharp."
+      hint="Dodaj technologię przyciskiem +. Icon slug w formacie prefix/nazwa, np. mdi/unity lub logos/react."
       action={
         <AdminAddButton
           label="Dodaj technologię"
@@ -64,7 +64,7 @@ function ProjectTechnologiesField({
                 id={`${id}-slug-${index}`}
                 className="admin-technology-row__input"
                 value={technology.iconSlug}
-                placeholder="Icon slug"
+                placeholder="np. mdi/unity"
                 disabled={disabled}
                 onChange={(event) =>
                   onUpdate(index, "iconSlug", event.target.value)

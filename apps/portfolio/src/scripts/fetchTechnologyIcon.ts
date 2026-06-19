@@ -1,23 +1,39 @@
-const ICONIFY_LOGOS_BASE_URL = "https://api.iconify.design/logos";
+const ICONIFY_BASE_URL = "https://api.iconify.design";
+const ICON_FOREGROUND_COLOR = "e4e5e8";
 
-const ICON_SLUG_PATTERN = /^[a-z0-9-]+$/i;
+const ICON_SLUG_PATTERN = /^[a-z0-9][a-z0-9-]*\/[a-z0-9][a-z0-9-]+$/;
 
 const iconMarkupCache = new Map<string, string>();
 
 export function normalizeTechnologyIconSlug(iconSlug: string): string {
-  return iconSlug.trim().toLowerCase();
+  let value = iconSlug.trim().toLowerCase();
+
+  const urlMatch = value.match(/api\.iconify\.design\/(.+?)(?:\.svg)?$/);
+
+  if (urlMatch) {
+    value = urlMatch[1];
+  }
+
+  return value
+    .replace(/\.svg$/i, "")
+    .replace(/:/g, "/")
+    .replace(/^\/+/, "")
+    .replace(/\/+/g, "/");
 }
 
 export function isValidTechnologyIconSlug(iconSlug: string): boolean {
   const normalized = normalizeTechnologyIconSlug(iconSlug);
 
-  return normalized.length > 0 && ICON_SLUG_PATTERN.test(normalized);
+  return ICON_SLUG_PATTERN.test(normalized);
 }
 
-function getTechnologyIconUrl(iconSlug: string): string {
-  const normalized = normalizeTechnologyIconSlug(iconSlug);
+export function getTechnologyIconUrl(iconSlug: string): string {
+  const iconPath = normalizeTechnologyIconSlug(iconSlug);
+  const [prefix, ...nameParts] = iconPath.split("/");
+  const iconName = nameParts.join("/");
+  const colorQuery = `color=%23${ICON_FOREGROUND_COLOR}`;
 
-  return `${ICONIFY_LOGOS_BASE_URL}/${encodeURIComponent(normalized)}.svg`;
+  return `${ICONIFY_BASE_URL}/${encodeURIComponent(prefix)}/${encodeURIComponent(iconName)}.svg?${colorQuery}`;
 }
 
 export async function fetchTechnologyIconSvg(
@@ -55,13 +71,58 @@ export async function fetchTechnologyIconSvg(
   }
 }
 
+export function createTechnologyIconAltText(label: string): string {
+  return `${label} icon`;
+}
+
+export function createAccessibleTechnologyIconSvg(
+  markup: string,
+  label: string,
+): SVGSVGElement | null {
+  const document = new DOMParser().parseFromString(markup, "image/svg+xml");
+  const parseError = document.querySelector("parsererror");
+
+  if (parseError) {
+    return null;
+  }
+
+  const svg = document.querySelector("svg");
+
+  if (!svg) {
+    return null;
+  }
+
+  const altText = createTechnologyIconAltText(label);
+
+  svg.setAttribute("role", "img");
+  svg.setAttribute("aria-label", altText);
+  svg.setAttribute("focusable", "false");
+
+  const existingTitle = svg.querySelector("title");
+
+  if (existingTitle) {
+    existingTitle.textContent = altText;
+  } else {
+    const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+    title.textContent = altText;
+    svg.prepend(title);
+  }
+
+  return svg;
+}
+
 export async function fetchTechnologyIconElement(
   iconSlug: string,
+  label?: string,
 ): Promise<SVGSVGElement | null> {
   const markup = await fetchTechnologyIconSvg(iconSlug);
 
   if (!markup) {
     return null;
+  }
+
+  if (label) {
+    return createAccessibleTechnologyIconSvg(markup, label);
   }
 
   const document = new DOMParser().parseFromString(markup, "image/svg+xml");

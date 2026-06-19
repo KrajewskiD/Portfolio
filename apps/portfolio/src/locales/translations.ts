@@ -18,6 +18,7 @@ export type Translations = {
     noImage: string;
     loadError: string;
     emptyMessage: string;
+    openProjectLink: string;
   };
   skills: {
     label: string;

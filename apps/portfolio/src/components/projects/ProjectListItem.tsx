@@ -1,5 +1,6 @@
 import ProjectCard from "@portfolio/components/projects/ProjectCard";
 import ProjectDetails from "@portfolio/components/projects/ProjectDetails";
+import ProjectExternalLink from "@portfolio/components/projects/ProjectExternalLink";
 import ProjectImage from "@portfolio/components/projects/ProjectImage";
 import ProjectTopicsGroup from "@portfolio/components/projects/ProjectTopicsGroup";
 import TechnologyTag from "@portfolio/components/projects/TechnologyTag";
@@ -12,6 +13,7 @@ type ProjectListItemProps = {
   project: Project;
   language: Language;
   noImage: string;
+  openProjectLinkLabel: string;
   selectedTopicId: ProjectTopicId;
   onTopicChange: (topicId: ProjectTopicId) => void;
 };
@@ -20,6 +22,7 @@ function ProjectListItem({
   project,
   language,
   noImage,
+  openProjectLinkLabel,
   selectedTopicId,
   onTopicChange,
 }: ProjectListItemProps) {
@@ -72,6 +75,13 @@ function ProjectListItem({
           />
         }
       />
+
+      {project.projectUrl ? (
+        <ProjectExternalLink
+          href={project.projectUrl}
+          label={openProjectLinkLabel}
+        />
+      ) : null}
     </ProjectCard>
   );
 }

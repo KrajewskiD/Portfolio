@@ -4,11 +4,6 @@ function ProjectSkeleton() {
     "w-24",
     "w-32",
   ];
-  const technologies = [
-    "w-20",
-    "w-28",
-    "w-24",
-  ];
   const topics = [
     "w-24",
     "w-28",
@@ -47,13 +42,12 @@ function ProjectSkeleton() {
 
           <div className="site-skeleton mt-3 h-10 w-3/4" />
 
-          <div className="mt-5 flex flex-wrap gap-2">
-            {technologies.map((width, index) => (
-              <div
-                key={index}
-                className={`site-skeleton h-9 ${width} rounded-pill`}
-              />
-            ))}
+          <div className="site-project-technologies">
+            <div className="site-project-technologies__card">
+              {[0, 1, 2].map((index) => (
+                <div key={index} className="site-skeleton h-8 w-8 rounded-lg" />
+              ))}
+            </div>
           </div>
 
           <div className="mt-6 grid grid-cols-[1fr_auto] gap-4 sm:block">

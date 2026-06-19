@@ -20,6 +20,7 @@ export const en: Translations = {
     noImage: "No project image",
     loadError: "The projects could not be loaded.",
     emptyMessage: "No projects available.",
+    openProjectLink: "Open project on GitHub",
   },
   skills: {
     label: "skills",
