@@ -57,7 +57,11 @@ function ProjectListItem({
         code={project.code ?? ""}
         title={projectTitle}
         technologies={project.technologies.map((technology) => (
-          <TechnologyTag key={technology} label={technology} />
+          <TechnologyTag
+            key={technology.name}
+            label={technology.name}
+            iconSlug={technology.iconSlug}
+          />
         ))}
         topics={
           <ProjectTopicsGroup

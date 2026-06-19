@@ -44,7 +44,16 @@ export function mapProjectRow(
 
   const technologies = project.project_technologies
     .toSorted((first, second) => first.display_order - second.display_order)
-    .flatMap((item) => (item.technologies ? [item.technologies.name] : []));
+    .flatMap((item) =>
+      item.technologies
+        ? [
+            {
+              name: item.technologies.name,
+              iconSlug: item.technologies.icon_slug ?? "",
+            },
+          ]
+        : [],
+    );
 
   const videoPath = project.video_path ?? undefined;
   const videoUrl = videoPath

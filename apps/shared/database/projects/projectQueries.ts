@@ -30,7 +30,8 @@ export async function getProjectsFromDatabase(
       project_technologies (
         display_order,
         technologies (
-          name
+          name,
+          icon_slug
         )
       )
     `,

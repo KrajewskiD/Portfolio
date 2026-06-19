@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 
+import ProjectTechnologiesField from "@admin/components/projects/ProjectTechnologiesField";
 import ProjectTopicContentPanel, {
   type ProjectTopicContentField,
 } from "@admin/components/projects/ProjectTopicContentPanel";
@@ -48,6 +49,7 @@ import { PROJECT_TITLE_MAX_LENGTH } from "@shared/constants/project";
 import { normalizeProjectIds } from "@shared/database";
 import { DEFAULT_PROJECT_TOPIC_ID } from "@shared/database/types/projectTopic";
 import type { Project, ProjectTopicId } from "@shared/database/types/project";
+import { createEmptyProjectTechnology } from "@shared/database/types/project";
 import {
   getLocalizedField,
   getLocalizedKey,
@@ -85,9 +87,6 @@ function ProjectsForm({ language }: AdminFormProps) {
   } = usePendingKeyedImages();
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string>();
-  const [technologyInputs, setTechnologyInputs] = useState<
-    Record<string, string>
-  >({});
 
   const prepareBeforeSave = useCallback(
     async (currentProjects: Project[]) => {
@@ -205,7 +204,6 @@ function ProjectsForm({ language }: AdminFormProps) {
     onDiscard: () => {
       discardPendingImages();
       discardPendingVideos();
-      setTechnologyInputs({});
     },
   });
 
@@ -253,25 +251,67 @@ function ProjectsForm({ language }: AdminFormProps) {
     );
   }
 
-  function updateTechnologies(value: string) {
+  function addTechnology() {
     if (!activeProject) {
       return;
     }
-
-    setTechnologyInputs((currentInputs) => ({
-      ...currentInputs,
-      [activeProject.id]: value,
-    }));
 
     setProjects((currentProjects) =>
       currentProjects.map((project) =>
         project.id === activeProject.id
           ? {
               ...project,
-              technologies: value
-                .split(",")
-                .map((technology) => technology.trim())
-                .filter(Boolean),
+              technologies: [
+                ...project.technologies,
+                createEmptyProjectTechnology(),
+              ],
+            }
+          : project,
+      ),
+    );
+  }
+
+  function updateTechnology(
+    index: number,
+    field: "name" | "iconSlug",
+    value: string,
+  ) {
+    if (!activeProject) {
+      return;
+    }
+
+    setProjects((currentProjects) =>
+      currentProjects.map((project) =>
+        project.id === activeProject.id
+          ? {
+              ...project,
+              technologies: project.technologies.map((technology, technologyIndex) =>
+                technologyIndex === index
+                  ? {
+                      ...technology,
+                      [field]: value,
+                    }
+                  : technology,
+              ),
+            }
+          : project,
+      ),
+    );
+  }
+
+  function removeTechnology(index: number) {
+    if (!activeProject) {
+      return;
+    }
+
+    setProjects((currentProjects) =>
+      currentProjects.map((project) =>
+        project.id === activeProject.id
+          ? {
+              ...project,
+              technologies: project.technologies.filter(
+                (_, technologyIndex) => technologyIndex !== index,
+              ),
             }
           : project,
       ),
@@ -540,20 +580,14 @@ function ProjectsForm({ language }: AdminFormProps) {
                   />
                 </AdminTranslatableField>
 
-                <AdminField
+                <ProjectTechnologiesField
                   id="project-technologies"
-                  label="Technologie"
-                  hint="Wpisz technologie po przecinku, np. React, TypeScript, Supabase."
-                >
-                  <AdminInput
-                    id="project-technologies"
-                    value={
-                      technologyInputs[activeProject.id] ??
-                      activeProject.technologies.join(", ")
-                    }
-                    onChange={(event) => updateTechnologies(event.target.value)}
-                  />
-                </AdminField>
+                  technologies={activeProject.technologies}
+                  disabled={isBusy}
+                  onAdd={addTechnology}
+                  onUpdate={updateTechnology}
+                  onRemove={removeTechnology}
+                />
 
                 <AdminField
                   id="project-topic-tabs"

@@ -5,15 +5,38 @@ import {
   mapProjectToRow,
   mapProjectTopicToRow,
 } from "@shared/database/projects/projectMapper";
-import type { Project } from "@shared/database/types/project";
+import type {
+  Project,
+  ProjectTechnology,
+} from "@shared/database/types/project";
 
-function uniqueTechnologyNames(technologies: string[]): string[] {
-  return technologies.filter(
-    (technology, index, allTechnologies) =>
-      allTechnologies.findIndex(
-        (item) => item.toLowerCase() === technology.toLowerCase(),
-      ) === index,
-  );
+function uniqueTechnologies(
+  technologies: ProjectTechnology[],
+): ProjectTechnology[] {
+  const seen = new Set<string>();
+
+  return technologies.flatMap((technology) => {
+    const name = technology.name.trim();
+
+    if (!name) {
+      return [];
+    }
+
+    const key = name.toLowerCase();
+
+    if (seen.has(key)) {
+      return [];
+    }
+
+    seen.add(key);
+
+    return [
+      {
+        name,
+        iconSlug: technology.iconSlug.trim(),
+      },
+    ];
+  });
 }
 
 async function upsertProjectRow(
@@ -60,7 +83,7 @@ export async function saveProjectTechnologies(project: Project): Promise<void> {
     throw deleteError;
   }
 
-  const technologies = uniqueTechnologyNames(project.technologies);
+  const technologies = uniqueTechnologies(project.technologies);
 
   if (technologies.length === 0) {
     return;
@@ -69,7 +92,11 @@ export async function saveProjectTechnologies(project: Project): Promise<void> {
   const rows = await Promise.all(
     technologies.map(async (technology, index) => ({
       project_id: project.id,
-      technology_id: await getOrCreateTechnologyId(supabase, technology),
+      technology_id: await getOrCreateTechnologyId(
+        supabase,
+        technology.name,
+        technology.iconSlug,
+      ),
       display_order: index + 1,
     })),
   );

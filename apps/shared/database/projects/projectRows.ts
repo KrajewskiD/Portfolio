@@ -17,6 +17,7 @@ export type ProjectRow = {
     display_order: number;
     technologies: {
       name: string;
+      icon_slug: string | null;
     } | null;
   }[];
 };

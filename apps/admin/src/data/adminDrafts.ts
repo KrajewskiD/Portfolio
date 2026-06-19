@@ -23,7 +23,11 @@ export const projectDrafts: Project[] = [
     code: "PROJECT_01",
     titlePl: "Nazwa projektu PL",
     titleEn: "Project name EN",
-    technologies: ["React", "TypeScript", "Supabase"],
+    technologies: [
+      { name: "React", iconSlug: "react" },
+      { name: "TypeScript", iconSlug: "typescript" },
+      { name: "Supabase", iconSlug: "supabase" },
+    ],
     topics: [
       {
         id: "overview",
@@ -60,7 +64,12 @@ export const projectDrafts: Project[] = [
     code: "PROJECT_02",
     titlePl: "Panel administratora PL",
     titleEn: "Admin panel EN",
-    technologies: ["React", "TypeScript", "Supabase", "PostgreSQL"],
+    technologies: [
+      { name: "React", iconSlug: "react" },
+      { name: "TypeScript", iconSlug: "typescript" },
+      { name: "Supabase", iconSlug: "supabase" },
+      { name: "PostgreSQL", iconSlug: "postgresql" },
+    ],
     topics: [
       {
         id: "overview",

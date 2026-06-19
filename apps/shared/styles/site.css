@@ -864,7 +864,15 @@
   }
 
   .site-tag {
-    @apply rounded-full border border-border px-3 py-1.5 text-sm;
+    @apply inline-flex items-center gap-2 rounded-full border border-border px-3 py-1.5 text-sm;
+  }
+
+  .site-tag__icon {
+    @apply inline-flex h-4 w-4 shrink-0 items-center justify-center;
+  }
+
+  .site-tag__icon svg {
+    @apply h-full w-full;
   }
 
   .site-pill--link {

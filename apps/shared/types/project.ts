@@ -1,3 +1,7 @@
+import type { ProjectTechnology } from "../database/types/project";
+
+export type { ProjectTechnology };
+
 export type ProjectTopicId =
   | "overview"
   | "features"
@@ -20,6 +24,6 @@ export type Project = {
   code?: string;
   titlePl: string;
   titleEn: string;
-  technologies: string[];
+  technologies: ProjectTechnology[];
   topics: ProjectTopics;
 };

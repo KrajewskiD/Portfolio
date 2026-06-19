@@ -2,6 +2,18 @@ import type { ProjectTopicId } from "./projectTopic";
 
 export type { ProjectTopicId };
 
+export type ProjectTechnology = {
+  name: string;
+  iconSlug: string;
+};
+
+export function createEmptyProjectTechnology(): ProjectTechnology {
+  return {
+    name: "",
+    iconSlug: "",
+  };
+}
+
 export type ProjectTopicContent = {
   id: ProjectTopicId;
   contentPl: string;
@@ -19,7 +31,7 @@ export type Project = {
   code?: string;
   titlePl: string;
   titleEn: string;
-  technologies: string[];
+  technologies: ProjectTechnology[];
   videoPath?: string;
   videoUrl?: string;
   topics: ProjectTopics;

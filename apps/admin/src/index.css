@@ -125,6 +125,14 @@ body,
     @apply inline-flex h-12 w-12 shrink-0 items-center justify-center p-0 text-xl font-black;
   }
 
+  .admin-technology-row {
+    @apply flex items-start gap-3;
+  }
+
+  .admin-technology-row__input {
+    @apply min-w-0 flex-1;
+  }
+
   .admin-drag-handle {
     @apply inline-flex h-10 w-6 shrink-0 cursor-grab items-center justify-center rounded-lg text-white/25 transition;
     @apply hover:text-white/55 active:cursor-grabbing;
