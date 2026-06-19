@@ -5,7 +5,12 @@ type FooterLinkProps = {
 
 function FooterLink({ label, href }: FooterLinkProps) {
   return (
-    <a href={href} className="site-pill--link">
+    <a
+      href={href}
+      className="site-pill--link"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
       {label}
     </a>
   );

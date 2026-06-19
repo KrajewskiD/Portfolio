@@ -1,38 +1,83 @@
 function ProjectSkeleton() {
+  const thumbnailWidths = [
+    "w-28",
+    "w-24",
+    "w-32",
+  ];
+  const technologies = [
+    "w-20",
+    "w-28",
+    "w-24",
+  ];
+  const topics = [
+    "w-24",
+    "w-28",
+    "w-36",
+    "w-24",
+  ];
+
   return (
     <div className="site-project-layout" aria-hidden="true">
       <div className="site-project-grid">
-        {Array.from({ length: 3 }, (_, index) => (
-          <div key={index} className="site-skeleton site-project-thumb" />
+        {thumbnailWidths.map((width, index) => (
+          <div
+            key={index}
+            className={`site-project-thumb site-project-thumb--skeleton ${
+              index === 0 ? "site-project-thumb--active" : ""
+            }`}
+          >
+            <div className="site-project-thumb__placeholder" />
+
+            <span className="site-project-thumb__overlay">
+              <span className={`site-skeleton h-4 ${width}`} />
+            </span>
+          </div>
         ))}
       </div>
 
       <article className="site-card--project">
         <div className="site-project-image">
-          <div className="site-skeleton h-56 w-full sm:h-72 lg:h-full" />
+          <div className="site-project-image__frame">
+            <div className="site-skeleton h-5 w-36" />
+          </div>
         </div>
 
-        <div className="site-project-skeleton__content">
+        <div className="site-project-details">
           <div className="site-skeleton hidden h-5 w-24 sm:block" />
 
           <div className="site-skeleton mt-3 h-10 w-3/4" />
 
-          <div className="mt-5 flex gap-2">
-            <div className="site-skeleton h-10 w-20 rounded-pill" />
-            <div className="site-skeleton h-10 w-28 rounded-pill" />
-            <div className="site-skeleton h-10 w-24 rounded-pill" />
+          <div className="mt-5 flex flex-wrap gap-2">
+            {technologies.map((width, index) => (
+              <div
+                key={index}
+                className={`site-skeleton h-9 ${width} rounded-pill`}
+              />
+            ))}
           </div>
 
-          <div className="mt-6 flex gap-5 border-b border-border pb-3">
-            <div className="site-skeleton h-6 w-24" />
-            <div className="site-skeleton h-6 w-28" />
-            <div className="site-skeleton h-6 w-32" />
-          </div>
+          <div className="mt-6 grid grid-cols-[1fr_auto] gap-4 sm:block">
+            <div className="site-topic-list">
+              {topics.map((width, index) => (
+                <div
+                  key={index}
+                  className={`site-topic-tab ${
+                    index === 0
+                      ? "site-topic-tab--active"
+                      : "site-topic-tab--inactive"
+                  }`}
+                >
+                  <div className="site-skeleton h-5 w-5 sm:hidden" />
+                  <div className={`site-skeleton hidden h-5 ${width} sm:block`} />
+                </div>
+              ))}
+            </div>
 
-          <div className="site-topic-panel mt-5 space-y-4">
-            <div className="site-skeleton h-5 w-28" />
-            <div className="site-skeleton h-5 w-full" />
-            <div className="site-skeleton h-5 w-4/5" />
+            <div className="site-topic-panel col-start-1 row-start-1 space-y-4">
+              <div className="site-skeleton h-5 w-28" />
+              <div className="site-skeleton h-5 w-full" />
+              <div className="site-skeleton h-5 w-4/5" />
+            </div>
           </div>
         </div>
       </article>

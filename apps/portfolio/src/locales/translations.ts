@@ -3,6 +3,11 @@ export type Translations = {
     label: string;
     noImage: string;
     loadError: string;
+    emailLabel: string;
+    copyEmailLabel: string;
+    emailCopiedMessage: string;
+    emailEmptyMessage: string;
+    emailLoadErrorMessage: string;
   };
   showcase: {
     loadError: string;

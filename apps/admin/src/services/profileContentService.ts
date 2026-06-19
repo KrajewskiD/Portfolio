@@ -9,7 +9,9 @@ import {
 import type { Profile } from "@shared/database/types/profile";
 
 export async function getAdminProfile(): Promise<Profile> {
-  return getProfileFromDatabase(supabase, getProfileImagePublicUrl);
+  return getProfileFromDatabase(supabase, getProfileImagePublicUrl, {
+    includeEmail: true,
+  });
 }
 
 export async function saveAdminProfile(profile: Profile): Promise<void> {

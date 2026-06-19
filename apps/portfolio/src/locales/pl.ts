@@ -5,6 +5,11 @@ export const pl: Translations = {
     label: "o_mnie",
     noImage: "Brak zdjęcia",
     loadError: "Nie udało się wczytać profilu.",
+    emailLabel: "Pokaż e-mail",
+    copyEmailLabel: "Kopiuj",
+    emailCopiedMessage: "Adres e-mail skopiowany",
+    emailEmptyMessage: "Brak adresu e-mail w profilu.",
+    emailLoadErrorMessage: "Nie udało się wczytać adresu e-mail.",
   },
   showcase: {
     loadError: "Nie udało się wczytać prezentacji projektów.",

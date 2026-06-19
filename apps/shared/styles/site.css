@@ -125,6 +125,145 @@
     @apply scroll-mt-24 flex items-center py-16;
   }
 
+  .site-hero-email-reveal {
+    position: absolute;
+    left: 50%;
+    right: auto;
+    bottom: calc(100% + 0.5rem);
+    z-index: 4;
+    width: max-content;
+    min-width: 100%;
+    max-width: min(36rem, calc(100vw - 2rem));
+    overflow: visible;
+    pointer-events: none;
+    transform: translateX(-50%);
+  }
+
+  .site-hero-email-reveal__field {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    padding: 0.5rem 3rem 0.5rem 1.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: 9999px;
+    background: color-mix(
+      in srgb,
+      var(--color-background) 88%,
+      var(--color-foreground)
+    );
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.28);
+    pointer-events: auto;
+  }
+
+  .site-hero-email-reveal__value {
+    transform: translateX(-0.25rem);
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-foreground);
+    text-decoration: none;
+  }
+
+  .site-hero-email-reveal__value:hover {
+    text-decoration: underline;
+  }
+
+  .site-hero-email-reveal__message {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-subtle);
+  }
+
+  .site-hero-email-reveal__copy-toast {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    z-index: 10;
+    padding: 0.4375rem 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.625rem;
+    background: var(--color-surface);
+    box-shadow: 0 8px 20px rgb(0 0 0 / 0.28);
+    color: var(--color-foreground);
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.2;
+    white-space: nowrap;
+    pointer-events: none;
+    animation: site-hero-email-copy-toast-in 0.2s ease;
+  }
+
+  .site-hero-email-reveal__copy-toast::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    right: 1rem;
+    border: 0.4rem solid transparent;
+    border-bottom-color: var(--color-border);
+  }
+
+  .site-hero-email-reveal__copy-toast::after {
+    content: "";
+    position: absolute;
+    bottom: calc(100% - 1px);
+    right: 1rem;
+    border: 0.4rem solid transparent;
+    border-bottom-color: var(--color-surface);
+  }
+
+  @keyframes site-hero-email-copy-toast-in {
+    from {
+      opacity: 0;
+      margin-top: -0.25rem;
+    }
+
+    to {
+      opacity: 1;
+      margin-top: 0;
+    }
+  }
+
+  .site-hero-email-reveal__copy {
+    position: absolute;
+    right: 0.5rem;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 9999px;
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    color: var(--color-foreground);
+    cursor: pointer;
+    transition:
+      border-color 0.2s ease,
+      background-color 0.2s ease;
+  }
+
+  .site-hero-email-reveal__copy:hover {
+    border-color: var(--color-accent-soft);
+    background: color-mix(in srgb, var(--color-accent) 20%, transparent);
+  }
+
+  .site-hero-email-reveal__copy-icon {
+    width: 0.875rem;
+    height: 0.875rem;
+    filter: brightness(0) invert(1);
+    opacity: 0.88;
+  }
+
+  .site-hero-email-reveal__copy:hover .site-hero-email-reveal__copy-icon {
+    opacity: 1;
+  }
+
   .site-section--showcase {
     @apply scroll-mt-24 py-8 sm:py-10;
   }
@@ -231,36 +370,107 @@
     justify-content: center;
     padding: 1.75rem 1.5rem 1.75rem 1rem;
     text-align: left;
+    overflow: visible;
   }
 
   .site-hero-card__name-row {
+    --hero-name-size: clamp(1.625rem, 3.5vw, 2.375rem);
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     gap: 1rem;
     margin-top: 1rem;
+    font-size: var(--hero-name-size);
   }
 
   .site-hero-card__name {
     flex: 1 1 auto;
     min-width: 0;
-    font-size: clamp(1.625rem, 3.5vw, 2.375rem);
+    margin: 0;
+    font-size: inherit;
     font-weight: 700;
-    line-height: 1.08;
+    line-height: 1;
     letter-spacing: 0.03em;
     text-transform: uppercase;
     color: var(--color-foreground);
+  }
+
+  .site-hero-card__social {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    align-self: center;
+    overflow: visible;
+    z-index: 2;
   }
 
   .site-hero-card__links {
     display: flex;
     flex-shrink: 0;
     flex-wrap: wrap;
-    justify-content: flex-end;
+    justify-content: center;
     align-items: center;
     gap: 0.5rem;
-    padding-top: 0.2rem;
-    margin-right: -0.5rem;
+  }
+
+  .site-hero-card__link--icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.28em;
+    height: 1.28em;
+    padding: 0;
+    border-radius: 9999px;
+    border: 1px solid var(--color-border);
+    background-color: transparent;
+    color: var(--color-foreground);
+    cursor: pointer;
+    transition:
+      border-color 0.2s ease,
+      color 0.2s ease,
+      background-color 0.2s ease;
+  }
+
+  button.site-hero-card__link--icon {
+    font: inherit;
+  }
+
+  .site-hero-card__link--icon--loading {
+    cursor: wait;
+  }
+
+  .site-hero-card__mail-dots {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.64em;
+    min-width: 0.64em;
+    height: 0.64em;
+    font-size: 0.42em;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    color: var(--color-foreground);
+    opacity: 0.92;
+  }
+
+  .site-hero-card__link--icon:hover {
+    border-color: var(--color-accent-soft);
+    color: var(--color-accent);
+    background-color: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  }
+
+  .site-hero-card__link-icon {
+    width: 0.64em;
+    height: 0.64em;
+    filter: brightness(0) invert(1);
+    opacity: 0.88;
+  }
+
+  .site-hero-card__link--icon:hover .site-hero-card__link-icon {
+    opacity: 1;
   }
 
   .site-hero-card .site-pill--link {
@@ -314,10 +524,6 @@
     .site-hero-card__content {
       padding: 2.5rem 3rem 2.5rem 1.5rem;
     }
-
-    .site-hero-card__links {
-      margin-right: -1.25rem;
-    }
   }
 
   @media (max-width: 639px) {
@@ -344,10 +550,14 @@
       flex-wrap: wrap;
     }
 
+    .site-hero-card__social {
+      width: fit-content;
+      max-width: 100%;
+      align-self: center;
+    }
+
     .site-hero-card__links {
-      width: 100%;
-      justify-content: flex-start;
-      margin-right: 0;
+      width: auto;
     }
   }
 
@@ -458,6 +668,19 @@
   .site-project-thumb--active {
     border-color: var(--color-accent);
     box-shadow: 0 0 0 1px var(--color-accent);
+  }
+
+  .site-project-thumb--skeleton {
+    cursor: default;
+  }
+
+  .site-project-thumb--skeleton:hover {
+    transform: none;
+  }
+
+  .site-project-thumb--skeleton:hover:not(.site-project-thumb--active) {
+    border-color: var(--color-border);
+    box-shadow: none;
   }
 
   .site-project-thumb__image {

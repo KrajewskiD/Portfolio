@@ -1,6 +1,7 @@
 import ProfileSkeleton from "../components/about/ProfileSkeleton";
 import ProfileContent from "../components/about/ProfileContent";
 import ProfileImage from "../components/about/ProfileImage";
+import { useProfileEmailReveal } from "../hooks/useProfileEmailReveal";
 import type { FooterLinkData } from "@shared/database/types/link";
 import type { Language } from "@shared/database/types/language";
 import type { Profile } from "@shared/database/types/profile";
@@ -14,6 +15,11 @@ type AboutSectionProps = {
   label: string;
   noImage: string;
   socialLinksLabel: string;
+  emailLabel: string;
+  copyEmailLabel: string;
+  emailCopiedMessage: string;
+  emailEmptyMessage: string;
+  emailLoadErrorMessage: string;
   language: Language;
 };
 
@@ -26,8 +32,23 @@ function AboutSection({
   label,
   noImage,
   socialLinksLabel,
+  emailLabel,
+  copyEmailLabel,
+  emailCopiedMessage,
+  emailEmptyMessage,
+  emailLoadErrorMessage,
   language,
 }: AboutSectionProps) {
+  const {
+    email,
+    panelState,
+    isCopied,
+    isMailExpanded,
+    isMailLoading,
+    handleMailClick,
+    handleCopyEmail,
+  } = useProfileEmailReveal();
+
   const role = profile
     ? language === "pl"
       ? profile.rolePl
@@ -72,6 +93,18 @@ function AboutSection({
               label={label}
               links={footerLinks}
               socialLinksLabel={socialLinksLabel}
+              emailLabel={emailLabel}
+              copyEmailLabel={copyEmailLabel}
+              emailCopiedMessage={emailCopiedMessage}
+              emailEmptyMessage={emailEmptyMessage}
+              emailLoadErrorMessage={emailLoadErrorMessage}
+              panelState={panelState}
+              email={email}
+              isCopied={isCopied}
+              isMailExpanded={isMailExpanded}
+              isMailLoading={isMailLoading}
+              onMailClick={() => void handleMailClick()}
+              onCopyEmail={() => void handleCopyEmail()}
             >
               <p>{description}</p>
             </ProfileContent>

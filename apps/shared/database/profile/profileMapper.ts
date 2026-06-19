@@ -10,6 +10,7 @@ export function mapProfileRow(
 
   return {
     name: data.name,
+    email: data.email ?? "",
     rolePl: data.role_pl,
     roleEn: data.role_en,
     descriptionPl: data.description_pl,
@@ -26,6 +27,7 @@ export function mapProfileRow(
 export function mapProfileToRow(profile: Profile): Omit<ProfileRow, never> {
   return {
     name: profile.name,
+    email: profile.email,
     role_pl: profile.rolePl,
     role_en: profile.roleEn,
     description_pl: profile.descriptionPl,

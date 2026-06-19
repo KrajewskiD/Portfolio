@@ -5,6 +5,11 @@ export const en: Translations = {
     label: "about_me",
     noImage: "No profile image",
     loadError: "The profile could not be loaded.",
+    emailLabel: "Show email",
+    copyEmailLabel: "Copy",
+    emailCopiedMessage: "Email address copied",
+    emailEmptyMessage: "No email address in the profile.",
+    emailLoadErrorMessage: "Could not load the email address.",
   },
   showcase: {
     loadError: "The project showcase could not be loaded.",

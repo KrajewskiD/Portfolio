@@ -31,6 +31,7 @@ import { useCallback, useMemo } from "react";
 
 type ProfileTextField =
   | "name"
+  | "email"
   | "rolePl"
   | "roleEn"
   | "descriptionPl"
@@ -105,12 +106,12 @@ function ProfileForm({ language }: AdminFormProps) {
 
   const { isOverlayOpen } = useTranslationOverlay();
 
-  function updateProfile(field: ProfileTextField, value: string) {
+  const updateProfile = useCallback((field: ProfileTextField, value: string) => {
     setProfile((current) => ({
       ...current,
       [field]: value,
     }));
-  }
+  }, [setProfile]);
 
   const formDisabled = isLoading || isSaving || isOverlayOpen;
 
@@ -119,7 +120,7 @@ function ProfileForm({ language }: AdminFormProps) {
       createProfileTranslateFields(profile, language, (field, text) =>
         updateProfile(field, text),
       ),
-    [language, profile],
+    [language, profile, updateProfile],
   );
 
   const bulkTranslate = useTranslateFields({
@@ -221,6 +222,16 @@ function ProfileForm({ language }: AdminFormProps) {
                 value={profile.name}
                 disabled={isLoading}
                 onChange={(event) => updateProfile("name", event.target.value)}
+              />
+            </AdminField>
+
+            <AdminField id="profile-email" label="Email kontaktowy">
+              <AdminInput
+                id="profile-email"
+                type="email"
+                value={profile.email}
+                disabled={isLoading}
+                onChange={(event) => updateProfile("email", event.target.value)}
               />
             </AdminField>
 

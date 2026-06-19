@@ -17,13 +17,19 @@ const PROFILE_SELECT = `
   image_alt_en
 `;
 
+const ADMIN_PROFILE_SELECT = `
+  ${PROFILE_SELECT},
+  email
+`;
+
 export async function getProfileFromDatabase(
   supabase: SupabaseClient,
   getProfileImagePublicUrl: (path: string) => string,
+  options: { includeEmail?: boolean } = {},
 ): Promise<Profile> {
   const { data, error } = await supabase
     .from("profiles")
-    .select(PROFILE_SELECT)
+    .select(options.includeEmail ? ADMIN_PROFILE_SELECT : PROFILE_SELECT)
     .eq("id", 1)
     .single<ProfileRow>();
 

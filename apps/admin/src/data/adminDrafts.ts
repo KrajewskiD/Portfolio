@@ -6,6 +6,7 @@ import { normalizeProjectTopics } from "@shared/constants/projectTopics";
 
 export const profileDraft: Profile = {
   name: "Dawid Krajewski",
+  email: "",
   rolePl: "Frontend Developer PL",
   roleEn: "Frontend Developer EN",
   descriptionPl: "Lorem ipsum dolor sit amet. PL",

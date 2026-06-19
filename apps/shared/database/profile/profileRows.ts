@@ -1,5 +1,6 @@
 export type ProfileRow = {
   name: string;
+  email?: string | null;
   role_pl: string;
   role_en: string;
   description_pl: string;

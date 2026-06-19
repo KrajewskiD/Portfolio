@@ -50,6 +50,11 @@ function HomePage({
         label={translation.about.label}
         noImage={translation.about.noImage}
         socialLinksLabel={socialLinksLabel}
+        emailLabel={translation.about.emailLabel}
+        copyEmailLabel={translation.about.copyEmailLabel}
+        emailCopiedMessage={translation.about.emailCopiedMessage}
+        emailEmptyMessage={translation.about.emailEmptyMessage}
+        emailLoadErrorMessage={translation.about.emailLoadErrorMessage}
         language={language}
       />
 

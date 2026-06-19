@@ -11,7 +11,6 @@ import {
 } from "@shared/utils/webpImage";
 import {
   getProjectVideoExtension,
-  PROJECT_VIDEO_ACCEPT,
   validateProjectVideoFile,
 } from "@shared/utils/videoFile";
 

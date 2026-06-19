@@ -1,5 +1,6 @@
 export type Profile = {
   name: string;
+  email: string;
   rolePl: string;
   roleEn: string;
   descriptionPl: string;
