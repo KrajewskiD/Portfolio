@@ -1,48 +1,18 @@
-import { useState } from "react";
-import { adminRoute, getAdminUrl } from "@shared/config/routes";
-import {
-  enrollMfa,
-  verifyMfa,
-  type MfaEnrollment,
-} from "../services/mfaService";
+import { useMfaSetup } from "@admin/hooks/auth/useMfaSetup";
 import AuthLayout from "../layouts/AuthLayout";
 import MfaCodeInput from "../components/MfaCodeInput";
 import AuthButton from "../components/AuthButton";
 
 function MfaSetupPage() {
-  const [enrollment, setEnrollment] = useState<MfaEnrollment | null>(null);
-  const [code, setCode] = useState("");
-  const [errorMessage, setErrorMessage] = useState<string>();
-  const [isLoading, setIsLoading] = useState(false);
-
-  async function handleEnroll() {
-    setIsLoading(true);
-    setErrorMessage(undefined);
-
-    try {
-      setEnrollment(await enrollMfa());
-    } catch {
-      setErrorMessage("Nie udało się rozpocząć konfiguracji MFA.");
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  async function handleVerify() {
-    if (!enrollment || code.length !== 6) return;
-
-    setIsLoading(true);
-    setErrorMessage(undefined);
-
-    try {
-      await verifyMfa(enrollment.factorId, code);
-      window.location.replace(getAdminUrl(adminRoute.dashboard));
-    } catch {
-      setErrorMessage("Kod jest nieprawidłowy lub wygasł.");
-    } finally {
-      setIsLoading(false);
-    }
-  }
+  const {
+    enrollment,
+    code,
+    setCode,
+    errorMessage,
+    isLoading,
+    enroll,
+    verify,
+  } = useMfaSetup();
 
   return (
     <AuthLayout
@@ -53,7 +23,7 @@ function MfaSetupPage() {
       {!enrollment ? (
         <button
           type="button"
-          onClick={handleEnroll}
+          onClick={() => void enroll()}
           disabled={isLoading}
           className="rounded-full border border-white/30 px-5 py-3 font-bold transition hover:bg-white hover:text-black disabled:cursor-not-allowed disabled:opacity-40"
         >
@@ -90,7 +60,7 @@ function MfaSetupPage() {
 
           <AuthButton
             type="button"
-            onClick={handleVerify}
+            onClick={() => void verify()}
             disabled={isLoading || code.length !== 6}
           >
             {isLoading ? "Weryfikowanie..." : "Zweryfikuj i przejdz dalej"}

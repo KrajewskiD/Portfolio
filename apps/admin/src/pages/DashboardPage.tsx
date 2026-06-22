@@ -1,65 +1,30 @@
-import { useState } from "react";
-import { adminRoute, getAdminUrl } from "@shared/config/routes";
-
 import AdminTranslationOverlay from "@admin/components/ui/AdminTranslationOverlay";
 import { AdminFormGuardProvider } from "@admin/context/AdminFormGuardProvider";
 import { TranslationOverlayProvider } from "@admin/context/TranslationOverlayProvider";
-import { useTranslationOverlay } from "@admin/context/useTranslationOverlay";
-import { useGuardedNavigation } from "@admin/hooks/useGuardedNavigation";
+import { useDashboardPage } from "@admin/hooks/useDashboardPage";
 import DashboardActions from "../components/DashboardActions";
 import DashboardTabs from "../components/DashboardTabs";
-import type { Language } from "@shared/database/types/language";
-import { dashboardTabs, type DashboardTabId } from "../config/dashboardTabs";
 import ProfileForm from "../forms/ProfileForm";
 import ProjectsForm from "../forms/ProjectsForm";
 import SettingsForm from "../forms/SettingsForm";
 import SkillsForm from "../forms/SkillsForm";
 import AdminLayout from "../layouts/AdminLayout";
-import { useAdminFormGuard } from "@admin/context/useAdminFormGuard";
-import { signOut } from "../services/authService";
 
 function DashboardPageContent() {
-  const { confirmNavigation } = useAdminFormGuard();
-  const guarded = useGuardedNavigation(confirmNavigation);
-  const { overlayState, isOverlayOpen, cancelTranslation, dismissTranslation } =
-    useTranslationOverlay();
-  const [activeTabId, setActiveTabId] = useState<DashboardTabId>("profile");
-  const [editLanguage, setEditLanguage] = useState<Language>("pl");
-  const [isSigningOut, setIsSigningOut] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string>();
-
-  const handleTabChange = guarded(
-    (nextTabId: DashboardTabId) => {
-      setActiveTabId(nextTabId);
-    },
-    (nextTabId) => nextTabId !== activeTabId,
-  );
-
-  const handleLanguageChange = guarded(
-    (nextLanguage: Language) => {
-      setEditLanguage(nextLanguage);
-    },
-    (nextLanguage) => nextLanguage !== editLanguage,
-  );
-
-  async function handleSignOut() {
-    const canNavigate = await confirmNavigation();
-
-    if (!canNavigate) {
-      return;
-    }
-
-    setIsSigningOut(true);
-    setErrorMessage(undefined);
-
-    try {
-      await signOut();
-      window.location.replace(getAdminUrl(adminRoute.login));
-    } catch {
-      setErrorMessage("Nie udało się wylogować. Spróbuj ponownie.");
-      setIsSigningOut(false);
-    }
-  }
+  const {
+    activeTabId,
+    editLanguage,
+    isSigningOut,
+    errorMessage,
+    isOverlayOpen,
+    overlayState,
+    dashboardTabs,
+    handleTabChange,
+    handleLanguageChange,
+    handleSignOut,
+    cancelTranslation,
+    dismissTranslation,
+  } = useDashboardPage();
 
   function renderActiveForm() {
     const formProps = {

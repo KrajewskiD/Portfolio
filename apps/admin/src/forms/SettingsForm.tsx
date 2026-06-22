@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import SettingsFooterLinksSection from "@admin/components/settings/SettingsFooterLinksSection";
 import SettingsSkillGroupsSection from "@admin/components/settings/SettingsSkillGroupsSection";
 import SettingsSkillNamesSection from "@admin/components/settings/SettingsSkillNamesSection";
@@ -7,56 +5,21 @@ import AdminEditLanguageBanner from "@admin/components/ui/AdminEditLanguageBanne
 import AdminFormActions from "@admin/components/ui/AdminFormActions";
 import AdminFormShell from "@admin/components/ui/AdminFormShell";
 import AdminSaveButton from "@admin/components/ui/AdminSaveButton";
-import { footerLinkDrafts, skillGroupDrafts } from "@admin/data/adminDrafts";
-import { useSettingsEditor } from "@admin/forms/settings/useSettingsEditor";
-import { useAdminForm } from "@admin/hooks/useAdminForm";
-import { useTranslationOverlay } from "@admin/context/useTranslationOverlay";
-import {
-  getAdminSettings,
-  saveAdminSettings,
-  type AdminSettingsData,
-} from "@admin/services/settingsContentService";
+import { useSettingsForm } from "@admin/forms/settings/useSettingsForm";
 import type { AdminFormProps } from "@admin/types/adminForms";
-import {
-  normalizeFooterLinkIds,
-  normalizeSkillGroupIds,
-} from "@shared/database";
 
 function SettingsForm({ language }: AdminFormProps) {
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set());
-  const { isOverlayOpen } = useTranslationOverlay();
-
   const {
-    value: settings,
-    setValue: setSettings,
+    settings,
     isLoading,
     isSaving,
     loadError,
     saveError,
     saveSuccess,
     save,
-  } = useAdminForm<AdminSettingsData>({
-    initialValue: {
-      skillGroups: skillGroupDrafts,
-      footerLinks: footerLinkDrafts,
-    },
-    loadValue: getAdminSettings,
-    saveValue: saveAdminSettings,
-    prepareBeforeSave: async (settings) => ({
-      skillGroups: normalizeSkillGroupIds(settings.skillGroups),
-      footerLinks: normalizeFooterLinkIds(settings.footerLinks),
-    }),
-  });
-
-  const editor = useSettingsEditor({
-    language,
-    settings,
-    setSettings,
-    expandedIds,
-    setExpandedIds,
-  });
-
-  const formDisabled = isLoading || isSaving || isOverlayOpen;
+    formDisabled,
+    editor,
+  } = useSettingsForm(language);
 
   return (
     <AdminFormShell

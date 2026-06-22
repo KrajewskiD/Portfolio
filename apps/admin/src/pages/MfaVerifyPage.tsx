@@ -1,30 +1,10 @@
-import { useState } from "react";
-import { adminRoute, getAdminUrl } from "@shared/config/routes";
-import { verifyExistingMfa } from "../services/mfaService";
+import { useMfaVerify } from "@admin/hooks/auth/useMfaVerify";
 import AuthLayout from "../layouts/AuthLayout";
 import AuthButton from "../components/AuthButton";
 import MfaCodeInput from "../components/MfaCodeInput";
 
 function MfaVerifyPage() {
-  const [code, setCode] = useState("");
-  const [errorMessage, setErrorMessage] = useState<string>();
-  const [isLoading, setIsLoading] = useState(false);
-
-  async function handleVerify() {
-    if (code.length !== 6) return;
-
-    setIsLoading(true);
-    setErrorMessage(undefined);
-
-    try {
-      await verifyExistingMfa(code);
-      window.location.replace(getAdminUrl(adminRoute.dashboard));
-    } catch {
-      setErrorMessage("Kod jest nieprawidłowy lub wygasł.");
-    } finally {
-      setIsLoading(false);
-    }
-  }
+  const { code, setCode, errorMessage, isLoading, verify } = useMfaVerify();
 
   return (
     <AuthLayout
@@ -46,7 +26,7 @@ function MfaVerifyPage() {
 
       <AuthButton
         type="button"
-        onClick={handleVerify}
+        onClick={() => void verify()}
         disabled={isLoading || code.length !== 6}
       >
         {isLoading ? "Weryfikowanie..." : "Potwierdź"}

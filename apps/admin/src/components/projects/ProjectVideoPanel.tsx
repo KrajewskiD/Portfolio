@@ -3,12 +3,8 @@ import { useId } from "react";
 import AdminField from "@admin/components/ui/AdminField";
 import AdminButton from "@admin/components/ui/AdminButton";
 import AdminFilePickerMessages from "@admin/components/ui/AdminFilePickerMessages";
-import { useLocalFilePreview } from "@admin/hooks/useLocalFilePreview";
-import { useValidatedFilePicker } from "@admin/hooks/useValidatedFilePicker";
-import {
-  PROJECT_VIDEO_ACCEPT,
-  validateProjectVideoFile,
-} from "@shared/utils/videoFile";
+import { useProjectVideoPicker } from "@admin/hooks/useProjectVideoPicker";
+import { PROJECT_VIDEO_ACCEPT } from "@shared/utils/videoFile";
 
 type ProjectVideoPanelProps = {
   videoUrl?: string;
@@ -28,25 +24,20 @@ function ProjectVideoPanel({
   onVideoMarkedForRemovalChange,
 }: ProjectVideoPanelProps) {
   const fieldId = useId();
-  const localPreviewUrl = useLocalFilePreview(selectedFile);
   const {
-    clearSelection,
+    previewUrl,
     fileError,
     handleInputChange,
     inputRef,
     openPicker,
-  } = useValidatedFilePicker({
-    validate: validateProjectVideoFile,
-    onValidFile: (file) => {
-      onVideoMarkedForRemovalChange?.(false);
-      onFileSelect(file);
-    },
-    onClear: () => onFileSelect(null),
+    removeVideo,
+  } = useProjectVideoPicker({
+    videoUrl,
+    selectedFile,
+    videoMarkedForRemoval,
+    onFileSelect,
+    onVideoMarkedForRemovalChange,
   });
-
-  const previewUrl = videoMarkedForRemoval
-    ? undefined
-    : (localPreviewUrl ?? videoUrl);
 
   return (
     <AdminField
@@ -88,10 +79,7 @@ function ProjectVideoPanel({
               type="button"
               variant="ghost"
               disabled={disabled}
-              onClick={() => {
-                clearSelection();
-                onVideoMarkedForRemovalChange?.(true);
-              }}
+              onClick={removeVideo}
             >
               Usuń wideo
             </AdminButton>

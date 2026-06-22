@@ -1,0 +1,60 @@
+@layer components {
+  .site-hero-card,
+  .site-card--project,
+  .site-card--skeleton,
+  .site-panel--alert,
+  .site-panel--empty,
+  .site-panel--empty-lg {
+    --card-gradient-angle: 145deg;
+    --card-accent-x: 100%;
+    --card-accent-y: 0%;
+    --card-gradient-mid: 46%;
+    background-image:
+      radial-gradient(
+        ellipse 90% 70% at var(--card-accent-x) var(--card-accent-y),
+        rgb(255 107 74 / 0.1),
+        transparent 58%
+      ),
+      linear-gradient(
+        var(--card-gradient-angle),
+        color-mix(in srgb, var(--color-surface) 78%, var(--color-muted)) 0%,
+        var(--color-surface) var(--card-gradient-mid),
+        color-mix(in srgb, var(--color-surface) 86%, var(--color-background))
+          100%
+      );
+  }
+
+  .site-card--project {
+    @apply relative grid w-full min-w-0 overflow-hidden rounded-3xl border border-accent shadow-card lg:min-h-[60vh] lg:grid-cols-2;
+  }
+
+  .site-card--project__external-link {
+    position: absolute;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    z-index: 2;
+  }
+
+  @media (min-width: 1024px) {
+    .site-card--project__external-link {
+      right: 2rem;
+      bottom: 2rem;
+    }
+  }
+
+  .site-card--skeleton {
+    @apply animate-pulse rounded-3xl border border-accent p-6 shadow-card;
+  }
+
+  .site-panel--alert {
+    @apply mt-8 flex min-h-96 items-center justify-center rounded-3xl border border-accent text-center shadow-card;
+  }
+
+  .site-panel--empty {
+    @apply mt-6 flex min-h-64 items-center justify-center rounded-3xl border border-accent text-center shadow-card;
+  }
+
+  .site-panel--empty-lg {
+    @apply mt-8 flex min-h-64 items-center justify-center rounded-3xl border border-accent text-center shadow-card;
+  }
+}

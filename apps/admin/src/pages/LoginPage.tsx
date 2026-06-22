@@ -1,24 +1,10 @@
-import { useState } from "react";
-import { signInWithGitHub } from "../services/authService";
+import { useGitHubSignIn } from "@admin/hooks/auth/useGitHubSignIn";
 import AuthLayout from "../layouts/AuthLayout";
 import AuthButton from "../components/AuthButton";
 import LoadingDots from "../components/LoadingDots";
 
 function LoginPage() {
-  const [errorMessage, setErrorMessage] = useState<string>();
-  const [isLoading, setIsLoading] = useState(false);
-
-  async function handleSignIn() {
-    setIsLoading(true);
-    setErrorMessage(undefined);
-
-    try {
-      await signInWithGitHub();
-    } catch {
-      setErrorMessage("Nie udało się rozpocząć logowania.");
-      setIsLoading(false);
-    }
-  }
+  const { errorMessage, isLoading, signIn } = useGitHubSignIn();
 
   return (
     <AuthLayout
@@ -26,7 +12,7 @@ function LoginPage() {
       title="Panel administratora"
       description="Zaloguj się kontem GitHub, aby zarządzać treścią portfolio."
     >
-      <AuthButton type="button" onClick={handleSignIn} disabled={isLoading}>
+      <AuthButton type="button" onClick={() => void signIn()} disabled={isLoading}>
         {isLoading ? (
           <>
             Logowanie

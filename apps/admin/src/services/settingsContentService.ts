@@ -7,6 +7,10 @@ import {
   saveAdminSkillGroups,
 } from "@admin/services/skillContentService";
 import { supabase } from "@admin/lib/supabase";
+import {
+  normalizeFooterLinkIds,
+  normalizeSkillGroupIds,
+} from "@shared/database";
 import type { FooterLinkData } from "@shared/database/types/link";
 import type { SkillGroupData } from "@shared/database/types/skill";
 
@@ -83,13 +87,16 @@ export async function saveAdminSettings({
   skillGroups,
   footerLinks,
 }: AdminSettingsData): Promise<void> {
-  const normalizedFooterLinks = footerLinks.map((link, index) => ({
-    ...link,
-    displayOrder: index + 1,
-  }));
+  const normalizedSkillGroups = normalizeSkillGroupIds(skillGroups);
+  const normalizedFooterLinks = normalizeFooterLinkIds(footerLinks).map(
+    (link, index) => ({
+      ...link,
+      displayOrder: index + 1,
+    }),
+  );
 
-  await syncDeletedSkillGroups(skillGroups);
+  await syncDeletedSkillGroups(normalizedSkillGroups);
   await syncDeletedFooterLinks(normalizedFooterLinks);
-  await saveAdminSkillGroups(skillGroups);
+  await saveAdminSkillGroups(normalizedSkillGroups);
   await saveAdminFooterLinks(normalizedFooterLinks);
 }

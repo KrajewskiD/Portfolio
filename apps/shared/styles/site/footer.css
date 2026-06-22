@@ -1,0 +1,13 @@
+@layer components {
+  .site-footer {
+    @apply border-t border-border;
+  }
+
+  .site-footer__inner {
+    @apply mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:py-6;
+  }
+
+  .site-footer .site-pill--link {
+    @apply py-1.5 text-sm sm:px-4 sm:py-2;
+  }
+}

@@ -1,0 +1,80 @@
+@layer components {
+  .site-layout {
+    --island-bg: #16171a;
+    @apply relative isolate flex min-h-screen flex-col text-foreground;
+    background: transparent;
+  }
+
+  .site-layout > :not(.site-noise):not(.site-chrome) {
+    position: relative;
+    z-index: 1;
+  }
+
+  .site-main {
+    @apply mx-auto w-full max-w-7xl flex-1 px-4;
+  }
+
+  .site-section--default {
+    @apply scroll-mt-24 py-8 sm:py-10;
+  }
+
+  .site-section--projects {
+    @apply scroll-mt-0 pt-4 pb-8 sm:pt-6 sm:pb-10;
+  }
+
+  .site-section-label {
+    @apply font-mono text-lg text-foreground;
+  }
+
+  .site-label {
+    @apply text-foreground;
+  }
+
+  .site-title {
+    @apply text-4xl font-bold sm:text-5xl;
+  }
+
+  .site-title--hero {
+    @apply text-4xl font-bold sm:text-5xl lg:text-6xl;
+  }
+
+  .site-title--project {
+    @apply text-2xl font-bold sm:mt-3 sm:text-3xl;
+  }
+
+  .site-title--skill-group {
+    @apply text-lg font-semibold;
+  }
+
+  .site-subtitle {
+    @apply mt-4 text-xl text-foreground;
+  }
+
+  .site-body {
+    @apply text-lg leading-8 text-foreground;
+  }
+
+  .site-body--compact {
+    @apply text-sm leading-6 text-foreground;
+  }
+
+  .site-body--panel {
+    @apply mt-2 leading-7 text-foreground;
+  }
+
+  .site-code {
+    @apply hidden text-sm sm:block;
+  }
+
+  .site-text-muted {
+    @apply text-subtle;
+  }
+
+  .site-text-error {
+    @apply text-lg text-foreground;
+  }
+
+  .site-pill--link {
+    @apply rounded-full border border-border py-2 text-sm sm:px-5 sm:py-3 sm:text-base;
+  }
+}

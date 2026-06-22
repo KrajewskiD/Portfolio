@@ -1,64 +1,28 @@
-import { useMemo, useState } from "react";
-
 import SkillLevelsTable from "@admin/components/skills/SkillLevelsTable";
 import AdminEditLanguageBanner from "@admin/components/ui/AdminEditLanguageBanner";
 import AdminEntitySelect from "@admin/components/ui/AdminEntitySelect";
 import AdminFormActions from "@admin/components/ui/AdminFormActions";
 import AdminFormSaveActions from "@admin/components/ui/AdminFormSaveActions";
 import AdminFormShell from "@admin/components/ui/AdminFormShell";
-import { skillGroupDrafts } from "@admin/data/adminDrafts";
-import { patchSkillInGroups } from "@admin/forms/skillTranslatableFields";
-import { useAdminForm } from "@admin/hooks/useAdminForm";
-import { useTranslationOverlay } from "@admin/context/useTranslationOverlay";
-import {
-  getAdminSkillGroups,
-  saveAdminSkillGroups,
-} from "@admin/services/skillContentService";
+import { useSkillsForm } from "@admin/forms/skills/useSkillsForm";
 import type { AdminFormProps } from "@admin/types/adminForms";
-import { normalizeSkillGroupIds } from "@shared/database";
-import type { SkillGroupData } from "@shared/database/types/skill";
 import { getLocalizedField } from "@shared/utils/localizedField";
 
 function SkillsForm({ language }: AdminFormProps) {
   const {
-    value: skillGroups,
-    setValue: setSkillGroups,
+    skillGroups,
+    activeGroup,
+    activeGroupId,
+    setActiveGroupId,
+    updateSkillLevel,
     isLoading,
     isSaving,
     loadError,
     saveError,
     saveSuccess,
     save,
-  } = useAdminForm<SkillGroupData[]>({
-    initialValue: skillGroupDrafts,
-    loadValue: getAdminSkillGroups,
-    saveValue: saveAdminSkillGroups,
-    prepareBeforeSave: async (groups) => normalizeSkillGroupIds(groups),
-  });
-
-  const { isOverlayOpen } = useTranslationOverlay();
-
-  const [activeGroupId, setActiveGroupId] = useState(
-    skillGroupDrafts[0]?.id ?? "",
-  );
-
-  const activeGroup = useMemo(
-    () =>
-      skillGroups.find((group) => group.id === activeGroupId) ?? skillGroups[0],
-    [activeGroupId, skillGroups],
-  );
-
-  const formDisabled = isLoading || isSaving || isOverlayOpen;
-
-  function updateSkillLevel(skillId: string, level: number) {
-    if (!activeGroup) {
-      return;
-    }
-
-    setSkillGroups((current) =>
-      patchSkillInGroups(current, activeGroup.id, skillId, "level", level),
-    );
-  }
+    formDisabled,
+  } = useSkillsForm(language);
 
   if (!activeGroup) {
     return null;
@@ -78,7 +42,7 @@ function SkillsForm({ language }: AdminFormProps) {
             id="skill-group-select"
             ariaLabel="Grupa umiejętności"
             className="w-80 max-w-full"
-            value={activeGroup.id}
+            value={activeGroupId}
             disabled={isLoading}
             items={skillGroups}
             getItemId={(group) => group.id}

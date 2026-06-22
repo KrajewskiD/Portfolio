@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from "react";
+import { useId } from "react";
 
 import AdminField from "./AdminField";
 import AdminFilePickerMessages from "./AdminFilePickerMessages";
@@ -6,13 +6,8 @@ import AdminImagePreview from "./AdminImagePreview";
 import AdminImagePreviewRemoveButton from "./AdminImagePreviewRemoveButton";
 import AdminImagePreviewSelectButton from "./AdminImagePreviewSelectButton";
 import AdminImagePreviewSelectCorner from "./AdminImagePreviewSelectCorner";
-import { useLocalFilePreview } from "@admin/hooks/useLocalFilePreview";
-import { useValidatedFilePicker } from "@admin/hooks/useValidatedFilePicker";
-import {
-  isAnimatedWebpFile,
-  validateWebpImageFile,
-  WEBP_IMAGE_ACCEPT,
-} from "@shared/utils/webpImage";
+import { useAdminImagePicker } from "@admin/hooks/useAdminImagePicker";
+import { WEBP_IMAGE_ACCEPT } from "@shared/utils/webpImage";
 
 type AdminImagePickerProps = {
   label: string;
@@ -40,61 +35,22 @@ function AdminImagePicker({
   onImageMarkedForRemovalChange,
 }: AdminImagePickerProps) {
   const fieldId = useId();
-  const [animatedWebpCheck, setAnimatedWebpCheck] = useState<{
-    file: File;
-    isAnimated: boolean;
-  } | null>(null);
-  const localPreviewUrl = useLocalFilePreview(selectedFile);
   const {
+    previewUrl,
+    canRemoveImage,
     fileError,
     handleInputChange,
     inputRef,
     openPicker,
-  } = useValidatedFilePicker({
-    validate: validateWebpImageFile,
-    onValidFile: onFileSelect,
-    onClear: () => onFileSelect(null),
+    isAnimatedWebp,
+    selectedFileHint,
+  } = useAdminImagePicker({
+    imageUrl,
+    selectedFile,
+    imageMarkedForRemoval,
+    onFileSelect,
+    onImageMarkedForRemovalChange,
   });
-
-  useEffect(() => {
-    if (!selectedFile) {
-      return;
-    }
-
-    let isCancelled = false;
-
-    void isAnimatedWebpFile(selectedFile).then((isAnimated) => {
-      if (!isCancelled) {
-        setAnimatedWebpCheck({ file: selectedFile, isAnimated });
-      }
-    });
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [selectedFile]);
-
-  const previewUrl = imageMarkedForRemoval
-    ? undefined
-    : (localPreviewUrl ?? imageUrl);
-
-  const canRemoveImage =
-    Boolean(imageUrl) &&
-    !selectedFile &&
-    !imageMarkedForRemoval &&
-    onImageMarkedForRemovalChange;
-
-  const isAnimatedWebp =
-    selectedFile && animatedWebpCheck?.file === selectedFile
-      ? animatedWebpCheck.isAnimated
-      : null;
-
-  const selectedFileHint =
-    isAnimatedWebp === true
-      ? "Wykryto animowany WebP — na stronie odtworzy się w przeglądarce."
-      : isAnimatedWebp === false
-        ? "To jest statyczny WebP (bez animacji). Jeśli oczekujesz ruchu, wyeksportuj ponownie jako animated WebP albo użyj WebM."
-        : undefined;
 
   return (
     <AdminField id={fieldId} label={label} hint={hint}>
@@ -106,7 +62,7 @@ function AdminImagePicker({
         {canRemoveImage ? (
           <AdminImagePreviewRemoveButton
             disabled={disabled}
-            onClick={() => onImageMarkedForRemovalChange(true)}
+            onClick={() => onImageMarkedForRemovalChange?.(true)}
           />
         ) : null}
 

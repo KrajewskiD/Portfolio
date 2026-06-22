@@ -1,6 +1,7 @@
 import {
   getSkillGroupsFromDatabase,
   getOrCreateTechnologyId,
+  normalizeSkillGroupIds,
 } from "@shared/database";
 import {
   mapSkillGroupToRow,
@@ -16,7 +17,9 @@ export async function getAdminSkillGroups(): Promise<SkillGroupData[]> {
 export async function saveAdminSkillGroups(
   groups: SkillGroupData[],
 ): Promise<void> {
-  for (const [groupIndex, group] of groups.entries()) {
+  const normalizedGroups = normalizeSkillGroupIds(groups);
+
+  for (const [groupIndex, group] of normalizedGroups.entries()) {
     const { error: groupError } = await supabase
       .from("skill_groups")
       .upsert(mapSkillGroupToRow(group, groupIndex + 1));

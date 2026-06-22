@@ -1,67 +1,24 @@
-import { useMemo } from "react";
-
 import ProjectEditorLayout from "@admin/components/projects/ProjectEditorLayout";
 import ProjectFormActions from "@admin/components/projects/ProjectFormActions";
 import AdminEmptyMessage from "@admin/components/ui/AdminEmptyMessage";
 import AdminFormShell from "@admin/components/ui/AdminFormShell";
-import { projectDrafts } from "@admin/data/adminDrafts";
-import { useProjectMediaDrafts } from "@admin/forms/projects/useProjectMediaDrafts";
-import { useProjectMediaViewModel } from "@admin/forms/projects/useProjectMediaViewModel";
-import { useProjectsEditor } from "@admin/forms/projects/useProjectsEditor";
-import { useAdminForm } from "@admin/hooks/useAdminForm";
-import { useTranslationOverlay } from "@admin/context/useTranslationOverlay";
-import {
-  getAdminProjects,
-  saveAdminProjects,
-} from "@admin/database/projects/ProjectRepository";
+import { useProjectsForm } from "@admin/forms/projects/useProjectsForm";
 import type { AdminFormProps } from "@admin/types/adminForms";
-import type { Project } from "@shared/database/types/project";
 
 function ProjectsForm({ language }: AdminFormProps) {
-  const media = useProjectMediaDrafts();
-  const { isOverlayOpen } = useTranslationOverlay();
-
   const {
-    value: projects,
-    setValue: setProjects,
-    syncSavedValue,
+    projects,
     isLoading,
     isSaving,
     loadError,
     saveError,
     saveSuccess,
     save,
-  } = useAdminForm<Project[]>({
-    initialValue: projectDrafts,
-    loadValue: getAdminProjects,
-    saveValue: saveAdminProjects,
-    prepareBeforeSave: media.prepareBeforeSave,
-    extraDirty: media.hasPendingEdits,
-    onDiscard: media.discardAll,
-  });
-
-  const isBusy = isLoading || isSaving || isOverlayOpen;
-
-  const editor = useProjectsEditor({
-    language,
-    projects,
-    setProjects,
-    syncSavedValue,
-    clearKeysForProject: media.clearKeysForProject,
-    isBusy,
-  });
-
-  const isFormBusy = isBusy || editor.isDeleting;
-  const mediaViewModel = useProjectMediaViewModel(editor, media);
-
-  const extraErrors = useMemo(
-    () =>
-      [
-        ...(editor.bulkTranslate.error ? [editor.bulkTranslate.error] : []),
-        ...(editor.deleteError ? [editor.deleteError] : []),
-      ],
-    [editor.bulkTranslate.error, editor.deleteError],
-  );
+    extraErrors,
+    editor,
+    isFormBusy,
+    mediaViewModel,
+  } = useProjectsForm(language);
 
   return (
     <AdminFormShell
