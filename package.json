@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "security:smoke": "node scripts/security-smoke.mjs",
     "format": "prettier --write \"apps/**/*.{ts,tsx,css,json}\""
   },
   "dependencies": {

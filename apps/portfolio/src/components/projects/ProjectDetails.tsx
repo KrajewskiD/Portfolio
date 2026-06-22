@@ -5,6 +5,7 @@ type ProjectDetailsProps = {
   title: string;
   technologies: ReactNode;
   topics: ReactNode;
+  externalLink?: ReactNode;
 };
 
 function ProjectDetails({
@@ -12,16 +13,27 @@ function ProjectDetails({
   title,
   technologies,
   topics,
+  externalLink,
 }: ProjectDetailsProps) {
   return (
     <div className="site-project-details">
-      <p className="site-code">{code}</p>
+      <div className="site-project-details__content">
+        <p className="site-code">{code}</p>
 
-      <h3 className="site-title--project">{title}</h3>
-      <div className="site-project-technologies">
-        <div className="site-project-technologies__card">{technologies}</div>
+        <h3 className="site-title--project">{title}</h3>
+
+        <div className="site-project-technologies">
+          <div className="site-project-technologies__card">{technologies}</div>
+        </div>
+
+        {topics}
       </div>
-      {topics}
+
+      {externalLink ? (
+        <div className="site-project-details__actions site-social-icon-scale">
+          {externalLink}
+        </div>
+      ) : null}
     </div>
   );
 }

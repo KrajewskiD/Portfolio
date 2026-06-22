@@ -10,6 +10,17 @@ import { navigationData } from "./data/navigation.data";
 import { useProfile } from "./hooks/useProfile";
 import { useFooterLinks } from "./hooks/useFooterLinks";
 
+function detectPreferredLanguage(): Language {
+  const preferredLanguages =
+    navigator.languages.length > 0 ? navigator.languages : [navigator.language];
+
+  return preferredLanguages.some((language) =>
+    language.toLowerCase().startsWith("pl"),
+  )
+    ? "pl"
+    : "en";
+}
+
 function App() {
   const {
     data: profile,
@@ -29,7 +40,7 @@ function App() {
       return savedLanguage;
     }
 
-    return navigator.language.startsWith("pl") ? "pl" : "en";
+    return detectPreferredLanguage();
   });
 
   const translation = translations[language];

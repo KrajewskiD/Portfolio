@@ -8,13 +8,7 @@ type ProjectExternalLinkProps = {
 
 function ProjectExternalLink({ href, label }: ProjectExternalLinkProps) {
   return (
-    <IconLinkButton
-      href={href}
-      label={label}
-      iconSrc={githubIcon}
-      size="lg"
-      className="site-card--project__external-link"
-    />
+    <IconLinkButton href={href} label={label} iconSrc={githubIcon} />
   );
 }
 

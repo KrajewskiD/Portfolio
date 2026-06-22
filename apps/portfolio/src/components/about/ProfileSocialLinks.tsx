@@ -41,7 +41,7 @@ function ProfileSocialLinks({
   onCopyEmail,
 }: ProfileSocialLinksProps) {
   return (
-    <div className="site-hero-card__social">
+    <div className="site-hero-card__social site-social-icon-scale">
       <nav aria-label={socialLinksLabel} className="site-hero-card__links">
         <button
           type="button"

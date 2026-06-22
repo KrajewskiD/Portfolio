@@ -1,5 +1,6 @@
 import ProfileSkeleton from "../components/about/ProfileSkeleton";
 import ProfileContent from "../components/about/ProfileContent";
+import ProfileDescription from "../components/about/ProfileDescription";
 import ProfileImage from "../components/about/ProfileImage";
 import { useProfileEmailReveal } from "../hooks/useProfileEmailReveal";
 import type { Translations } from "@portfolio/locales/translations";
@@ -84,7 +85,11 @@ function AboutSection({
             onMailClick={() => void handleMailClick()}
             onCopyEmail={() => void handleCopyEmail()}
           >
-            <p>{description}</p>
+            <ProfileDescription
+              text={description}
+              expandLabel={text.readMore}
+              collapseLabel={text.readLess}
+            />
           </ProfileContent>
         </div>
       )}

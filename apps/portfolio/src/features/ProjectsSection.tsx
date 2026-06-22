@@ -66,6 +66,7 @@ function ProjectsSection({
               language={language}
               noImage={text.noImage}
               openProjectLinkLabel={text.openProjectLink}
+              topicSectionLabel={text.topicSectionLabel}
               selectedTopicId={
                 activeTopics[activeProject.id] ?? DEFAULT_PROJECT_TOPIC_ID
               }

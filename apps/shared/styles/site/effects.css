@@ -19,8 +19,7 @@
   }
 
   .site-parchment-tilt .site-section--hero,
-  .site-parchment-tilt .site-section--default,
-  .site-parchment-tilt .site-section--projects {
+  .site-parchment-tilt .site-section--default {
     transform-origin: center center;
     transform-style: preserve-3d;
     backface-visibility: hidden;

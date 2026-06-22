@@ -6,11 +6,11 @@
   .site-hero-email-reveal {
     position: absolute;
     top: calc(100% + 0.5rem);
-    left: 0;
-    right: auto;
+    left: auto;
+    right: 0;
     z-index: 4;
     width: max-content;
-    min-width: 100%;
+    min-width: 0;
     max-width: min(36rem, calc(100vw - 2rem));
     overflow: visible;
     pointer-events: none;
@@ -21,8 +21,8 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    width: max-content;
-    min-width: 100%;
+    width: 100%;
+    min-width: 0;
     padding: 0.5rem 1rem 0.5rem 1rem;
     border: 1px solid var(--color-border);
     border-radius: 9999px;
@@ -34,10 +34,13 @@
   }
 
   .site-hero-email-reveal__value {
-    flex-shrink: 0;
-    white-space: nowrap;
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow-wrap: anywhere;
+    white-space: normal;
     font-size: 0.875rem;
     font-weight: 500;
+    line-height: 1.35;
     color: var(--color-foreground);
     text-decoration: none;
   }
@@ -195,7 +198,6 @@
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    font-size: var(--hero-name-size);
     overflow: visible;
     pointer-events: none;
   }
@@ -255,5 +257,63 @@
   .site-hero-card__description {
     margin-top: 1.75rem;
     max-width: 90%;
+  }
+
+  .site-hero-description {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .site-hero-description__text {
+    margin: 0;
+  }
+
+  @media (max-width: 639px) {
+    .site-hero-description[data-collapsible="true"][data-state="collapsed"]
+      .site-hero-description__text {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 4;
+      max-height: 8rem;
+      overflow: hidden;
+    }
+
+    .site-hero-description[data-state="expanded"] .site-hero-description__text {
+      display: block;
+      max-height: none;
+      overflow: visible;
+      -webkit-line-clamp: initial;
+    }
+  }
+
+  .site-hero-description__toggle {
+    position: relative;
+    z-index: 2;
+    align-self: flex-end;
+    flex-shrink: 0;
+    margin-top: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    touch-action: manipulation;
+    transition: color 0.2s ease;
+  }
+
+  @media (min-width: 640px) {
+    .site-hero-description__toggle {
+      display: none;
+    }
+  }
+
+  .site-hero-description__toggle:hover {
+    color: var(--color-accent-soft);
   }
 }

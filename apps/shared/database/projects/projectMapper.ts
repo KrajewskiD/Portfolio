@@ -2,6 +2,7 @@ import {
   normalizeProjectTopics,
   projectTopicOrder,
 } from "../../constants/projectTopics";
+import { normalizeExternalUrl } from "../../utils/externalUrl";
 import type {
   Project,
   ProjectTopicContent,
@@ -79,7 +80,9 @@ export function mapProjectToRow(project: Project, displayOrder: number) {
   return {
     id: project.id,
     code: project.code ?? null,
-    project_url: project.projectUrl?.trim() || null,
+    project_url: project.projectUrl
+      ? normalizeExternalUrl(project.projectUrl) || null
+      : null,
     title_pl: project.titlePl,
     title_en: project.titleEn,
     display_order: displayOrder,

@@ -8,6 +8,8 @@ export type Translations = {
     emailCopiedMessage: string;
     emailEmptyMessage: string;
     emailLoadErrorMessage: string;
+    readMore: string;
+    readLess: string;
   };
   projects: {
     label: string;
@@ -16,6 +18,7 @@ export type Translations = {
     loadError: string;
     emptyMessage: string;
     openProjectLink: string;
+    topicSectionLabel: string;
   };
   skills: {
     label: string;

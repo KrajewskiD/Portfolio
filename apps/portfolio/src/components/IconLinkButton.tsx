@@ -3,7 +3,6 @@ type IconLinkButtonProps = {
   label: string;
   iconSrc: string;
   className?: string;
-  size?: "default" | "lg";
 };
 
 function IconLinkButton({
@@ -11,21 +10,24 @@ function IconLinkButton({
   label,
   iconSrc,
   className = "",
-  size = "default",
 }: IconLinkButtonProps) {
   return (
     <a
       href={href}
-      className={[
-        "site-icon-link",
-        size === "lg" ? "site-icon-link--lg" : "",
-        className,
-      ]
-        .filter(Boolean)
-        .join(" ")}
+      className={["site-icon-link", className].filter(Boolean).join(" ")}
       aria-label={label}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={(event) => {
+        event.stopPropagation();
+
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+          return;
+        }
+
+        event.preventDefault();
+        window.open(href, "_blank", "noopener,noreferrer");
+      }}
     >
       <img src={iconSrc} alt="" aria-hidden className="site-icon-link__icon" />
     </a>

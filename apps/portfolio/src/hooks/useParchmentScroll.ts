@@ -7,7 +7,6 @@ const PAGE_BLEND_DISTANCE = 360;
 const PARCHMENT_ITEM_SELECTOR = [
   ".site-section--hero",
   ".site-section--default",
-  ".site-section--projects",
 ].join(", ");
 
 function smoothstep(value: number): number {

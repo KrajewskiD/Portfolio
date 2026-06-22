@@ -10,6 +10,8 @@ export const en: Translations = {
     emailCopiedMessage: "Copied",
     emailEmptyMessage: "No email address in the profile.",
     emailLoadErrorMessage: "Could not load the email address.",
+    readMore: "Read more",
+    readLess: "Show less",
   },
   projects: {
     label: "projects",
@@ -18,6 +20,7 @@ export const en: Translations = {
     loadError: "The projects could not be loaded.",
     emptyMessage: "No projects available.",
     openProjectLink: "Open project on GitHub",
+    topicSectionLabel: "Project sections",
   },
   skills: {
     label: "skills",

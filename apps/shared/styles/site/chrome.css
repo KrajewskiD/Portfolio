@@ -1,14 +1,4 @@
 @layer components {
-  .site-icon-link--lg {
-    width: 2.75rem;
-    height: 2.75rem;
-  }
-
-  .site-icon-link--lg .site-icon-link__icon {
-    width: 1.25rem;
-    height: 1.25rem;
-  }
-
   .site-nav-link {
     @apply px-3 py-1.5 text-xl text-subtle transition-colors hover:text-accent;
   }

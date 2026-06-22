@@ -1,6 +1,5 @@
 type ProjectTopicProps = {
   id: string;
-  panelId: string;
   label: string;
   iconSrc: string;
   active: boolean;
@@ -9,7 +8,6 @@ type ProjectTopicProps = {
 
 function ProjectTopic({
   id,
-  panelId,
   label,
   active,
   iconSrc,
@@ -19,10 +17,7 @@ function ProjectTopic({
     <button
       id={id}
       type="button"
-      role="tab"
-      aria-label={label}
-      aria-selected={active}
-      aria-controls={panelId}
+      aria-pressed={active}
       onClick={onSelect}
       className={`site-topic-tab ${
         active ? "site-topic-tab--active" : "site-topic-tab--inactive"
@@ -31,11 +26,12 @@ function ProjectTopic({
       <img
         src={iconSrc}
         alt=""
-        aria-hidden="true"
+        aria-hidden
         className="site-topic-tab__icon h-5 w-5 sm:hidden"
       />
 
       <span className="hidden sm:inline">{label}</span>
+      <span className="sr-only sm:hidden">{label}</span>
     </button>
   );
 }

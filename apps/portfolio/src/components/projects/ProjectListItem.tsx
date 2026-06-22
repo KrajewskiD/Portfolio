@@ -6,6 +6,7 @@ import ProjectTopicsGroup from "@portfolio/components/projects/ProjectTopicsGrou
 import TechnologyTag from "@portfolio/components/projects/TechnologyTag";
 import { useProjectTopic } from "@portfolio/hooks/useProjectTopic";
 import { getLocalizedField } from "@shared/utils/localizedField";
+import { normalizeExternalUrl } from "@shared/utils/externalUrl";
 import type { Language } from "@shared/database/types/language";
 import type { Project, ProjectTopicId } from "@shared/database/types/project";
 
@@ -14,6 +15,7 @@ type ProjectListItemProps = {
   language: Language;
   noImage: string;
   openProjectLinkLabel: string;
+  topicSectionLabel: string;
   selectedTopicId: ProjectTopicId;
   onTopicChange: (topicId: ProjectTopicId) => void;
 };
@@ -23,6 +25,7 @@ function ProjectListItem({
   language,
   noImage,
   openProjectLinkLabel,
+  topicSectionLabel,
   selectedTopicId,
   onTopicChange,
 }: ProjectListItemProps) {
@@ -72,16 +75,18 @@ function ProjectListItem({
             activeId={activeTopicId}
             onTopicChange={onTopicChange}
             language={language}
+            sectionLabel={topicSectionLabel}
           />
         }
+        externalLink={
+          project.projectUrl ? (
+            <ProjectExternalLink
+              href={normalizeExternalUrl(project.projectUrl)}
+              label={openProjectLinkLabel}
+            />
+          ) : null
+        }
       />
-
-      {project.projectUrl ? (
-        <ProjectExternalLink
-          href={project.projectUrl}
-          label={openProjectLinkLabel}
-        />
-      ) : null}
     </ProjectCard>
   );
 }

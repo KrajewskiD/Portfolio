@@ -19,6 +19,7 @@ type ProjectTopicsGroupProps = {
   activeId: ProjectTopicId;
   onTopicChange: (id: ProjectTopicId) => void;
   language: Language;
+  sectionLabel: string;
 };
 
 function ProjectTopicsGroup({
@@ -26,6 +27,7 @@ function ProjectTopicsGroup({
   activeId,
   onTopicChange,
   language,
+  sectionLabel,
 }: ProjectTopicsGroupProps) {
   const groupId = useId();
 
@@ -40,20 +42,17 @@ function ProjectTopicsGroup({
     return null;
   }
 
-  const panelId = `${groupId}-panel`;
-
   return (
-    <div className="mt-6 grid grid-cols-[1fr_auto] gap-4 sm:block">
+    <div className="site-topic-group">
       <div
-        role="tablist"
-        aria-orientation="horizontal"
+        role="group"
+        aria-label={sectionLabel}
         className="site-topic-list"
       >
         {orderedTopics.map((topic) => (
           <ProjectTopic
             key={topic.id}
             id={`${groupId}-${topic.id}-tab`}
-            panelId={panelId}
             label={projectTopicLabels[topic.id][language]}
             iconSrc={projectTopicIcons[topic.id]}
             active={topic.id === activeTopic.id}
@@ -62,12 +61,7 @@ function ProjectTopicsGroup({
         ))}
       </div>
 
-      <div
-        id={panelId}
-        role="tabpanel"
-        aria-labelledby={`${groupId}-${activeTopic.id}-tab`}
-        className="site-topic-panel col-start-1 row-start-1"
-      >
+      <div className="site-topic-panel">
         <p className="site-label text-sm">
           {projectTopicLabels[activeTopic.id][language]}
         </p>

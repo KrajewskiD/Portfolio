@@ -10,7 +10,7 @@ function SkillLevel({ level, maxLevel = 5, levelLabel }: SkillLevelProps) {
     .replace("{level}", String(safeLevel))
     .replace("{maxLevel}", String(maxLevel));
   return (
-    <span className="flex gap-1.5" aria-label={ariaLabel}>
+    <span className="flex gap-1.5" role="img" aria-label={ariaLabel}>
       {Array.from({ length: maxLevel }, (_, index) => {
         const dot = index + 1;
 

@@ -29,6 +29,10 @@
     pointer-events: none;
   }
 
+  .site-social-icon-scale {
+    font-size: clamp(1.625rem, 3.5vw, 2.375rem);
+  }
+
   .site-icon-link {
     display: inline-flex;
     align-items: center;

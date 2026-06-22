@@ -10,6 +10,8 @@ export const pl: Translations = {
     emailCopiedMessage: "Skopiowano",
     emailEmptyMessage: "Brak adresu e-mail w profilu.",
     emailLoadErrorMessage: "Nie udało się wczytać adresu e-mail.",
+    readMore: "Czytaj więcej",
+    readLess: "Zwiń",
   },
   projects: {
     label: "projekty",
@@ -18,6 +20,7 @@ export const pl: Translations = {
     loadError: "Nie udało się wczytać projektów.",
     emptyMessage: "Brak projektów.",
     openProjectLink: "Otwórz projekt na GitHubie",
+    topicSectionLabel: "Sekcje projektu",
   },
   skills: {
     label: "umiejętności",

@@ -24,21 +24,7 @@
   }
 
   .site-card--project {
-    @apply relative grid w-full min-w-0 overflow-hidden rounded-3xl border border-accent shadow-card lg:min-h-[60vh] lg:grid-cols-2;
-  }
-
-  .site-card--project__external-link {
-    position: absolute;
-    right: 1.5rem;
-    bottom: 1.5rem;
-    z-index: 2;
-  }
-
-  @media (min-width: 1024px) {
-    .site-card--project__external-link {
-      right: 2rem;
-      bottom: 2rem;
-    }
+    @apply relative isolate grid w-full min-w-0 overflow-hidden rounded-3xl border border-accent shadow-card lg:min-h-[60vh] lg:grid-cols-2;
   }
 
   .site-panel--alert {
