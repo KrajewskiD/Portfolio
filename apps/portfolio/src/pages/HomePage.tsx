@@ -46,15 +46,8 @@ function HomePage({
         footerLinks={footerLinks}
         isLoading={isProfileLoading}
         isError={isProfileError}
-        errorMessage={translation.about.loadError}
-        label={translation.about.label}
-        noImage={translation.about.noImage}
+        text={translation.about}
         socialLinksLabel={socialLinksLabel}
-        emailLabel={translation.about.emailLabel}
-        copyEmailLabel={translation.about.copyEmailLabel}
-        emailCopiedMessage={translation.about.emailCopiedMessage}
-        emailEmptyMessage={translation.about.emailEmptyMessage}
-        emailLoadErrorMessage={translation.about.emailLoadErrorMessage}
         language={language}
       />
 
@@ -62,7 +55,7 @@ function HomePage({
         projects={projects}
         isLoading={areProjectsPending}
         isError={areProjectsError}
-        errorMessage={translation.showcase.loadError}
+        text={translation.showcase}
         language={language}
       />
 
@@ -70,12 +63,7 @@ function HomePage({
         projects={projects}
         isLoading={areProjectsPending}
         isError={areProjectsError}
-        errorMessage={translation.projects.loadError}
-        emptyMessage={translation.projects.emptyMessage}
-        label={translation.projects.label}
-        title={translation.projects.title}
-        noImage={translation.projects.noImage}
-        openProjectLinkLabel={translation.projects.openProjectLink}
+        text={translation.projects}
         language={language}
       />
 
@@ -83,12 +71,8 @@ function HomePage({
         skillGroups={skillGroups}
         isLoading={areSkillGroupsPending}
         isError={areSkillGroupsError}
-        errorMessage={translation.skills.loadError}
-        emptyMessage={translation.skills.emptyMessage}
-        label={translation.skills.label}
-        title={translation.skills.title}
+        text={translation.skills}
         language={language}
-        levelLabel={translation.skills.levelLabel}
       />
     </>
   );

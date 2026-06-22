@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useState } from "react";
 
 import AdminField from "./AdminField";
 import AdminFilePickerMessages from "./AdminFilePickerMessages";
@@ -7,6 +7,7 @@ import AdminImagePreviewRemoveButton from "./AdminImagePreviewRemoveButton";
 import AdminImagePreviewSelectButton from "./AdminImagePreviewSelectButton";
 import AdminImagePreviewSelectCorner from "./AdminImagePreviewSelectCorner";
 import { useLocalFilePreview } from "@admin/hooks/useLocalFilePreview";
+import { useValidatedFilePicker } from "@admin/hooks/useValidatedFilePicker";
 import {
   isAnimatedWebpFile,
   validateWebpImageFile,
@@ -39,13 +40,21 @@ function AdminImagePicker({
   onImageMarkedForRemovalChange,
 }: AdminImagePickerProps) {
   const fieldId = useId();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [fileError, setFileError] = useState<string>();
   const [animatedWebpCheck, setAnimatedWebpCheck] = useState<{
     file: File;
     isAnimated: boolean;
   } | null>(null);
   const localPreviewUrl = useLocalFilePreview(selectedFile);
+  const {
+    fileError,
+    handleInputChange,
+    inputRef,
+    openPicker,
+  } = useValidatedFilePicker({
+    validate: validateWebpImageFile,
+    onValidFile: onFileSelect,
+    onClear: () => onFileSelect(null),
+  });
 
   useEffect(() => {
     if (!selectedFile) {
@@ -108,24 +117,7 @@ function AdminImagePicker({
           accept={WEBP_IMAGE_ACCEPT}
           disabled={disabled}
           className="sr-only"
-          onChange={async (event) => {
-            const file = event.target.files?.[0] ?? null;
-            event.target.value = "";
-
-            if (!file) {
-              return;
-            }
-
-            const validation = await validateWebpImageFile(file);
-
-            if (!validation.valid) {
-              setFileError(validation.message);
-              return;
-            }
-
-            setFileError(undefined);
-            onFileSelect(file);
-          }}
+          onChange={handleInputChange}
         />
 
         <AdminImagePreviewSelectCorner>
@@ -149,7 +141,7 @@ function AdminImagePicker({
 
           <AdminImagePreviewSelectButton
             disabled={disabled}
-            onClick={() => inputRef.current?.click()}
+            onClick={openPicker}
           />
         </AdminImagePreviewSelectCorner>
       </AdminImagePreview>

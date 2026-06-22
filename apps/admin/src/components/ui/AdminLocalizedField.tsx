@@ -1,46 +1,52 @@
+import { useMemo } from "react";
+
 import type { Language } from "@shared/database/types/language";
-import {
-  getLocalizedField,
-  getLocalizedKey,
-  getOppositeLocalizedKey,
-} from "@shared/utils/localizedField";
 
 import AdminInput from "./AdminInput";
 import AdminTranslatableField from "./AdminTranslatableField";
 import AdminTextarea from "./AdminTextarea";
 
-type LocalizedValueSource = Record<string, unknown>;
+function useLocalizedFieldState<
+  TPl extends string,
+  TEn extends string,
+  TSource extends Record<TPl | TEn, string>,
+>(source: TSource, language: Language, plKey: TPl, enKey: TEn) {
+  return useMemo(() => {
+    const localizedKey = (language === "pl" ? plKey : enKey) as TPl | TEn;
+    const oppositeKey = (language === "pl" ? enKey : plKey) as TPl | TEn;
+    const localizedValue = source[localizedKey];
 
-function readLocalizedString(
-  source: LocalizedValueSource,
-  language: Language,
-  plKey: string,
-  enKey: string,
-): string {
-  const value = getLocalizedField(
-    source,
-    language,
-    plKey as never,
-    enKey as never,
-  );
-
-  return typeof value === "string" ? value : "";
+    return {
+      localizedKey,
+      oppositeKey,
+      localizedValue,
+      sourceText: localizedValue,
+    };
+  }, [enKey, language, plKey, source]);
 }
 
-type AdminLocalizedInputProps<TField extends string> = {
+type AdminLocalizedInputProps<
+  TPl extends string,
+  TEn extends string,
+  TSource extends Record<TPl | TEn, string>,
+> = {
   id: string;
   label: string;
   hint?: string;
   language: Language;
   disabled?: boolean;
-  source: LocalizedValueSource;
-  plKey: TField;
-  enKey: TField;
-  onChange: (field: TField, value: string) => void;
+  source: TSource;
+  plKey: TPl;
+  enKey: TEn;
+  onChange: (field: TPl | TEn, value: string) => void;
   maxLength?: number;
 };
 
-export function AdminLocalizedInput<TField extends string>({
+export function AdminLocalizedInput<
+  TPl extends string,
+  TEn extends string,
+  TSource extends Record<TPl | TEn, string>,
+>({
   id,
   label,
   hint,
@@ -51,7 +57,10 @@ export function AdminLocalizedInput<TField extends string>({
   enKey,
   onChange,
   maxLength,
-}: AdminLocalizedInputProps<TField>) {
+}: AdminLocalizedInputProps<TPl, TEn, TSource>) {
+  const { localizedKey, oppositeKey, localizedValue, sourceText } =
+    useLocalizedFieldState(source, language, plKey, enKey);
+
   return (
     <AdminTranslatableField
       id={id}
@@ -59,40 +68,44 @@ export function AdminLocalizedInput<TField extends string>({
       hint={hint}
       language={language}
       disabled={disabled}
-      sourceText={readLocalizedString(source, language, plKey, enKey)}
-      onApply={(text) =>
-        onChange(getOppositeLocalizedKey(language, plKey, enKey), text)
-      }
+      sourceText={sourceText}
+      onApply={(text) => onChange(oppositeKey, text)}
     >
       <AdminInput
         id={id}
         maxLength={maxLength}
-        value={readLocalizedString(source, language, plKey, enKey)}
+        value={localizedValue}
         disabled={disabled}
-        onChange={(event) =>
-          onChange(getLocalizedKey(language, plKey, enKey), event.target.value)
-        }
+        onChange={(event) => onChange(localizedKey, event.target.value)}
       />
     </AdminTranslatableField>
   );
 }
 
-type AdminLocalizedTextareaProps<TField extends string> = {
+type AdminLocalizedTextareaProps<
+  TPl extends string,
+  TEn extends string,
+  TSource extends Record<TPl | TEn, string>,
+> = {
   id: string;
   label: string;
   hint?: string;
   language: Language;
   disabled?: boolean;
-  source: LocalizedValueSource;
-  plKey: TField;
-  enKey: TField;
-  onChange: (field: TField, value: string) => void;
+  source: TSource;
+  plKey: TPl;
+  enKey: TEn;
+  onChange: (field: TPl | TEn, value: string) => void;
   rows?: number;
   className?: string;
   fillHeight?: boolean;
 };
 
-export function AdminLocalizedTextarea<TField extends string>({
+export function AdminLocalizedTextarea<
+  TPl extends string,
+  TEn extends string,
+  TSource extends Record<TPl | TEn, string>,
+>({
   id,
   label,
   hint,
@@ -105,8 +118,9 @@ export function AdminLocalizedTextarea<TField extends string>({
   rows = 5,
   className,
   fillHeight = false,
-}: AdminLocalizedTextareaProps<TField>) {
-  const contentField = getLocalizedKey(language, plKey, enKey);
+}: AdminLocalizedTextareaProps<TPl, TEn, TSource>) {
+  const { localizedKey, oppositeKey, localizedValue, sourceText } =
+    useLocalizedFieldState(source, language, plKey, enKey);
 
   return (
     <AdminTranslatableField
@@ -118,17 +132,15 @@ export function AdminLocalizedTextarea<TField extends string>({
         .filter(Boolean)
         .join(" ") || undefined}
       disabled={disabled}
-      sourceText={readLocalizedString(source, language, plKey, enKey)}
-      onApply={(text) =>
-        onChange(getOppositeLocalizedKey(language, plKey, enKey), text)
-      }
+      sourceText={sourceText}
+      onApply={(text) => onChange(oppositeKey, text)}
     >
       <AdminTextarea
         id={id}
         rows={fillHeight ? undefined : rows}
-        value={readLocalizedString(source, language, plKey, enKey)}
+        value={localizedValue}
         disabled={disabled}
-        onChange={(event) => onChange(contentField, event.target.value)}
+        onChange={(event) => onChange(localizedKey, event.target.value)}
       />
     </AdminTranslatableField>
   );

@@ -1,7 +1,9 @@
 import SectionHeading from "../components/sections/SectionHeading";
+import SectionStatePanel from "../components/sections/SectionStatePanel";
 import SkillGroup from "../components/skills/SkillGroup";
 import SkillItem from "../components/skills/SkillItem";
 import SkillsSkeleton from "../components/skills/SkillsSkeleton";
+import type { Translations } from "@portfolio/locales/translations";
 import type { Language } from "@shared/database/types/language";
 import type { SkillGroupData } from "@shared/database/types/skill";
 import { getLocalizedField } from "@shared/utils/localizedField";
@@ -10,42 +12,31 @@ type SkillsSectionProps = {
   skillGroups?: SkillGroupData[];
   isLoading: boolean;
   isError: boolean;
-  errorMessage: string;
-  emptyMessage: string;
-  label: string;
-  title: string;
+  text: Translations["skills"];
   language: Language;
-  levelLabel: string;
 };
 
 function SkillsSection({
   skillGroups,
   isLoading,
   isError,
-  errorMessage,
-  emptyMessage,
-  label,
-  title,
-  levelLabel,
+  text,
   language,
 }: SkillsSectionProps) {
   return (
     <section id="skills" className="site-section--default">
-      <SectionHeading label={label} title={title} />
+      <SectionHeading label={text.label} title={text.title} />
 
-      {isLoading ? (
-        <SkillsSkeleton />
-      ) : isError ? (
-        <div role="alert" className="site-panel--empty">
-          <p className="site-text-error">{errorMessage}</p>
-        </div>
-      ) : !skillGroups?.length ? (
-        <div className="site-panel--empty">
-          <p>{emptyMessage}</p>
-        </div>
-      ) : (
+      <SectionStatePanel
+        isLoading={isLoading}
+        isError={isError}
+        isEmpty={!skillGroups?.length}
+        errorMessage={text.loadError}
+        emptyMessage={text.emptyMessage}
+        loading={<SkillsSkeleton />}
+      >
         <div className="mt-6 grid items-start gap-6 lg:grid-cols-2">
-          {skillGroups.map((group) => (
+          {skillGroups?.map((group) => (
             <SkillGroup
               key={group.id}
               title={getLocalizedField(group, language, "titlePl", "titleEn")}
@@ -55,13 +46,13 @@ function SkillsSection({
                   key={skill.id}
                   name={skill.name}
                   level={skill.level}
-                  levelLabel={levelLabel}
+                  levelLabel={text.levelLabel}
                 />
               ))}
             </SkillGroup>
           ))}
         </div>
-      )}
+      </SectionStatePanel>
     </section>
   );
 }

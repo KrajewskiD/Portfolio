@@ -14,14 +14,7 @@ import type {
   ProjectTopicId,
 } from "@shared/database/types/project";
 
-type MediaDraftState = {
-  selectedFile: File | null;
-  markedForRemoval: boolean;
-  handlers: {
-    onFileSelect: (file: File | null) => void;
-    onMarkedForRemovalChange: (marked: boolean) => void;
-  };
-};
+import type { ProjectMediaDraftState } from "@admin/forms/projects/useProjectMediaViewModel";
 
 type ProjectEditorLayoutProps = {
   language: Language;
@@ -29,9 +22,9 @@ type ProjectEditorLayoutProps = {
   topic: ProjectTopicContent;
   projectTitle: string;
   disabled?: boolean;
-  miniature: MediaDraftState;
-  topicImage: MediaDraftState;
-  video: MediaDraftState;
+  miniature: ProjectMediaDraftState;
+  topicImage: ProjectMediaDraftState;
+  video: ProjectMediaDraftState;
   onUpdateProject: (field: ProjectTextField, value: string) => void;
   onUpdateTopic: (field: TopicTextField, value: string) => void;
   onTopicTabChange: (topicId: ProjectTopicId) => void;

@@ -4,6 +4,8 @@ import ProjectListItem from "@portfolio/components/projects/ProjectListItem";
 import ProjectSkeleton from "@portfolio/components/projects/ProjectSkeleton";
 import ProjectThumbnail from "@portfolio/components/projects/ProjectThumbnail";
 import SectionHeading from "@portfolio/components/sections/SectionHeading";
+import SectionStatePanel from "@portfolio/components/sections/SectionStatePanel";
+import type { Translations } from "@portfolio/locales/translations";
 import { DEFAULT_PROJECT_TOPIC_ID } from "@shared/database/types/projectTopic";
 import type { Language } from "@shared/database/types/language";
 import type { Project, ProjectTopicId } from "@shared/database/types/project";
@@ -12,25 +14,15 @@ type ProjectsSectionProps = {
   projects?: Project[];
   isLoading: boolean;
   isError: boolean;
-  errorMessage: string;
-  label: string;
-  title: string;
+  text: Translations["projects"];
   language: Language;
-  noImage: string;
-  emptyMessage: string;
-  openProjectLinkLabel: string;
 };
 
 function ProjectsSection({
   projects,
   isLoading,
   isError,
-  errorMessage,
-  label,
-  title,
-  noImage,
-  emptyMessage,
-  openProjectLinkLabel,
+  text,
   language,
 }: ProjectsSectionProps) {
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
@@ -43,54 +35,50 @@ function ProjectsSection({
 
   return (
     <section id="projects" className="site-section--projects">
-      <SectionHeading label={label} title={title} />
+      <SectionHeading label={text.label} title={text.title} />
 
-      {isLoading ? (
-        <ProjectSkeleton />
-      ) : isError ? (
-        <div role="alert" className="site-panel--alert">
-          <p className="site-text-error">{errorMessage}</p>
-        </div>
-      ) : !projects?.length ? (
-        <div className="site-panel--empty-lg">
-          <p>{emptyMessage}</p>
-        </div>
-      ) : (
-        <>
-          <div className="site-project-layout">
-            <div className="site-project-grid">
-              {projects.map((project) => (
-                <ProjectThumbnail
-                  key={project.id}
-                  project={project}
-                  language={language}
-                  isActive={project.id === activeProject?.id}
-                  onSelect={() => setActiveProjectId(project.id)}
-                />
-              ))}
-            </div>
-
-            {activeProject ? (
-              <ProjectListItem
-                key={activeProject.id}
-                project={activeProject}
+      <SectionStatePanel
+        isLoading={isLoading}
+        isError={isError}
+        isEmpty={!projects?.length}
+        errorMessage={text.loadError}
+        emptyMessage={text.emptyMessage}
+        emptyPanelClassName="site-panel--empty-lg"
+        loading={<ProjectSkeleton />}
+      >
+        <div className="site-project-layout">
+          <div className="site-project-grid">
+            {projects?.map((project) => (
+              <ProjectThumbnail
+                key={project.id}
+                project={project}
                 language={language}
-                noImage={noImage}
-                openProjectLinkLabel={openProjectLinkLabel}
-                selectedTopicId={
-                  activeTopics[activeProject.id] ?? DEFAULT_PROJECT_TOPIC_ID
-                }
-                onTopicChange={(topicId) =>
-                  setActiveTopics((current) => ({
-                    ...current,
-                    [activeProject.id]: topicId,
-                  }))
-                }
+                isActive={project.id === activeProject?.id}
+                onSelect={() => setActiveProjectId(project.id)}
               />
-            ) : null}
+            ))}
           </div>
-        </>
-      )}
+
+          {activeProject ? (
+            <ProjectListItem
+              key={activeProject.id}
+              project={activeProject}
+              language={language}
+              noImage={text.noImage}
+              openProjectLinkLabel={text.openProjectLink}
+              selectedTopicId={
+                activeTopics[activeProject.id] ?? DEFAULT_PROJECT_TOPIC_ID
+              }
+              onTopicChange={(topicId) =>
+                setActiveTopics((current) => ({
+                  ...current,
+                  [activeProject.id]: topicId,
+                }))
+              }
+            />
+          ) : null}
+        </div>
+      </SectionStatePanel>
     </section>
   );
 }

@@ -23,11 +23,6 @@ function ProjectThumbnail({
       aria-pressed={isActive}
       aria-label={title}
       className={`site-project-thumb shrink-0${isActive ? " site-project-thumb--active" : ""}`}
-      style={{
-        width: "14rem",
-        height: "14rem",
-        flex: "0 0 14rem",
-      }}
       onClick={onSelect}
     >
       {project.miniatureUrl ? (

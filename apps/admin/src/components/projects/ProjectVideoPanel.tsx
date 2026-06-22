@@ -1,9 +1,10 @@
-import { useId, useRef, useState } from "react";
+import { useId } from "react";
 
 import AdminField from "@admin/components/ui/AdminField";
 import AdminButton from "@admin/components/ui/AdminButton";
 import AdminFilePickerMessages from "@admin/components/ui/AdminFilePickerMessages";
 import { useLocalFilePreview } from "@admin/hooks/useLocalFilePreview";
+import { useValidatedFilePicker } from "@admin/hooks/useValidatedFilePicker";
 import {
   PROJECT_VIDEO_ACCEPT,
   validateProjectVideoFile,
@@ -27,33 +28,25 @@ function ProjectVideoPanel({
   onVideoMarkedForRemovalChange,
 }: ProjectVideoPanelProps) {
   const fieldId = useId();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [fileError, setFileError] = useState<string>();
   const localPreviewUrl = useLocalFilePreview(selectedFile);
+  const {
+    clearSelection,
+    fileError,
+    handleInputChange,
+    inputRef,
+    openPicker,
+  } = useValidatedFilePicker({
+    validate: validateProjectVideoFile,
+    onValidFile: (file) => {
+      onVideoMarkedForRemovalChange?.(false);
+      onFileSelect(file);
+    },
+    onClear: () => onFileSelect(null),
+  });
 
   const previewUrl = videoMarkedForRemoval
     ? undefined
     : (localPreviewUrl ?? videoUrl);
-
-  async function handleFileChange(file: File | null) {
-    if (!file) {
-      setFileError(undefined);
-      onFileSelect(null);
-      return;
-    }
-
-    const validation = await validateProjectVideoFile(file);
-
-    if (!validation.valid) {
-      setFileError(validation.message);
-      onFileSelect(null);
-      return;
-    }
-
-    setFileError(undefined);
-    onVideoMarkedForRemovalChange?.(false);
-    onFileSelect(file);
-  }
 
   return (
     <AdminField
@@ -85,7 +78,7 @@ function ProjectVideoPanel({
             type="button"
             variant="secondary"
             disabled={disabled}
-            onClick={() => inputRef.current?.click()}
+            onClick={openPicker}
           >
             {previewUrl ? "Zmień wideo" : "Dodaj wideo"}
           </AdminButton>
@@ -96,12 +89,8 @@ function ProjectVideoPanel({
               variant="ghost"
               disabled={disabled}
               onClick={() => {
-                void handleFileChange(null);
+                clearSelection();
                 onVideoMarkedForRemovalChange?.(true);
-
-                if (inputRef.current) {
-                  inputRef.current.value = "";
-                }
               }}
             >
               Usuń wideo
@@ -116,11 +105,7 @@ function ProjectVideoPanel({
           accept={PROJECT_VIDEO_ACCEPT}
           className="sr-only"
           disabled={disabled}
-          onChange={(event) => {
-            const file = event.target.files?.[0] ?? null;
-            event.target.value = "";
-            void handleFileChange(file);
-          }}
+          onChange={handleInputChange}
         />
 
         <AdminFilePickerMessages

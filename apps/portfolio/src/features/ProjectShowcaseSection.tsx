@@ -2,6 +2,8 @@ import { useMemo } from "react";
 
 import ProjectShowcaseSkeleton from "@portfolio/components/projects/ProjectShowcaseSkeleton";
 import ProjectVideoCarousel from "@portfolio/components/projects/ProjectVideoCarousel";
+import SectionStatePanel from "@portfolio/components/sections/SectionStatePanel";
+import type { Translations } from "@portfolio/locales/translations";
 import type { Language } from "@shared/database/types/language";
 import type { Project } from "@shared/database/types/project";
 
@@ -9,7 +11,7 @@ type ProjectShowcaseSectionProps = {
   projects?: Project[];
   isLoading: boolean;
   isError: boolean;
-  errorMessage: string;
+  text: Translations["showcase"];
   language: Language;
 };
 
@@ -17,7 +19,7 @@ function ProjectShowcaseSection({
   projects,
   isLoading,
   isError,
-  errorMessage,
+  text,
   language,
 }: ProjectShowcaseSectionProps) {
   const showcaseProjects = useMemo(
@@ -31,15 +33,14 @@ function ProjectShowcaseSection({
 
   return (
     <section id="showcase" className="site-section--showcase">
-      {isLoading ? (
-        <ProjectShowcaseSkeleton />
-      ) : isError ? (
-        <div role="alert" className="site-panel--alert">
-          <p className="site-text-error">{errorMessage}</p>
-        </div>
-      ) : (
+      <SectionStatePanel
+        isLoading={isLoading}
+        isError={isError}
+        errorMessage={text.loadError}
+        loading={<ProjectShowcaseSkeleton />}
+      >
         <ProjectVideoCarousel projects={showcaseProjects} language={language} />
-      )}
+      </SectionStatePanel>
     </section>
   );
 }

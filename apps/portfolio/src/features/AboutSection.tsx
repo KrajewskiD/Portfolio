@@ -2,6 +2,7 @@ import ProfileSkeleton from "../components/about/ProfileSkeleton";
 import ProfileContent from "../components/about/ProfileContent";
 import ProfileImage from "../components/about/ProfileImage";
 import { useProfileEmailReveal } from "../hooks/useProfileEmailReveal";
+import type { Translations } from "@portfolio/locales/translations";
 import type { FooterLinkData } from "@shared/database/types/link";
 import type { Language } from "@shared/database/types/language";
 import type { Profile } from "@shared/database/types/profile";
@@ -12,15 +13,8 @@ type AboutSectionProps = {
   footerLinks?: FooterLinkData[];
   isLoading: boolean;
   isError: boolean;
-  errorMessage: string;
-  label: string;
-  noImage: string;
+  text: Translations["about"];
   socialLinksLabel: string;
-  emailLabel: string;
-  copyEmailLabel: string;
-  emailCopiedMessage: string;
-  emailEmptyMessage: string;
-  emailLoadErrorMessage: string;
   language: Language;
 };
 
@@ -29,15 +23,8 @@ function AboutSection({
   footerLinks,
   isLoading,
   isError,
-  errorMessage,
-  label,
-  noImage,
+  text,
   socialLinksLabel,
-  emailLabel,
-  copyEmailLabel,
-  emailCopiedMessage,
-  emailEmptyMessage,
-  emailLoadErrorMessage,
   language,
 }: AboutSectionProps) {
   const {
@@ -68,27 +55,27 @@ function AboutSection({
         <ProfileSkeleton />
       ) : isError || !profile ? (
         <div className="site-hero-card site-hero-card--error" role="alert">
-          <p className="site-text-error">{errorMessage}</p>
+          <p className="site-text-error">{text.loadError}</p>
         </div>
       ) : (
         <div className="site-hero-card">
           <ProfileImage
             imageUrl={profile.imageUrl}
             alt={imageAlt}
-            fallbackLabel={noImage}
+            fallbackLabel={text.noImage}
           />
 
           <ProfileContent
             name={profile.name}
             role={role}
-            label={label}
+            label={text.label}
             links={footerLinks}
             socialLinksLabel={socialLinksLabel}
-            emailLabel={emailLabel}
-            copyEmailLabel={copyEmailLabel}
-            emailCopiedMessage={emailCopiedMessage}
-            emailEmptyMessage={emailEmptyMessage}
-            emailLoadErrorMessage={emailLoadErrorMessage}
+            emailLabel={text.emailLabel}
+            copyEmailLabel={text.copyEmailLabel}
+            emailCopiedMessage={text.emailCopiedMessage}
+            emailEmptyMessage={text.emailEmptyMessage}
+            emailLoadErrorMessage={text.emailLoadErrorMessage}
             panelState={panelState}
             email={email}
             isCopied={isCopied}

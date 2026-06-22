@@ -7,18 +7,14 @@ import ProfileImageSection from "@admin/components/profile/ProfileImageSection";
 import { profileDraft } from "@admin/data/adminDrafts";
 import { createProfileTranslateFields } from "@admin/forms/profileTranslatableFields";
 import { useAdminForm } from "@admin/hooks/useAdminForm";
-import { usePendingSingleImage } from "@admin/hooks/usePendingSingleImage";
+import { useProfileImageDraft } from "@admin/hooks/useProfileImageDraft";
 import { useTranslateFields } from "@admin/hooks/useTranslateFields";
 import { useTranslationOverlay } from "@admin/context/useTranslationOverlay";
 import {
-  deleteProfileImage,
   getAdminProfile,
-  getVersionedProfileImageUrl,
   saveAdminProfile,
-  uploadProfileImage,
 } from "@admin/services/profileContentService";
 import type { AdminFormProps } from "@admin/types/adminForms";
-import type { Profile } from "@shared/database/types/profile";
 import { useCallback, useMemo } from "react";
 
 type ProfileTextField =
@@ -34,52 +30,7 @@ type ProfileTextField =
   | "imageAltEn";
 
 function ProfileForm({ language }: AdminFormProps) {
-  const {
-    pendingFile: pendingProfileImage,
-    pendingFileRef: pendingProfileImageRef,
-    setPendingFile: setPendingProfileImage,
-    markedForRemoval: profileImageMarkedForRemoval,
-    setMarkedForRemoval: setProfileImageMarkedForRemoval,
-    hasPendingEdits: hasPendingImageEdits,
-    discardPending: discardPendingImage,
-  } = usePendingSingleImage();
-
-  const prepareBeforeSave = useCallback(
-    async (currentProfile: Profile) => {
-      let nextProfile = currentProfile;
-
-      if (profileImageMarkedForRemoval && currentProfile.imagePath) {
-        await deleteProfileImage(currentProfile.imagePath);
-        nextProfile = {
-          ...currentProfile,
-          imagePath: undefined,
-          imageUrl: undefined,
-        };
-      }
-
-      if (pendingProfileImageRef.current) {
-        const imagePath = await uploadProfileImage(
-          pendingProfileImageRef.current,
-        );
-        setPendingProfileImage(null);
-
-        nextProfile = {
-          ...nextProfile,
-          imagePath,
-          imageUrl: await getVersionedProfileImageUrl(imagePath),
-        };
-      }
-
-      setProfileImageMarkedForRemoval(false);
-      return nextProfile;
-    },
-    [
-      pendingProfileImageRef,
-      profileImageMarkedForRemoval,
-      setPendingProfileImage,
-      setProfileImageMarkedForRemoval,
-    ],
-  );
+  const imageDraft = useProfileImageDraft();
 
   const {
     value: profile,
@@ -91,13 +42,13 @@ function ProfileForm({ language }: AdminFormProps) {
     saveSuccess,
     save,
     isDirty,
-  } = useAdminForm<Profile>({
+  } = useAdminForm({
     initialValue: profileDraft,
     loadValue: getAdminProfile,
     saveValue: saveAdminProfile,
-    prepareBeforeSave,
-    extraDirty: hasPendingImageEdits,
-    onDiscard: discardPendingImage,
+    prepareBeforeSave: imageDraft.prepareBeforeSave,
+    extraDirty: imageDraft.hasPendingEdits,
+    onDiscard: imageDraft.discardPending,
   });
 
   const { isOverlayOpen } = useTranslationOverlay();
@@ -157,16 +108,11 @@ function ProfileForm({ language }: AdminFormProps) {
         <ProfileImageSection
           profile={profile}
           language={language}
-          pendingFile={pendingProfileImage}
-          imageMarkedForRemoval={profileImageMarkedForRemoval}
+          pendingFile={imageDraft.pendingFile}
+          imageMarkedForRemoval={imageDraft.markedForRemoval}
           disabled={isLoading || isSaving}
-          onFileSelect={(file) => {
-            setPendingProfileImage(file);
-            if (file) {
-              setProfileImageMarkedForRemoval(false);
-            }
-          }}
-          onImageMarkedForRemovalChange={setProfileImageMarkedForRemoval}
+          onFileSelect={imageDraft.handleFileSelect}
+          onImageMarkedForRemovalChange={imageDraft.setMarkedForRemoval}
           onUpdateImageAlt={updateProfile}
         />
 

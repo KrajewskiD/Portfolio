@@ -11,6 +11,7 @@ import type {
   ProjectTopicId,
   ProjectTopics,
 } from "@shared/database/types/project";
+import { getLocalizedField } from "@shared/utils/localizedField";
 import ProjectTopic from "./ProjectTopic";
 
 type ProjectTopicsGroupProps = {
@@ -72,7 +73,12 @@ function ProjectTopicsGroup({
         </p>
 
         <p className="site-body--panel">
-          {language === "pl" ? activeTopic.contentPl : activeTopic.contentEn}
+          {getLocalizedField(
+            activeTopic,
+            language,
+            "contentPl",
+            "contentEn",
+          )}
         </p>
       </div>
     </div>

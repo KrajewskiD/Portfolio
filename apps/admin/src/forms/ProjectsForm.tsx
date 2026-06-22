@@ -6,8 +6,8 @@ import AdminEmptyMessage from "@admin/components/ui/AdminEmptyMessage";
 import AdminFormShell from "@admin/components/ui/AdminFormShell";
 import { projectDrafts } from "@admin/data/adminDrafts";
 import { useProjectMediaDrafts } from "@admin/forms/projects/useProjectMediaDrafts";
+import { useProjectMediaViewModel } from "@admin/forms/projects/useProjectMediaViewModel";
 import { useProjectsEditor } from "@admin/forms/projects/useProjectsEditor";
-import { useActiveTopicImageHandlers } from "@admin/hooks/useActiveTopicImageHandlers";
 import { useAdminForm } from "@admin/hooks/useAdminForm";
 import { useTranslationOverlay } from "@admin/context/useTranslationOverlay";
 import {
@@ -52,24 +52,7 @@ function ProjectsForm({ language }: AdminFormProps) {
   });
 
   const isFormBusy = isBusy || editor.isDeleting;
-
-  const topicImageHandlers = useActiveTopicImageHandlers(
-    editor.activeTopicImageKey,
-    media.topicImages.setPendingFiles,
-    media.topicImages.setMarkedForRemovals,
-  );
-
-  const videoHandlers = useActiveTopicImageHandlers(
-    editor.activeProjectVideoKey,
-    media.videos.setPendingFiles,
-    media.videos.setMarkedForRemovals,
-  );
-
-  const miniatureHandlers = useActiveTopicImageHandlers(
-    editor.activeProjectMiniatureKey,
-    media.miniatures.setPendingFiles,
-    media.miniatures.setMarkedForRemovals,
-  );
+  const mediaViewModel = useProjectMediaViewModel(editor, media);
 
   const extraErrors = useMemo(
     () =>
@@ -117,44 +100,9 @@ function ProjectsForm({ language }: AdminFormProps) {
           topic={editor.activeTopic}
           projectTitle={editor.activeProjectTitle}
           disabled={isFormBusy}
-          miniature={{
-            selectedFile:
-              media.miniatures.pendingFiles[editor.activeProjectMiniatureKey] ??
-              null,
-            markedForRemoval:
-              media.miniatures.markedForRemovals[
-                editor.activeProjectMiniatureKey
-              ] ?? false,
-            handlers: {
-              onFileSelect: miniatureHandlers.onFileSelect,
-              onMarkedForRemovalChange:
-                miniatureHandlers.onImageMarkedForRemovalChange,
-            },
-          }}
-          topicImage={{
-            selectedFile:
-              media.topicImages.pendingFiles[editor.activeTopicImageKey] ?? null,
-            markedForRemoval:
-              media.topicImages.markedForRemovals[editor.activeTopicImageKey] ??
-              false,
-            handlers: {
-              onFileSelect: topicImageHandlers.onFileSelect,
-              onMarkedForRemovalChange:
-                topicImageHandlers.onImageMarkedForRemovalChange,
-            },
-          }}
-          video={{
-            selectedFile:
-              media.videos.pendingFiles[editor.activeProjectVideoKey] ?? null,
-            markedForRemoval:
-              media.videos.markedForRemovals[editor.activeProjectVideoKey] ??
-              false,
-            handlers: {
-              onFileSelect: videoHandlers.onFileSelect,
-              onMarkedForRemovalChange:
-                videoHandlers.onImageMarkedForRemovalChange,
-            },
-          }}
+          miniature={mediaViewModel.miniature}
+          topicImage={mediaViewModel.topicImage}
+          video={mediaViewModel.video}
           onUpdateProject={editor.updateProject}
           onUpdateTopic={editor.updateTopic}
           onTopicTabChange={editor.setActiveTopicId}
