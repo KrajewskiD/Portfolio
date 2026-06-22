@@ -3,9 +3,8 @@ import { AdminLocalizedInput } from "@admin/components/ui/AdminLocalizedField";
 import { projectTopicLabels } from "@shared/constants/projectTopics";
 import type { Language } from "@shared/database/types/language";
 import type { ProjectTopicContent } from "@shared/database/types/project";
+import type { ProjectTopicImageField } from "@admin/forms/projects/projectEditorTypes";
 import { getLocalizedField } from "@shared/utils/localizedField";
-
-export type ProjectTopicImageField = "imageAltPl" | "imageAltEn";
 
 type ProjectTopicImagePanelProps = {
   topic: ProjectTopicContent;

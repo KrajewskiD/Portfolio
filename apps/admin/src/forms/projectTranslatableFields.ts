@@ -7,10 +7,15 @@ import type {
 } from "@shared/database/types/project";
 
 import { createTranslateFields } from "@admin/forms/createTranslateFields";
+import type {
+  ProjectTextField,
+  ProjectTopicContentField,
+  ProjectTopicImageField,
+} from "@admin/forms/projects/projectEditorTypes";
 
-type ProjectTitleKey = "titlePl" | "titleEn";
-type TopicContentKey = "contentPl" | "contentEn";
-type TopicImageAltKey = "imageAltPl" | "imageAltEn";
+type ProjectTitleKey = Extract<ProjectTextField, "titlePl" | "titleEn">;
+type TopicContentKey = ProjectTopicContentField;
+type TopicImageAltKey = ProjectTopicImageField;
 
 type ProjectTranslateCallbacks = {
   onApplyTitle: (field: ProjectTitleKey, text: string) => void;

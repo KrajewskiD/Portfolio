@@ -1,7 +1,6 @@
 @layer components {
   .site-hero-card,
   .site-card--project,
-  .site-card--skeleton,
   .site-panel--alert,
   .site-panel--empty,
   .site-panel--empty-lg {
@@ -40,10 +39,6 @@
       right: 2rem;
       bottom: 2rem;
     }
-  }
-
-  .site-card--skeleton {
-    @apply animate-pulse rounded-3xl border border-accent p-6 shadow-card;
   }
 
   .site-panel--alert {

@@ -3,13 +3,11 @@ import type { Language } from "@shared/database/types/language";
 import type { ProjectTopicContent } from "@shared/database/types/project";
 
 import { AdminLocalizedTextarea } from "@admin/components/ui/AdminLocalizedField";
-
-export type ProjectTopicContentField = "contentPl" | "contentEn";
+import type { ProjectTopicContentField } from "@admin/forms/projects/projectEditorTypes";
 
 type ProjectTopicContentPanelProps = {
   topic: ProjectTopicContent;
   language: Language;
-  fillHeight?: boolean;
   disabled?: boolean;
   onChange: (field: ProjectTopicContentField, value: string) => void;
 };
@@ -17,7 +15,6 @@ type ProjectTopicContentPanelProps = {
 function ProjectTopicContentPanel({
   topic,
   language,
-  fillHeight = false,
   disabled = false,
   onChange,
 }: ProjectTopicContentPanelProps) {
@@ -29,7 +26,7 @@ function ProjectTopicContentPanel({
       id={fieldId}
       label={topicLabel}
       language={language}
-      fillHeight={fillHeight}
+      rows={4}
       disabled={disabled}
       source={topic}
       plKey="contentPl"

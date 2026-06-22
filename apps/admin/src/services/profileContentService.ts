@@ -30,10 +30,3 @@ export async function saveAdminProfile(profile: Profile): Promise<void> {
     throw error;
   }
 }
-
-export {
-  uploadProfileImage,
-  getProfileImagePublicUrl,
-  getVersionedProfileImageUrl,
-  deleteProfileImage,
-} from "@admin/lib/imageStorage";

@@ -46,7 +46,7 @@ function ProjectContentColumn({
   onRemoveTechnology,
 }: ProjectContentColumnProps) {
   return (
-    <div className="flex min-h-full flex-col gap-6">
+    <div className="flex flex-col gap-6">
       <div className="admin-stack">
         <AdminLocalizedInput
           id="project-title"
@@ -83,7 +83,6 @@ function ProjectContentColumn({
       <ProjectTopicContentPanel
         topic={topic}
         language={language}
-        fillHeight
         disabled={disabled}
         onChange={onUpdateTopic}
       />

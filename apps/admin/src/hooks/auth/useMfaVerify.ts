@@ -1,36 +1,14 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { adminRoute, getAdminUrl } from "@shared/config/routes";
 
+import { useMfaCodeSubmit } from "@admin/hooks/auth/useMfaCodeSubmit";
 import { verifyExistingMfa } from "@admin/services/mfaService";
 
 export function useMfaVerify() {
-  const [code, setCode] = useState("");
-  const [errorMessage, setErrorMessage] = useState<string>();
-  const [isLoading, setIsLoading] = useState(false);
+  const submit = useCallback(async (code: string) => {
+    await verifyExistingMfa(code);
+    window.location.replace(getAdminUrl(adminRoute.dashboard));
+  }, []);
 
-  const verify = useCallback(async () => {
-    if (code.length !== 6) {
-      return;
-    }
-
-    setIsLoading(true);
-    setErrorMessage(undefined);
-
-    try {
-      await verifyExistingMfa(code);
-      window.location.replace(getAdminUrl(adminRoute.dashboard));
-    } catch {
-      setErrorMessage("Kod jest nieprawidłowy lub wygasł.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [code]);
-
-  return {
-    code,
-    setCode,
-    errorMessage,
-    isLoading,
-    verify,
-  };
+  return useMfaCodeSubmit({ submit });
 }

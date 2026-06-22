@@ -29,7 +29,6 @@
     pointer-events: none;
   }
 
-  .site-hero-card__link--icon,
   .site-icon-link {
     display: inline-flex;
     align-items: center;
@@ -52,12 +51,10 @@
       box-shadow 0.2s ease;
   }
 
-  .site-hero-card__link--icon--loading,
   .site-icon-link--loading {
     cursor: wait;
   }
 
-  .site-hero-card__link--icon:hover,
   .site-icon-link:hover {
     border-color: var(--color-accent-soft);
     color: var(--color-accent);
@@ -67,7 +64,6 @@
       inset 0 1px 0 rgb(255 255 255 / 0.04);
   }
 
-  .site-hero-card__link-icon,
   .site-icon-link__icon {
     width: 0.64em;
     height: 0.64em;
@@ -75,7 +71,6 @@
     opacity: 0.88;
   }
 
-  .site-hero-card__link--icon:hover .site-hero-card__link-icon,
   .site-icon-link:hover .site-icon-link__icon {
     opacity: 1;
   }

@@ -59,7 +59,6 @@ function ProjectsForm({ language }: AdminFormProps) {
           disabled={isFormBusy}
           miniature={mediaViewModel.miniature}
           topicImage={mediaViewModel.topicImage}
-          video={mediaViewModel.video}
           onUpdateProject={editor.updateProject}
           onUpdateTopic={editor.updateTopic}
           onTopicTabChange={editor.setActiveTopicId}

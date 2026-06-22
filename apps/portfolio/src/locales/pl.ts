@@ -11,9 +11,6 @@ export const pl: Translations = {
     emailEmptyMessage: "Brak adresu e-mail w profilu.",
     emailLoadErrorMessage: "Nie udało się wczytać adresu e-mail.",
   },
-  showcase: {
-    loadError: "Nie udało się wczytać prezentacji projektów.",
-  },
   projects: {
     label: "projekty",
     title: "Wybrane projekty",

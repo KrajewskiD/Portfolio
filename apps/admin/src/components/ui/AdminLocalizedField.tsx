@@ -98,7 +98,6 @@ type AdminLocalizedTextareaProps<
   onChange: (field: TPl | TEn, value: string) => void;
   rows?: number;
   className?: string;
-  fillHeight?: boolean;
 };
 
 export function AdminLocalizedTextarea<
@@ -117,7 +116,6 @@ export function AdminLocalizedTextarea<
   onChange,
   rows = 5,
   className,
-  fillHeight = false,
 }: AdminLocalizedTextareaProps<TPl, TEn, TSource>) {
   const { localizedKey, oppositeKey, localizedValue, sourceText } =
     useLocalizedFieldState(source, language, plKey, enKey);
@@ -128,16 +126,14 @@ export function AdminLocalizedTextarea<
       label={label}
       hint={hint}
       language={language}
-      className={[className, fillHeight ? "admin-field--fill" : ""]
-        .filter(Boolean)
-        .join(" ") || undefined}
+      className={className}
       disabled={disabled}
       sourceText={sourceText}
       onApply={(text) => onChange(oppositeKey, text)}
     >
       <AdminTextarea
         id={id}
-        rows={fillHeight ? undefined : rows}
+        rows={rows}
         value={localizedValue}
         disabled={disabled}
         onChange={(event) => onChange(localizedKey, event.target.value)}

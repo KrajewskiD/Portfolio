@@ -2,47 +2,38 @@ import { useCallback } from "react";
 
 import {
   projectMiniatureKey,
-  projectVideoKey,
   topicImageKey,
 } from "@admin/forms/projects/projectMediaKeys";
 import { usePendingKeyedImages } from "@admin/hooks/usePendingKeyedImages";
 import {
   deleteProjectMiniature,
   deleteProjectTopicImage,
-  deleteProjectVideo,
-  getProjectVideoPublicUrl,
   getVersionedProjectImageUrl,
   getVersionedProjectMiniatureUrl,
   uploadProjectMiniature,
   uploadProjectTopicImage,
-  uploadProjectVideo,
 } from "@admin/lib/imageStorage";
 import { ensureUuid } from "@shared/database";
 import type { Project } from "@shared/database/types/project";
 
 export function useProjectMediaDrafts() {
   const topicImages = usePendingKeyedImages();
-  const videos = usePendingKeyedImages();
   const miniatures = usePendingKeyedImages();
 
   const hasPendingEdits =
-    topicImages.hasPendingEdits ||
-    videos.hasPendingEdits ||
-    miniatures.hasPendingEdits;
+    topicImages.hasPendingEdits || miniatures.hasPendingEdits;
 
   const discardAll = useCallback(() => {
     topicImages.discardPending();
-    videos.discardPending();
     miniatures.discardPending();
-  }, [miniatures, topicImages, videos]);
+  }, [miniatures, topicImages]);
 
   const clearKeysForProject = useCallback(
     (projectId: string) => {
       topicImages.clearKeysForPrefix(projectId);
-      videos.clearKeysForPrefix(projectId);
       miniatures.clearKeysForPrefix(projectId);
     },
-    [miniatures, topicImages, videos],
+    [miniatures, topicImages],
   );
 
   const prepareBeforeSave = useCallback(
@@ -58,29 +49,12 @@ export function useProjectMediaDrafts() {
         currentProjects.map(async (project) => {
           const originalId = project.id;
           const normalizedId = ensureUuid(project.id);
-          const videoKey = projectVideoKey(originalId);
           const miniatureKey = projectMiniatureKey(originalId);
-          const pendingVideoFile = videos.pendingFiles[videoKey];
-          const pendingVideoRemoval = videos.markedForRemovals[videoKey];
           const pendingMiniatureFile = miniatures.pendingFiles[miniatureKey];
           const pendingMiniatureRemoval =
             miniatures.markedForRemovals[miniatureKey];
-          let nextVideoPath = project.videoPath;
-          let nextVideoUrl = project.videoUrl;
           let nextMiniaturePath = project.miniaturePath;
           let nextMiniatureUrl = project.miniatureUrl;
-
-          if (pendingVideoFile) {
-            nextVideoPath = await uploadProjectVideo(
-              normalizedId,
-              pendingVideoFile,
-            );
-            nextVideoUrl = getProjectVideoPublicUrl(nextVideoPath);
-          } else if (pendingVideoRemoval && project.videoPath) {
-            await deleteProjectVideo(project.videoPath);
-            nextVideoPath = undefined;
-            nextVideoUrl = undefined;
-          }
 
           if (pendingMiniatureFile) {
             if (project.miniaturePath && normalizedId !== originalId) {
@@ -103,8 +77,6 @@ export function useProjectMediaDrafts() {
           return {
             ...project,
             id: normalizedId,
-            videoPath: nextVideoPath,
-            videoUrl: nextVideoUrl,
             miniaturePath: nextMiniaturePath,
             miniatureUrl: nextMiniatureUrl,
             topics: await Promise.all(
@@ -154,14 +126,11 @@ export function useProjectMediaDrafts() {
       miniatures.pendingFiles,
       topicImages.markedForRemovals,
       topicImages.pendingFiles,
-      videos.markedForRemovals,
-      videos.pendingFiles,
     ],
   );
 
   return {
     topicImages,
-    videos,
     miniatures,
     hasPendingEdits,
     discardAll,

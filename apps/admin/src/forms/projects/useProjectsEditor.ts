@@ -11,8 +11,6 @@ import { useProjectSelection } from "./useProjectSelection";
 import { useProjectTechnologiesEditor } from "./useProjectTechnologiesEditor";
 import { useProjectTopicsEditor } from "./useProjectTopicsEditor";
 
-export type { ProjectTextField, TopicTextField } from "./projectEditorTypes";
-
 type UseProjectsEditorParams = {
   language: Language;
   projects: Project[];

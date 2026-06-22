@@ -1,4 +1,4 @@
-import { getProjectImagePublicUrl, getProjectMiniaturePublicUrl, getProjectVideoPublicUrl } from "@admin/lib/imageStorage";
+import { getProjectImagePublicUrl, getProjectMiniaturePublicUrl } from "@admin/lib/imageStorage";
 import { supabase } from "@admin/lib/supabase";
 import { getProjectsFromDatabase, hydrateProjectImages } from "@shared/database";
 import type { Project } from "@shared/database/types/project";
@@ -14,7 +14,6 @@ export async function getAdminProjects(): Promise<Project[]> {
   const projects = await getProjectsFromDatabase(
     supabase,
     getProjectImagePublicUrl,
-    getProjectVideoPublicUrl,
     getProjectMiniaturePublicUrl,
   );
 

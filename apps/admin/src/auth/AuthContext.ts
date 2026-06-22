@@ -12,7 +12,6 @@ export type AuthStatus =
 export type AuthContextValue = {
   session: Session | null;
   authStatus: AuthStatus;
-  isAdmin: boolean;
   mfaStatus: MfaStatus | null;
   isLoading: boolean;
 };

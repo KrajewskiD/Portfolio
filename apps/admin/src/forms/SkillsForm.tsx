@@ -22,7 +22,7 @@ function SkillsForm({ language }: AdminFormProps) {
     saveSuccess,
     save,
     formDisabled,
-  } = useSkillsForm(language);
+  } = useSkillsForm();
 
   if (!activeGroup) {
     return null;

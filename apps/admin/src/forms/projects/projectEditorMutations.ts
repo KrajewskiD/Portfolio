@@ -7,7 +7,7 @@ import type {
 
 import type { ProjectTextField, TopicTextField } from "./projectEditorTypes";
 
-export function mapProjectById(
+function mapProjectById(
   projects: Project[],
   projectId: string,
   updater: (project: Project) => Project,

@@ -11,9 +11,6 @@ export const en: Translations = {
     emailEmptyMessage: "No email address in the profile.",
     emailLoadErrorMessage: "Could not load the email address.",
   },
-  showcase: {
-    loadError: "The project showcase could not be loaded.",
-  },
   projects: {
     label: "projects",
     title: "Selected Work",

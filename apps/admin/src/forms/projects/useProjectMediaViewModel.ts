@@ -14,9 +14,7 @@ export type ProjectMediaDraftState = {
 
 type ProjectsEditorState = Pick<
   ReturnType<typeof useProjectsEditor>,
-  | "activeProjectMiniatureKey"
-  | "activeTopicImageKey"
-  | "activeProjectVideoKey"
+  "activeProjectMiniatureKey" | "activeTopicImageKey"
 >;
 
 type ProjectMediaDraftsState = ReturnType<typeof useProjectMediaDrafts>;
@@ -29,15 +27,12 @@ export function useProjectMediaViewModel(
     () => ({
       miniature: media.miniatures.getDraft(editor.activeProjectMiniatureKey),
       topicImage: media.topicImages.getDraft(editor.activeTopicImageKey),
-      video: media.videos.getDraft(editor.activeProjectVideoKey),
     }),
     [
       editor.activeProjectMiniatureKey,
-      editor.activeProjectVideoKey,
       editor.activeTopicImageKey,
       media.miniatures,
       media.topicImages,
-      media.videos,
     ],
   );
 }

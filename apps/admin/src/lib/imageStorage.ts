@@ -17,10 +17,3 @@ export {
   uploadProjectMiniature,
   uploadProjectTopicImage,
 } from "@admin/lib/storage/projectImageStorage";
-
-export {
-  deleteProjectVideo,
-  deleteProjectVideos,
-  getProjectVideoPublicUrl,
-  uploadProjectVideo,
-} from "@admin/lib/storage/projectVideoStorage";

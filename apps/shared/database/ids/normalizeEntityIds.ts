@@ -1,5 +1,4 @@
 import type { FooterLinkData } from "../types/link";
-import type { Project } from "../types/project";
 import type { SkillGroupData } from "../types/skill";
 
 const UUID_PATTERN =
@@ -32,12 +31,5 @@ export function normalizeFooterLinkIds(
   return links.map((link) => ({
     ...link,
     id: ensureUuid(link.id),
-  }));
-}
-
-export function normalizeProjectIds(projects: Project[]): Project[] {
-  return projects.map((project) => ({
-    ...project,
-    id: ensureUuid(project.id),
   }));
 }

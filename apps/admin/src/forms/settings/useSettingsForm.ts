@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import { footerLinkDrafts, skillGroupDrafts } from "@admin/data/adminDrafts";
 import { useSettingsEditor } from "@admin/forms/settings/useSettingsEditor";
 import { useAdminForm } from "@admin/hooks/useAdminForm";
@@ -12,7 +10,6 @@ import {
 import type { Language } from "@shared/database/types/language";
 
 export function useSettingsForm(language: Language) {
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set());
   const { isOverlayOpen } = useTranslationOverlay();
 
   const form = useAdminForm<AdminSettingsData>({
@@ -28,8 +25,6 @@ export function useSettingsForm(language: Language) {
     language,
     settings: form.value,
     setSettings: form.setValue,
-    expandedIds,
-    setExpandedIds,
   });
 
   const formDisabled = form.isLoading || form.isSaving || isOverlayOpen;

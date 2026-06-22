@@ -72,19 +72,6 @@ export function useAdminFormSave<T>({
     };
   }, [applyLoadedValue, loadFromDatabase]);
 
-  const reload = useCallback(async (): Promise<boolean> => {
-    try {
-      const loadedValue = await loadFromDatabase();
-      applyLoadedValue(loadedValue);
-      setLoadError(undefined);
-      return true;
-    } catch (error) {
-      console.error("Failed to reload admin form data:", error);
-      setLoadError("Nie udało się odświeżyć danych z bazy.");
-      return false;
-    }
-  }, [applyLoadedValue, loadFromDatabase]);
-
   const discard = useCallback(() => {
     setValue(savedValue);
     setSaveError(undefined);
@@ -152,7 +139,6 @@ export function useAdminFormSave<T>({
     saveError,
     saveSuccess,
     save,
-    reload,
     discard,
     syncSavedValue,
   };

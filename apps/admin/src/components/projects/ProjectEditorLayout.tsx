@@ -24,7 +24,6 @@ type ProjectEditorLayoutProps = {
   disabled?: boolean;
   miniature: ProjectMediaDraftState;
   topicImage: ProjectMediaDraftState;
-  video: ProjectMediaDraftState;
   onUpdateProject: (field: ProjectTextField, value: string) => void;
   onUpdateTopic: (field: TopicTextField, value: string) => void;
   onTopicTabChange: (topicId: ProjectTopicId) => void;
@@ -45,7 +44,6 @@ function ProjectEditorLayout({
   disabled = false,
   miniature,
   topicImage,
-  video,
   onUpdateProject,
   onUpdateTopic,
   onTopicTabChange,
@@ -73,7 +71,6 @@ function ProjectEditorLayout({
             disabled={disabled}
             miniature={miniature}
             topicImage={topicImage}
-            video={video}
             onTopicChange={onUpdateTopic}
           />
         </div>

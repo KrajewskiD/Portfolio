@@ -183,6 +183,10 @@
     backface-visibility: visible;
   }
 
+  .site-project-image {
+    @apply flex p-4 lg:border-r lg:border-border;
+  }
+
   .site-project-image__frame {
     @apply flex h-56 w-full items-center justify-center overflow-hidden rounded-2xl border border-dashed border-border sm:h-72 lg:h-full;
   }
@@ -193,10 +197,6 @@
 
   .site-project-details {
     @apply min-w-0 overflow-hidden border-t border-border p-6 lg:border-t-0 lg:p-8;
-  }
-
-  .site-project-skeleton__content {
-    @apply min-w-0 p-6 lg:p-8;
   }
 
   .site-topic-tab {

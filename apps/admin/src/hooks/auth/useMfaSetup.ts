@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { adminRoute, getAdminUrl } from "@shared/config/routes";
 
+import { useMfaCodeSubmit } from "@admin/hooks/auth/useMfaCodeSubmit";
 import {
   enrollMfa,
   verifyMfa,
@@ -9,47 +10,51 @@ import {
 
 export function useMfaSetup() {
   const [enrollment, setEnrollment] = useState<MfaEnrollment | null>(null);
-  const [code, setCode] = useState("");
-  const [errorMessage, setErrorMessage] = useState<string>();
-  const [isLoading, setIsLoading] = useState(false);
+  const [enrollErrorMessage, setEnrollErrorMessage] = useState<string>();
+  const [isEnrolling, setIsEnrolling] = useState(false);
+
+  const submit = useCallback(
+    async (code: string) => {
+      if (!enrollment) {
+        return;
+      }
+
+      await verifyMfa(enrollment.factorId, code);
+      window.location.replace(getAdminUrl(adminRoute.dashboard));
+    },
+    [enrollment],
+  );
+
+  const {
+    code,
+    setCode,
+    errorMessage: verifyErrorMessage,
+    isLoading: isVerifying,
+    verify,
+  } = useMfaCodeSubmit({
+    submit,
+    canSubmit: Boolean(enrollment),
+  });
 
   const enroll = useCallback(async () => {
-    setIsLoading(true);
-    setErrorMessage(undefined);
+    setIsEnrolling(true);
+    setEnrollErrorMessage(undefined);
 
     try {
       setEnrollment(await enrollMfa());
     } catch {
-      setErrorMessage("Nie udało się rozpocząć konfiguracji MFA.");
+      setEnrollErrorMessage("Nie udało się rozpocząć konfiguracji MFA.");
     } finally {
-      setIsLoading(false);
+      setIsEnrolling(false);
     }
   }, []);
-
-  const verify = useCallback(async () => {
-    if (!enrollment || code.length !== 6) {
-      return;
-    }
-
-    setIsLoading(true);
-    setErrorMessage(undefined);
-
-    try {
-      await verifyMfa(enrollment.factorId, code);
-      window.location.replace(getAdminUrl(adminRoute.dashboard));
-    } catch {
-      setErrorMessage("Kod jest nieprawidłowy lub wygasł.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [code, enrollment]);
 
   return {
     enrollment,
     code,
     setCode,
-    errorMessage,
-    isLoading,
+    errorMessage: enrollErrorMessage ?? verifyErrorMessage,
+    isLoading: isEnrolling || isVerifying,
     enroll,
     verify,
   };

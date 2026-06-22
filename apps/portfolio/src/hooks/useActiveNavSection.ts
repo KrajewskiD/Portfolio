@@ -4,21 +4,8 @@ import type { NavigationLinkData } from "@shared/database/types/link";
 
 const SECTION_START_VIEWPORT_RATIO = 0.45;
 
-const SECTION_NAV_ALIASES: Record<string, string> = {
-  showcase: "projects",
-};
-
 function hrefToSectionId(href: string): string {
   return href.replace(/^#/, "");
-}
-
-function resolveNavSectionId(
-  sectionId: string,
-  navSectionIds: Set<string>,
-): string | null {
-  const navId = SECTION_NAV_ALIASES[sectionId] ?? sectionId;
-
-  return navSectionIds.has(navId) ? navId : null;
 }
 
 function useActiveNavSection(navigationItems: NavigationLinkData[]) {
@@ -35,14 +22,7 @@ function useActiveNavSection(navigationItems: NavigationLinkData[]) {
 
     const getObservedElements = () =>
       navigationItems
-        .flatMap((item) => {
-          const sectionId = hrefToSectionId(item.href);
-
-          return sectionId === "projects"
-            ? [sectionId, "showcase"]
-            : [sectionId];
-        })
-        .map((id) => document.getElementById(id))
+        .map((item) => document.getElementById(hrefToSectionId(item.href)))
         .filter((element): element is HTMLElement => element !== null)
         .sort((left, right) => {
           const leftTop = left.getBoundingClientRect().top;
@@ -72,10 +52,8 @@ function useActiveNavSection(navigationItems: NavigationLinkData[]) {
           continue;
         }
 
-        const navId = resolveNavSectionId(element.id, navSectionIds);
-
-        if (navId) {
-          nextActive = navId;
+        if (navSectionIds.has(element.id)) {
+          nextActive = element.id;
         }
       }
 

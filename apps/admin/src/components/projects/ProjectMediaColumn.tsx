@@ -1,15 +1,9 @@
 import ProjectMiniaturePanel from "@admin/components/projects/ProjectMiniaturePanel";
-import ProjectTopicImagePanel, {
-  type ProjectTopicImageField,
-} from "@admin/components/projects/ProjectTopicImagePanel";
-import ProjectVideoPanel from "@admin/components/projects/ProjectVideoPanel";
+import ProjectTopicImagePanel from "@admin/components/projects/ProjectTopicImagePanel";
+import type { ProjectMediaDraftState } from "@admin/forms/projects/useProjectMediaViewModel";
+import type { ProjectTopicImageField } from "@admin/forms/projects/projectEditorTypes";
 import type { Language } from "@shared/database/types/language";
 import type { Project, ProjectTopicContent } from "@shared/database/types/project";
-
-type MediaFileHandlers = {
-  onFileSelect: (file: File | null) => void;
-  onMarkedForRemovalChange: (marked: boolean) => void;
-};
 
 type ProjectMediaColumnProps = {
   project: Project;
@@ -17,21 +11,8 @@ type ProjectMediaColumnProps = {
   projectTitle: string;
   language: Language;
   disabled?: boolean;
-  miniature: {
-    selectedFile: File | null;
-    markedForRemoval: boolean;
-    handlers: MediaFileHandlers;
-  };
-  topicImage: {
-    selectedFile: File | null;
-    markedForRemoval: boolean;
-    handlers: MediaFileHandlers;
-  };
-  video: {
-    selectedFile: File | null;
-    markedForRemoval: boolean;
-    handlers: MediaFileHandlers;
-  };
+  miniature: ProjectMediaDraftState;
+  topicImage: ProjectMediaDraftState;
   onTopicChange: (field: ProjectTopicImageField, value: string) => void;
 };
 
@@ -43,7 +24,6 @@ function ProjectMediaColumn({
   disabled = false,
   miniature,
   topicImage,
-  video,
   onTopicChange,
 }: ProjectMediaColumnProps) {
   return (
@@ -71,15 +51,6 @@ function ProjectMediaColumn({
           topicImage.handlers.onMarkedForRemovalChange
         }
         onChange={onTopicChange}
-      />
-
-      <ProjectVideoPanel
-        videoUrl={project.videoUrl}
-        selectedFile={video.selectedFile}
-        videoMarkedForRemoval={video.markedForRemoval}
-        disabled={disabled}
-        onFileSelect={video.handlers.onFileSelect}
-        onVideoMarkedForRemovalChange={video.handlers.onMarkedForRemovalChange}
       />
     </div>
   );

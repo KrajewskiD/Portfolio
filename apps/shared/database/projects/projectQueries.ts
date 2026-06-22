@@ -7,7 +7,6 @@ import type { ProjectRow } from "./projectRows";
 export async function getProjectsFromDatabase(
   supabase: SupabaseClient,
   getProjectImagePublicUrl: (path: string) => string,
-  getProjectVideoPublicUrl: (path: string) => string = getProjectImagePublicUrl,
   getProjectMiniaturePublicUrl: (
     path: string,
   ) => string = getProjectImagePublicUrl,
@@ -23,7 +22,6 @@ export async function getProjectsFromDatabase(
       title_en,
       display_order,
       miniature_path,
-      video_path,
       project_topics (
         topic_type_id,
         content_pl,
@@ -49,11 +47,6 @@ export async function getProjectsFromDatabase(
   }
 
   return data.map((project) =>
-    mapProjectRow(
-      project,
-      getProjectImagePublicUrl,
-      getProjectVideoPublicUrl,
-      getProjectMiniaturePublicUrl,
-    ),
+    mapProjectRow(project, getProjectImagePublicUrl, getProjectMiniaturePublicUrl),
   );
 }

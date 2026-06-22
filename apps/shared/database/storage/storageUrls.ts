@@ -11,7 +11,6 @@ export function getStoragePublicUrl(
 export const PROFILE_IMAGES_BUCKET = "profile-images";
 export const PROJECT_IMAGES_BUCKET = "project-images";
 export const PROJECT_MINIATURES_BUCKET = "project-miniatures";
-export const PROJECT_VIDEOS_BUCKET = "project-videos";
 
 export function createBucketUrlResolver(
   supabase: SupabaseClient,

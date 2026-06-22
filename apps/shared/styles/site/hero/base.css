@@ -210,7 +210,6 @@
     pointer-events: auto;
   }
 
-  button.site-hero-card__link--icon,
   button.site-icon-link {
     font: inherit;
   }

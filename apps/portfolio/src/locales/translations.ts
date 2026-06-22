@@ -9,9 +9,6 @@ export type Translations = {
     emailEmptyMessage: string;
     emailLoadErrorMessage: string;
   };
-  showcase: {
-    loadError: string;
-  };
   projects: {
     label: string;
     title: string;

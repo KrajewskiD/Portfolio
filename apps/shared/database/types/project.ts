@@ -35,7 +35,5 @@ export type Project = {
   technologies: ProjectTechnology[];
   miniaturePath?: string;
   miniatureUrl?: string;
-  videoPath?: string;
-  videoUrl?: string;
   topics: ProjectTopics;
 };

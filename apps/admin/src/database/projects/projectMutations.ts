@@ -1,4 +1,4 @@
-import { deleteProjectImages, deleteProjectMiniatures, deleteProjectVideos } from "@admin/lib/imageStorage";
+import { deleteProjectImages, deleteProjectMiniatures } from "@admin/lib/imageStorage";
 import { supabase } from "@admin/lib/supabase";
 import { getOrCreateTechnologyId } from "@shared/database";
 import {
@@ -113,7 +113,6 @@ export async function saveProjectTechnologies(project: Project): Promise<void> {
 export async function deleteProject(projectId: string): Promise<void> {
   await deleteProjectImages(projectId);
   await deleteProjectMiniatures(projectId);
-  await deleteProjectVideos(projectId);
 
   const { error: technologiesError } = await supabase
     .from("project_technologies")

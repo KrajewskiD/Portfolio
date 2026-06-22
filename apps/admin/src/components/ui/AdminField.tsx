@@ -37,9 +37,9 @@ function AdminField({
         </div>
       )}
 
-      {children}
-
       {hint ? <p className="admin-hint">{hint}</p> : null}
+
+      {children}
     </div>
   );
 }

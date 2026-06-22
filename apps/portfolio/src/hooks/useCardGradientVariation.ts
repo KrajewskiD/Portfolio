@@ -3,7 +3,6 @@ import { useEffect } from "react";
 const CARD_SURFACE_SELECTOR = [
   ".site-hero-card",
   ".site-card--project",
-  ".site-card--skeleton",
   ".site-card--skill",
   ".site-panel--alert",
   ".site-panel--empty",
@@ -16,6 +15,13 @@ function randomBetween(min: number, max: number): number {
 
 function applyGradientToElement(element: HTMLElement) {
   if (element.dataset.gradientVariant) {
+    return;
+  }
+
+  if (
+    element.classList.contains("site-hero-card--skeleton") ||
+    element.classList.contains("site-card--project--skeleton")
+  ) {
     return;
   }
 

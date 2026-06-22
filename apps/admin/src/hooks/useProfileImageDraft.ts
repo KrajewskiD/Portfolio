@@ -4,7 +4,7 @@ import {
   deleteProfileImage,
   getVersionedProfileImageUrl,
   uploadProfileImage,
-} from "@admin/services/profileContentService";
+} from "@admin/lib/imageStorage";
 import { usePendingSingleImage } from "@admin/hooks/usePendingSingleImage";
 import type { Profile } from "@shared/database/types/profile";
 

@@ -6,10 +6,9 @@ import {
   getAdminSkillGroups,
   saveAdminSkillGroups,
 } from "@admin/services/skillContentService";
-import type { Language } from "@shared/database/types/language";
 import type { SkillGroupData } from "@shared/database/types/skill";
 
-export function useSkillsForm(language: Language) {
+export function useSkillsForm() {
   const { isOverlayOpen } = useTranslationOverlay();
 
   const form = useAdminForm<SkillGroupData[]>({
@@ -26,7 +25,6 @@ export function useSkillsForm(language: Language) {
   const formDisabled = form.isLoading || form.isSaving || isOverlayOpen;
 
   return {
-    language,
     skillGroups: form.value,
     activeGroup: editor.activeGroup,
     activeGroupId: editor.activeGroupId,

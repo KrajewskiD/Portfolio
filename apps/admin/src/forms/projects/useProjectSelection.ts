@@ -6,11 +6,7 @@ import type { Project, ProjectTopicId } from "@shared/database/types/project";
 import type { Language } from "@shared/database/types/language";
 import { getLocalizedField } from "@shared/utils/localizedField";
 
-import {
-  projectMiniatureKey,
-  projectVideoKey,
-  topicImageKey,
-} from "./projectMediaKeys";
+import { projectMiniatureKey, topicImageKey } from "./projectMediaKeys";
 
 type UseProjectSelectionParams = {
   projects: Project[];
@@ -51,10 +47,6 @@ export function useProjectSelection({
       )
     : "";
 
-  const activeProjectVideoKey = activeProject
-    ? projectVideoKey(activeProject.id)
-    : "";
-
   const activeProjectMiniatureKey = activeProject
     ? projectMiniatureKey(activeProject.id)
     : "";
@@ -72,7 +64,6 @@ export function useProjectSelection({
     setActiveTopicId,
     selectProject,
     activeTopicImageKey,
-    activeProjectVideoKey,
     activeProjectMiniatureKey,
     activeProjectTitle,
   };

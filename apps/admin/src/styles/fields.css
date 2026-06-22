@@ -3,14 +3,6 @@
     @apply grid gap-3;
   }
 
-  .admin-field--fill {
-    @apply flex min-h-0 flex-1 flex-col;
-  }
-
-  .admin-field--fill .admin-textarea {
-    @apply min-h-0 flex-1 resize-y;
-  }
-
   .admin-field__header {
     @apply flex min-h-8 items-center justify-between gap-4;
   }
