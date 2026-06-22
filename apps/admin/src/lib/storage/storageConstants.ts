@@ -1,0 +1,1 @@
+export const STORAGE_UPLOAD_CACHE_CONTROL = "60";

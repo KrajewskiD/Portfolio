@@ -5,7 +5,7 @@ import AdminEditLanguageBanner from "@admin/components/ui/AdminEditLanguageBanne
 import type {
   ProjectTextField,
   TopicTextField,
-} from "@admin/forms/projects/useProjectsEditor";
+} from "@admin/forms/projects/projectEditorTypes";
 import type { Language } from "@shared/database/types/language";
 import type {
   Project,

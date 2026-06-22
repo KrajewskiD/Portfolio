@@ -1,0 +1,67 @@
+@layer components {
+  .admin-field {
+    @apply grid gap-3;
+  }
+
+  .admin-field--fill {
+    @apply flex min-h-0 flex-1 flex-col;
+  }
+
+  .admin-field--fill .admin-textarea {
+    @apply min-h-0 flex-1 resize-y;
+  }
+
+  .admin-field__header {
+    @apply flex min-h-8 items-center justify-between gap-4;
+  }
+
+  .admin-field--compact {
+    @apply gap-2;
+  }
+
+  .admin-field--compact .admin-field__header {
+    @apply min-h-6;
+  }
+
+  .admin-field--error .admin-hint {
+    @apply text-red-300;
+  }
+
+  .admin-label {
+    @apply text-sm font-bold text-white/60;
+  }
+
+  .admin-hint {
+    @apply text-sm text-white/40;
+  }
+
+  .admin-select {
+    @apply cursor-pointer appearance-none rounded-2xl border border-white/10 bg-neutral-800 px-4 py-3 font-bold text-white outline-none transition;
+    @apply hover:bg-neutral-700 focus:border-white/30;
+    @apply disabled:cursor-not-allowed disabled:opacity-40;
+  }
+
+  .admin-textarea {
+    @apply min-h-28 resize-y rounded-2xl border border-white/10 bg-neutral-800 px-4 py-3 font-bold text-white outline-none transition;
+    @apply placeholder:text-white/30 hover:bg-neutral-700 focus:border-white/30;
+    @apply disabled:cursor-not-allowed disabled:opacity-40;
+  }
+
+  .admin-control-compact {
+    @apply px-3 py-2 text-sm;
+  }
+
+  .admin-control-compact--level {
+    @apply px-2;
+  }
+
+  .admin-textarea-compact {
+    @apply min-h-16 resize-y;
+  }
+
+  .admin-input {
+    @apply rounded-2xl border border-white/10 bg-neutral-800 px-4 py-3 font-bold text-white outline-none transition;
+    @apply placeholder:text-white/30 hover:bg-neutral-700 focus:border-white/30;
+    @apply disabled:cursor-not-allowed disabled:opacity-40;
+  }
+}

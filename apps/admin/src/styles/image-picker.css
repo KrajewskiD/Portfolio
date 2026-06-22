@@ -1,0 +1,56 @@
+@layer components {
+  .admin-image-column {
+    @apply mx-auto flex w-full max-w-md flex-col gap-6;
+  }
+
+  .admin-image-column--fluid {
+    @apply max-w-none;
+  }
+
+  .admin-image-preview {
+    @apply relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-3xl border border-dashed border-white/20 bg-neutral-900 text-center;
+  }
+
+  .admin-image-preview__corner {
+    @apply absolute z-10 flex p-2;
+  }
+
+  .admin-image-preview__corner--top-left {
+    @apply top-0 left-0 h-14 w-14 items-start justify-start;
+  }
+
+  .admin-image-preview__corner--bottom-right {
+    @apply right-0 bottom-0 items-end justify-end p-3;
+  }
+
+  .admin-image-preview__corner-actions {
+    @apply flex flex-wrap items-end justify-end gap-2 opacity-0 transition;
+  }
+
+  .admin-image-preview__corner--top-left:hover
+    .admin-image-preview__corner-action:not(:disabled),
+  .admin-image-preview__corner--top-left
+    .admin-image-preview__corner-action:focus-visible,
+  .admin-image-preview__corner--bottom-right:hover
+    .admin-image-preview__corner-actions,
+  .admin-image-preview__corner--bottom-right:focus-within
+    .admin-image-preview__corner-actions {
+    @apply opacity-100;
+  }
+
+  .admin-image-preview__corner-action--icon {
+    @apply inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-transparent bg-transparent opacity-0 transition;
+    @apply hover:border-white/15 hover:bg-black/45;
+    @apply focus-visible:border-white/15 focus-visible:bg-black/45 focus-visible:outline-none;
+    @apply disabled:cursor-not-allowed disabled:opacity-0;
+  }
+
+  .admin-image-preview__corner-action--button {
+    @apply border-white/20 bg-neutral-950/85 px-4 py-2 text-sm shadow-lg backdrop-blur-sm;
+    @apply disabled:cursor-not-allowed;
+  }
+
+  .admin-image-preview__image {
+    @apply absolute inset-0 block h-full w-full object-cover;
+  }
+}

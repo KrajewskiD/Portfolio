@@ -6,7 +6,7 @@ import { AdminLocalizedInput } from "@admin/components/ui/AdminLocalizedField";
 import type {
   ProjectTextField,
   TopicTextField,
-} from "@admin/forms/projects/useProjectsEditor";
+} from "@admin/forms/projects/projectEditorTypes";
 import { PROJECT_TITLE_MAX_LENGTH } from "@shared/constants/project";
 import type { Language } from "@shared/database/types/language";
 import type {
