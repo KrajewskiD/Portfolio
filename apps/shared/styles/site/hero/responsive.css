@@ -1,0 +1,83 @@
+@layer components {
+  @media (min-width: 640px) {
+    .site-hero-card {
+      min-height: 20rem;
+    }
+
+    .site-hero-card__panel {
+      padding: 2.25rem 2.5rem 2.25rem 1.25rem;
+    }
+
+    .site-hero-card__social {
+      top: 2.25rem;
+      right: 2.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .site-hero-card {
+      min-height: 22rem;
+      grid-template-columns: minmax(11rem, 36%) minmax(0, 1fr);
+    }
+
+    .site-hero-card__panel {
+      padding: 2.5rem 3rem 2.5rem 1.5rem;
+    }
+
+    .site-hero-card__social {
+      top: 2.5rem;
+      right: 3rem;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .site-hero-card {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr;
+    }
+
+    .site-hero-card__trapezoid {
+      min-height: 13rem;
+      border-radius: 1.5rem 1.5rem 0 0;
+      filter: drop-shadow(0 14px 32px rgb(0 0 0 / 0.5));
+    }
+
+    .site-hero-card__trapezoid::before {
+      border: none;
+      border-radius: 1.5rem 1.5rem 0 0;
+    }
+
+    .site-hero-card__trapezoid-shape {
+      border-radius: 1.5rem 1.5rem 0 0;
+      clip-path: polygon(0 0, 100% 0, 100% 88%, 0 100%);
+    }
+
+    .site-hero-card__panel {
+      padding: 1.5rem;
+      border-radius: 0 0 1.5rem 1.5rem;
+    }
+
+    .site-hero-card__photo {
+      justify-content: center;
+    }
+
+    .site-hero-card__image {
+      height: 100%;
+      max-width: 70%;
+      object-position: center bottom;
+    }
+
+    .site-hero-card__social {
+      top: 1.5rem;
+      right: 1.5rem;
+    }
+
+    .site-hero-card__label {
+      padding-right: 9rem;
+    }
+
+    .site-hero-card__name-row {
+      margin-top: 3rem;
+    }
+  }
+}
