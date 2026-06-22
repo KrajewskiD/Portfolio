@@ -1,5 +1,10 @@
 import { supabase } from "@admin/lib/supabase";
 import {
+  deleteStorageFiles,
+  deleteStorageFolder,
+  uploadStorageFile,
+} from "@admin/lib/storageOperations";
+import {
   PROFILE_IMAGE_STORAGE_PATH,
   PROFILE_IMAGES_BUCKET,
   PROJECT_IMAGES_BUCKET,
@@ -116,19 +121,14 @@ export async function uploadProfileImage(file: File): Promise<string> {
 
   const path = PROFILE_IMAGE_STORAGE_PATH;
 
-  const { error } = await supabase.storage
-    .from(PROFILE_IMAGES_BUCKET)
-    .upload(path, file, {
-      upsert: true,
-      contentType: WEBP_IMAGE_ACCEPT,
-      cacheControl: STORAGE_UPLOAD_CACHE_CONTROL,
-    });
-
-  if (error) {
-    throw new Error(
-      `Nie udało się zapisać zdjęcia profilowego w buckecie "${PROFILE_IMAGES_BUCKET}": ${error.message}`,
-    );
-  }
+  await uploadStorageFile({
+    bucket: PROFILE_IMAGES_BUCKET,
+    path,
+    file,
+    contentType: WEBP_IMAGE_ACCEPT,
+    cacheControl: STORAGE_UPLOAD_CACHE_CONTROL,
+    errorLabel: `Nie udało się zapisać zdjęcia profilowego w buckecie "${PROFILE_IMAGES_BUCKET}"`,
+  });
 
   assertValidProfileImagePath(path);
   return path;
@@ -144,17 +144,13 @@ export async function uploadProjectTopicImage(
 
   const path = `${projectId}/${topicId}.webp`;
 
-  const { error } = await supabase.storage
-    .from(PROJECT_IMAGES_BUCKET)
-    .upload(path, file, {
-      upsert: true,
-      contentType: WEBP_IMAGE_ACCEPT,
-      cacheControl: STORAGE_UPLOAD_CACHE_CONTROL,
-    });
-
-  if (error) {
-    throw error;
-  }
+  await uploadStorageFile({
+    bucket: PROJECT_IMAGES_BUCKET,
+    path,
+    file,
+    contentType: WEBP_IMAGE_ACCEPT,
+    cacheControl: STORAGE_UPLOAD_CACHE_CONTROL,
+  });
 
   return path;
 }
@@ -168,53 +164,29 @@ export async function uploadProjectMiniature(
 
   const path = getProjectMiniatureStoragePath(projectId);
 
-  const { error } = await supabase.storage
-    .from(PROJECT_MINIATURES_BUCKET)
-    .upload(path, file, {
-      upsert: true,
-      contentType: WEBP_IMAGE_ACCEPT,
-      cacheControl: STORAGE_UPLOAD_CACHE_CONTROL,
-    });
-
-  if (error) {
-    throw new Error(
-      `Nie udało się zapisać miniatury w buckecie "${PROJECT_MINIATURES_BUCKET}": ${error.message}`,
-    );
-  }
+  await uploadStorageFile({
+    bucket: PROJECT_MINIATURES_BUCKET,
+    path,
+    file,
+    contentType: WEBP_IMAGE_ACCEPT,
+    cacheControl: STORAGE_UPLOAD_CACHE_CONTROL,
+    errorLabel: `Nie udało się zapisać miniatury w buckecie "${PROJECT_MINIATURES_BUCKET}"`,
+  });
 
   return path;
 }
 
 export async function deleteProfileImage(path: string): Promise<void> {
   assertValidProfileImagePath(path);
-
-  const { error } = await supabase.storage
-    .from(PROFILE_IMAGES_BUCKET)
-    .remove([path]);
-
-  if (error) {
-    throw error;
-  }
+  await deleteStorageFiles(PROFILE_IMAGES_BUCKET, [path]);
 }
 
 export async function deleteProjectTopicImage(path: string): Promise<void> {
-  const { error } = await supabase.storage
-    .from(PROJECT_IMAGES_BUCKET)
-    .remove([path]);
-
-  if (error) {
-    throw error;
-  }
+  await deleteStorageFiles(PROJECT_IMAGES_BUCKET, [path]);
 }
 
 export async function deleteProjectMiniature(path: string): Promise<void> {
-  const { error } = await supabase.storage
-    .from(PROJECT_MINIATURES_BUCKET)
-    .remove([path]);
-
-  if (error) {
-    throw error;
-  }
+  await deleteStorageFiles(PROJECT_MINIATURES_BUCKET, [path]);
 }
 
 export async function uploadProjectVideo(
@@ -231,84 +203,31 @@ export async function uploadProjectVideo(
   const path = `${projectId}/showcase.${extension}`;
   const contentType = extension === "webm" ? "video/webm" : "video/mp4";
 
-  const { error } = await supabase.storage
-    .from(PROJECT_VIDEOS_BUCKET)
-    .upload(path, file, { upsert: true, contentType });
-
-  if (error) {
-    throw error;
-  }
+  await uploadStorageFile({
+    bucket: PROJECT_VIDEOS_BUCKET,
+    path,
+    file,
+    contentType,
+  });
 
   return path;
 }
 
 export async function deleteProjectVideo(path: string): Promise<void> {
-  const { error } = await supabase.storage
-    .from(PROJECT_VIDEOS_BUCKET)
-    .remove([path]);
-
-  if (error) {
-    throw error;
-  }
+  await deleteStorageFiles(PROJECT_VIDEOS_BUCKET, [path]);
 }
 
 export async function deleteProjectVideos(projectId: string): Promise<void> {
-  const { data: files, error: listError } = await supabase.storage
-    .from(PROJECT_VIDEOS_BUCKET)
-    .list(projectId);
-
-  if (listError) {
-    throw listError;
-  }
-
-  if (!files?.length) {
-    return;
-  }
-
-  const paths = files.map((file) => `${projectId}/${file.name}`);
-  const { error: removeError } = await supabase.storage
-    .from(PROJECT_VIDEOS_BUCKET)
-    .remove(paths);
-
-  if (removeError) {
-    throw removeError;
-  }
+  await deleteStorageFolder(PROJECT_VIDEOS_BUCKET, projectId);
 }
 
 export async function deleteProjectMiniatures(projectId: string): Promise<void> {
-  const paths = [
+  await deleteStorageFiles(PROJECT_MINIATURES_BUCKET, [
     getProjectMiniatureStoragePath(projectId),
     `${projectId}.webp`,
-  ];
-
-  const { error } = await supabase.storage
-    .from(PROJECT_MINIATURES_BUCKET)
-    .remove(paths);
-
-  if (error) {
-    throw error;
-  }
+  ]);
 }
 
 export async function deleteProjectImages(projectId: string): Promise<void> {
-  const { data: files, error: listError } = await supabase.storage
-    .from(PROJECT_IMAGES_BUCKET)
-    .list(projectId);
-
-  if (listError) {
-    throw listError;
-  }
-
-  if (!files?.length) {
-    return;
-  }
-
-  const paths = files.map((file) => `${projectId}/${file.name}`);
-  const { error: removeError } = await supabase.storage
-    .from(PROJECT_IMAGES_BUCKET)
-    .remove(paths);
-
-  if (removeError) {
-    throw removeError;
-  }
+  await deleteStorageFolder(PROJECT_IMAGES_BUCKET, projectId);
 }

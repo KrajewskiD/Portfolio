@@ -1,7 +1,9 @@
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 
 import AdminField from "@admin/components/ui/AdminField";
 import AdminButton from "@admin/components/ui/AdminButton";
+import AdminFilePickerMessages from "@admin/components/ui/AdminFilePickerMessages";
+import { useLocalFilePreview } from "@admin/hooks/useLocalFilePreview";
 import {
   PROJECT_VIDEO_ACCEPT,
   validateProjectVideoFile,
@@ -27,24 +29,7 @@ function ProjectVideoPanel({
   const fieldId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [fileError, setFileError] = useState<string>();
-
-  const localPreviewUrl = useMemo(() => {
-    if (!selectedFile) {
-      return undefined;
-    }
-
-    return URL.createObjectURL(selectedFile);
-  }, [selectedFile]);
-
-  useEffect(() => {
-    if (!localPreviewUrl) {
-      return;
-    }
-
-    return () => {
-      URL.revokeObjectURL(localPreviewUrl);
-    };
-  }, [localPreviewUrl]);
+  const localPreviewUrl = useLocalFilePreview(selectedFile);
 
   const previewUrl = videoMarkedForRemoval
     ? undefined
@@ -111,7 +96,7 @@ function ProjectVideoPanel({
               variant="ghost"
               disabled={disabled}
               onClick={() => {
-                onFileSelect(null);
+                void handleFileChange(null);
                 onVideoMarkedForRemovalChange?.(true);
 
                 if (inputRef.current) {
@@ -133,15 +118,20 @@ function ProjectVideoPanel({
           disabled={disabled}
           onChange={(event) => {
             const file = event.target.files?.[0] ?? null;
+            event.target.value = "";
             void handleFileChange(file);
           }}
         />
 
-        {fileError ? (
-          <p role="alert" className="text-sm text-red-300">
-            {fileError}
-          </p>
-        ) : null}
+        <AdminFilePickerMessages
+          fileError={fileError}
+          selectedFileName={selectedFile?.name}
+          markedForRemovalMessage={
+            videoMarkedForRemoval
+              ? "Wideo zostanie usunięte po kliknięciu „Zapisz”."
+              : undefined
+          }
+        />
       </div>
     </AdminField>
   );

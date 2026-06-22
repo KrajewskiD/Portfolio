@@ -1,32 +1,14 @@
 import {
-  createContext,
   useCallback,
-  useContext,
   useMemo,
   useRef,
   useState,
   type ReactNode,
 } from "react";
 
+import { TranslationOverlayContext } from "@admin/context/translationOverlayContext";
+import type { TranslationOverlayState } from "@admin/context/translationOverlayTypes";
 import { cancelActiveTranslation } from "@admin/services/translationService";
-
-export type TranslationOverlayState =
-  | { phase: "loading" }
-  | { phase: "success"; message: string }
-  | { phase: "error"; message: string };
-
-type TranslationOverlayContextValue = {
-  overlayState: TranslationOverlayState | null;
-  isOverlayOpen: boolean;
-  beginTranslation: () => void;
-  finishTranslationSuccess: (message: string) => void;
-  finishTranslationError: (message: string) => void;
-  cancelTranslation: () => void;
-  dismissTranslation: () => void;
-};
-
-const TranslationOverlayContext =
-  createContext<TranslationOverlayContextValue | null>(null);
 
 export function TranslationOverlayProvider({
   children,
@@ -99,16 +81,4 @@ export function TranslationOverlayProvider({
       {children}
     </TranslationOverlayContext.Provider>
   );
-}
-
-export function useTranslationOverlay() {
-  const context = useContext(TranslationOverlayContext);
-
-  if (!context) {
-    throw new Error(
-      "useTranslationOverlay must be used within TranslationOverlayProvider",
-    );
-  }
-
-  return context;
 }

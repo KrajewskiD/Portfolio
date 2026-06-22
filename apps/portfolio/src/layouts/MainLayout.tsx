@@ -13,6 +13,7 @@ import type {
   NavigationLinkData,
 } from "@shared/database/types/link";
 import type { Profile } from "@shared/database/types/profile";
+import { getLocalizedField } from "@shared/utils/localizedField";
 
 type MainLayoutProps = {
   children: ReactNode;
@@ -52,9 +53,12 @@ function MainLayout({
       ? {
           name: profile?.name ?? "",
           description: profile
-            ? language === "pl"
-              ? profile.footerDescriptionPl
-              : profile.footerDescriptionEn
+            ? getLocalizedField(
+                profile,
+                language,
+                "footerDescriptionPl",
+                "footerDescriptionEn",
+              )
             : "",
           links: footerLinks ?? [],
         }

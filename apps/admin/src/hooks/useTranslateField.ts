@@ -1,4 +1,4 @@
-import { useTranslationOverlay } from "@admin/context/TranslationOverlayContext";
+import { useTranslationOverlay } from "@admin/context/useTranslationOverlay";
 import { useTranslationRunner } from "@admin/hooks/useTranslationRunner";
 import { translateText } from "@admin/services/translationService";
 import { getOppositeLanguage } from "@shared/utils/localizedField";

@@ -10,7 +10,7 @@ import AdminSaveButton from "@admin/components/ui/AdminSaveButton";
 import { footerLinkDrafts, skillGroupDrafts } from "@admin/data/adminDrafts";
 import { useSettingsEditor } from "@admin/forms/settings/useSettingsEditor";
 import { useAdminForm } from "@admin/hooks/useAdminForm";
-import { useTranslationOverlay } from "@admin/context/TranslationOverlayContext";
+import { useTranslationOverlay } from "@admin/context/useTranslationOverlay";
 import {
   getAdminSettings,
   saveAdminSettings,

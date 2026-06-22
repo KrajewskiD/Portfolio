@@ -1,6 +1,6 @@
 import AdminModal from "./AdminModal";
 
-import type { TranslationOverlayState } from "@admin/context/TranslationOverlayContext";
+import type { TranslationOverlayState } from "@admin/context/translationOverlayTypes";
 
 type AdminTranslationOverlayProps = {
   state: TranslationOverlayState | null;

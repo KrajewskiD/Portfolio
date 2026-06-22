@@ -22,15 +22,12 @@ function computeRotateX(y: number, scrollY: number): number {
     return 0;
   }
 
-  let angle = 0;
+  const angle =
+    (y < FLAT_LINE
+      ? -MAX_ANGLE * smoothstep(1 - y / FLAT_LINE)
+      : MAX_ANGLE * smoothstep((y - FLAT_LINE) / (1 - FLAT_LINE))) * pageBlend;
 
-  if (y < FLAT_LINE) {
-    angle = -MAX_ANGLE * smoothstep(1 - y / FLAT_LINE);
-  } else {
-    angle = MAX_ANGLE * smoothstep((y - FLAT_LINE) / (1 - FLAT_LINE));
-  }
-
-  return angle * pageBlend;
+  return angle;
 }
 
 function useParchmentScroll(tiltRef: RefObject<HTMLElement | null>) {
@@ -86,11 +83,11 @@ function useParchmentScroll(tiltRef: RefObject<HTMLElement | null>) {
       window.removeEventListener("resize", schedule);
       observer.disconnect();
 
-      tiltRef.current
-        ?.querySelectorAll<HTMLElement>(PARCHMENT_ITEM_SELECTOR)
-        .forEach((element) => {
+      tiltRoot?.querySelectorAll<HTMLElement>(PARCHMENT_ITEM_SELECTOR).forEach(
+        (element) => {
           element.style.removeProperty("transform");
-        });
+        },
+      );
     };
   }, [tiltRef]);
 }

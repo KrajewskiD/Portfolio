@@ -129,7 +129,7 @@ export async function translateTexts({
       throw error;
     }
 
-    throw new Error("Nie udało się przetłumaczyć.");
+    throw new Error("Nie udało się przetłumaczyć.", { cause: error });
   } finally {
     cancellation.dispose();
   }

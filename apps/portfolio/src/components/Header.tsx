@@ -32,7 +32,7 @@ function Header({
   const getLabel = (item: NavigationLinkData) =>
     language === "pl" ? item.labelPl : item.labelEn;
 
-  useAnimatedWidth(islandRef, [language, navigationItems, isMenuOpen]);
+  useAnimatedWidth(islandRef);
 
   return (
     <header className="site-chrome">

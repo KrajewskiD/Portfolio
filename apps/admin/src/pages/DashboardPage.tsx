@@ -2,11 +2,9 @@ import { useState } from "react";
 import { adminRoute, getAdminUrl } from "@shared/config/routes";
 
 import AdminTranslationOverlay from "@admin/components/ui/AdminTranslationOverlay";
-import { AdminFormGuardProvider } from "@admin/context/AdminFormGuardContext";
-import {
-  TranslationOverlayProvider,
-  useTranslationOverlay,
-} from "@admin/context/TranslationOverlayContext";
+import { AdminFormGuardProvider } from "@admin/context/AdminFormGuardProvider";
+import { TranslationOverlayProvider } from "@admin/context/TranslationOverlayProvider";
+import { useTranslationOverlay } from "@admin/context/useTranslationOverlay";
 import { useGuardedNavigation } from "@admin/hooks/useGuardedNavigation";
 import DashboardActions from "../components/DashboardActions";
 import DashboardTabs from "../components/DashboardTabs";
@@ -17,7 +15,7 @@ import ProjectsForm from "../forms/ProjectsForm";
 import SettingsForm from "../forms/SettingsForm";
 import SkillsForm from "../forms/SkillsForm";
 import AdminLayout from "../layouts/AdminLayout";
-import { useAdminFormGuard } from "@admin/context/AdminFormGuardContext";
+import { useAdminFormGuard } from "@admin/context/useAdminFormGuard";
 import { signOut } from "../services/authService";
 
 function DashboardPageContent() {

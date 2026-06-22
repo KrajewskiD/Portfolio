@@ -1,10 +1,12 @@
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 import AdminField from "./AdminField";
+import AdminFilePickerMessages from "./AdminFilePickerMessages";
 import AdminImagePreview from "./AdminImagePreview";
 import AdminImagePreviewRemoveButton from "./AdminImagePreviewRemoveButton";
 import AdminImagePreviewSelectButton from "./AdminImagePreviewSelectButton";
 import AdminImagePreviewSelectCorner from "./AdminImagePreviewSelectCorner";
+import { useLocalFilePreview } from "@admin/hooks/useLocalFilePreview";
 import {
   isAnimatedWebpFile,
   validateWebpImageFile,
@@ -39,28 +41,14 @@ function AdminImagePicker({
   const fieldId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [fileError, setFileError] = useState<string>();
-  const [isAnimatedWebp, setIsAnimatedWebp] = useState<boolean | null>(null);
-  const localPreviewUrl = useMemo(() => {
-    if (!selectedFile) {
-      return undefined;
-    }
-
-    return URL.createObjectURL(selectedFile);
-  }, [selectedFile]);
-
-  useEffect(() => {
-    if (!localPreviewUrl) {
-      return;
-    }
-
-    return () => {
-      URL.revokeObjectURL(localPreviewUrl);
-    };
-  }, [localPreviewUrl]);
+  const [animatedWebpCheck, setAnimatedWebpCheck] = useState<{
+    file: File;
+    isAnimated: boolean;
+  } | null>(null);
+  const localPreviewUrl = useLocalFilePreview(selectedFile);
 
   useEffect(() => {
     if (!selectedFile) {
-      setIsAnimatedWebp(null);
       return;
     }
 
@@ -68,7 +56,7 @@ function AdminImagePicker({
 
     void isAnimatedWebpFile(selectedFile).then((isAnimated) => {
       if (!isCancelled) {
-        setIsAnimatedWebp(isAnimated);
+        setAnimatedWebpCheck({ file: selectedFile, isAnimated });
       }
     });
 
@@ -86,6 +74,18 @@ function AdminImagePicker({
     !selectedFile &&
     !imageMarkedForRemoval &&
     onImageMarkedForRemovalChange;
+
+  const isAnimatedWebp =
+    selectedFile && animatedWebpCheck?.file === selectedFile
+      ? animatedWebpCheck.isAnimated
+      : null;
+
+  const selectedFileHint =
+    isAnimatedWebp === true
+      ? "Wykryto animowany WebP — na stronie odtworzy się w przeglądarce."
+      : isAnimatedWebp === false
+        ? "To jest statyczny WebP (bez animacji). Jeśli oczekujesz ruchu, wyeksportuj ponownie jako animated WebP albo użyj WebM."
+        : undefined;
 
   return (
     <AdminField id={fieldId} label={label} hint={hint}>
@@ -154,34 +154,28 @@ function AdminImagePicker({
         </AdminImagePreviewSelectCorner>
       </AdminImagePreview>
 
-      {fileError ? (
-        <p role="alert" className="text-center text-sm text-red-300">
-          {fileError}
-        </p>
-      ) : null}
-
-      {selectedFile ? (
-        <p className="text-center text-sm text-white/50">
-          Wybrany plik: {selectedFile.name} (zapisze się po kliknięciu „Zapisz”)
-          {isAnimatedWebp === true ? (
-            <span className="mt-1 block text-emerald-300/90">
-              Wykryto animowany WebP — na stronie odtworzy się w przeglądarce.
+      <AdminFilePickerMessages
+        fileError={fileError}
+        selectedFileName={selectedFile?.name}
+        selectedFileHint={
+          selectedFileHint ? (
+            <span
+              className={
+                isAnimatedWebp
+                  ? "text-emerald-300/90"
+                  : "text-amber-300/90"
+              }
+            >
+              {selectedFileHint}
             </span>
-          ) : null}
-          {isAnimatedWebp === false ? (
-            <span className="mt-1 block text-amber-300/90">
-              To jest statyczny WebP (bez animacji). Jeśli oczekujesz ruchu,
-              wyeksportuj ponownie jako animated WebP albo użyj WebM.
-            </span>
-          ) : null}
-        </p>
-      ) : null}
-
-      {imageMarkedForRemoval ? (
-        <p className="text-center text-sm text-amber-300/80">
-          Zdjęcie zostanie usunięte po kliknięciu „Zapisz”.
-        </p>
-      ) : null}
+          ) : undefined
+        }
+        markedForRemovalMessage={
+          imageMarkedForRemoval
+            ? "Zdjęcie zostanie usunięte po kliknięciu „Zapisz”."
+            : undefined
+        }
+      />
     </AdminField>
   );
 }

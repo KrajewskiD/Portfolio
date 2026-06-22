@@ -1,13 +1,8 @@
-import AdminTextarea from "@admin/components/ui/AdminTextarea";
-import AdminTranslatableField from "@admin/components/ui/AdminTranslatableField";
 import { projectTopicLabels } from "@shared/constants/projectTopics";
 import type { Language } from "@shared/database/types/language";
 import type { ProjectTopicContent } from "@shared/database/types/project";
-import {
-  getLocalizedField,
-  getLocalizedKey,
-  getOppositeLocalizedKey,
-} from "@shared/utils/localizedField";
+
+import { AdminLocalizedTextarea } from "@admin/components/ui/AdminLocalizedField";
 
 export type ProjectTopicContentField = "contentPl" | "contentEn";
 
@@ -26,33 +21,21 @@ function ProjectTopicContentPanel({
   disabled = false,
   onChange,
 }: ProjectTopicContentPanelProps) {
-  const contentField = getLocalizedKey(language, "contentPl", "contentEn");
   const topicLabel = projectTopicLabels[topic.id][language];
   const fieldId = `${topic.id}-content`;
 
   return (
-    <AdminTranslatableField
+    <AdminLocalizedTextarea
       id={fieldId}
       label={topicLabel}
       language={language}
-      className={fillHeight ? "admin-field--fill" : undefined}
+      fillHeight={fillHeight}
       disabled={disabled}
-      sourceText={getLocalizedField(topic, language, "contentPl", "contentEn")}
-      onApply={(text) =>
-        onChange(
-          getOppositeLocalizedKey(language, "contentPl", "contentEn"),
-          text,
-        )
-      }
-    >
-      <AdminTextarea
-        id={fieldId}
-        rows={fillHeight ? undefined : 5}
-        value={topic[contentField]}
-        disabled={disabled}
-        onChange={(event) => onChange(contentField, event.target.value)}
-      />
-    </AdminTranslatableField>
+      source={topic}
+      plKey="contentPl"
+      enKey="contentEn"
+      onChange={onChange}
+    />
   );
 }
 

@@ -1,67 +1,65 @@
 import AdminImagePicker from "@admin/components/ui/AdminImagePicker";
 import { AdminLocalizedInput } from "@admin/components/ui/AdminLocalizedField";
-import { projectTopicLabels } from "@shared/constants/projectTopics";
 import type { Language } from "@shared/database/types/language";
-import type { ProjectTopicContent } from "@shared/database/types/project";
+import type { Profile } from "@shared/database/types/profile";
 import { getLocalizedField } from "@shared/utils/localizedField";
 
-export type ProjectTopicImageField = "imageAltPl" | "imageAltEn";
-
-type ProjectTopicImagePanelProps = {
-  topic: ProjectTopicContent;
+type ProfileImageSectionProps = {
+  profile: Profile;
   language: Language;
-  selectedFile?: File | null;
-  imageMarkedForRemoval?: boolean;
+  pendingFile: File | null;
+  imageMarkedForRemoval: boolean;
   disabled?: boolean;
-  onChange: (field: ProjectTopicImageField, value: string) => void;
   onFileSelect: (file: File | null) => void;
-  onImageMarkedForRemovalChange?: (marked: boolean) => void;
+  onImageMarkedForRemovalChange: (marked: boolean) => void;
+  onUpdateImageAlt: (
+    field: "imageAltPl" | "imageAltEn",
+    value: string,
+  ) => void;
 };
 
-function ProjectTopicImagePanel({
-  topic,
+function ProfileImageSection({
+  profile,
   language,
-  selectedFile,
-  imageMarkedForRemoval = false,
+  pendingFile,
+  imageMarkedForRemoval,
   disabled = false,
-  onChange,
   onFileSelect,
   onImageMarkedForRemovalChange,
-}: ProjectTopicImagePanelProps) {
-  const topicLabel = projectTopicLabels[topic.id][language];
-  const imageAltFieldId = `${topic.id}-image-alt`;
-
+  onUpdateImageAlt,
+}: ProfileImageSectionProps) {
   return (
     <div className="admin-image-column admin-image-column--fluid">
       <AdminImagePicker
-        label={`Zdjęcie: ${topicLabel}`}
-        imageUrl={topic.imageUrl}
-        selectedFile={selectedFile}
+        label="Zdjęcie profilowe"
+        hint="Zapisuje się wyłącznie w buckecie profile-images jako profile/avatar.webp. Nie ma związku z miniaturami projektów."
+        imageUrl={profile.imageUrl}
+        selectedFile={pendingFile}
         imageMarkedForRemoval={imageMarkedForRemoval}
         previewAlt={getLocalizedField(
-          topic,
+          profile,
           language,
           "imageAltPl",
           "imageAltEn",
         )}
-        emptyLabel="Brak zdjęcia dla tej zakładki"
+        emptyLabel="Brak zdjęcia profilowego"
         disabled={disabled}
         onFileSelect={onFileSelect}
         onImageMarkedForRemovalChange={onImageMarkedForRemovalChange}
       />
 
       <AdminLocalizedInput
-        id={imageAltFieldId}
+        id="profile-image-alt"
         label="Opis alternatywny zdjęcia"
         language={language}
         disabled={disabled}
-        source={topic}
+        source={profile}
         plKey="imageAltPl"
         enKey="imageAltEn"
-        onChange={onChange}
+        onChange={onUpdateImageAlt}
       />
     </div>
   );
 }
 
-export default ProjectTopicImagePanel;
+export default ProfileImageSection;

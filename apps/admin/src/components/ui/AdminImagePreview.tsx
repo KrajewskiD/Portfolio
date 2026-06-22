@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 type AdminImagePreviewProps = {
   imageUrl?: string;
@@ -13,13 +13,9 @@ function AdminImagePreview({
   emptyLabel,
   children,
 }: AdminImagePreviewProps) {
-  const [hasLoadError, setHasLoadError] = useState(false);
+  const [failedImageUrl, setFailedImageUrl] = useState<string>();
 
-  useEffect(() => {
-    setHasLoadError(false);
-  }, [imageUrl]);
-
-  const showImage = Boolean(imageUrl) && !hasLoadError;
+  const showImage = Boolean(imageUrl) && imageUrl !== failedImageUrl;
 
   return (
     <div className="admin-image-preview">
@@ -29,7 +25,7 @@ function AdminImagePreview({
           src={imageUrl}
           alt={previewAlt}
           className="admin-image-preview__image"
-          onError={() => setHasLoadError(true)}
+          onError={() => setFailedImageUrl(imageUrl)}
         />
       ) : (
         <span className="px-6 text-white/40">{emptyLabel}</span>

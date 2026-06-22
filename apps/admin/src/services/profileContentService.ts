@@ -2,11 +2,7 @@ import { assertValidProfileImagePath, getProfileFromDatabase } from "@shared/dat
 import { hydrateProfileImage } from "@shared/database/profile/hydrateProfileImage";
 import { mapProfileToRow } from "@shared/database/profile/profileMapper";
 import { supabase } from "@admin/lib/supabase";
-import {
-  deleteProfileImage,
-  getProfileImagePublicUrl,
-  uploadProfileImage,
-} from "@admin/lib/imageStorage";
+import { getProfileImagePublicUrl } from "@admin/lib/imageStorage";
 import type { Profile } from "@shared/database/types/profile";
 
 export async function getAdminProfile(): Promise<Profile> {

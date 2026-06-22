@@ -4,6 +4,7 @@ import SkillItem from "../components/skills/SkillItem";
 import SkillsSkeleton from "../components/skills/SkillsSkeleton";
 import type { Language } from "@shared/database/types/language";
 import type { SkillGroupData } from "@shared/database/types/skill";
+import { getLocalizedField } from "@shared/utils/localizedField";
 
 type SkillsSectionProps = {
   skillGroups?: SkillGroupData[];
@@ -47,7 +48,7 @@ function SkillsSection({
           {skillGroups.map((group) => (
             <SkillGroup
               key={group.id}
-              title={language === "pl" ? group.titlePl : group.titleEn}
+              title={getLocalizedField(group, language, "titlePl", "titleEn")}
             >
               {group.skills.map((skill) => (
                 <SkillItem

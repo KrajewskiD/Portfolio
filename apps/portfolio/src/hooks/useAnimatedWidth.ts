@@ -2,10 +2,7 @@ import { useLayoutEffect, useRef, type RefObject } from "react";
 
 const WIDTH_TRANSITION = "width 0.35s cubic-bezier(0.4, 0, 0.2, 1)";
 
-function useAnimatedWidth(
-  ref: RefObject<HTMLElement | null>,
-  dependencies: unknown[],
-) {
+function useAnimatedWidth(ref: RefObject<HTMLElement | null>) {
   const committedWidthRef = useRef<number | null>(null);
   const isFirstRenderRef = useRef(true);
 
@@ -60,7 +57,7 @@ function useAnimatedWidth(
     return () => {
       element.removeEventListener("transitionend", handleTransitionEnd);
     };
-  }, dependencies);
+  });
 }
 
 export default useAnimatedWidth;

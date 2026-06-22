@@ -3,19 +3,18 @@ import { useEffect } from "react";
 import {
   useAdminFormGuard,
   type AdminFormGuardRegistration,
-} from "@admin/context/AdminFormGuardContext";
+} from "@admin/context/useAdminFormGuard";
 
-export function useRegisterAdminForm(registration: AdminFormGuardRegistration) {
+export function useRegisterAdminForm({
+  discard,
+  isDirty,
+  save,
+}: AdminFormGuardRegistration) {
   const { registerForm, clearForm } = useAdminFormGuard();
 
   useEffect(() => {
-    registerForm(registration);
-  }, [
-    registerForm,
-    registration.discard,
-    registration.isDirty,
-    registration.save,
-  ]);
+    registerForm({ discard, isDirty, save });
+  }, [discard, isDirty, registerForm, save]);
 
   useEffect(() => {
     return () => {

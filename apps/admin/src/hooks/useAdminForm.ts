@@ -17,12 +17,13 @@ export function useAdminForm<T>({
   ...saveOptions
 }: UseAdminFormOptions<T>) {
   const saveHook = useAdminFormSave<T>(saveOptions);
+  const discardSavedValue = saveHook.discard;
   const isDirty = saveHook.isDirty || extraDirty;
 
   const discard = useCallback(() => {
-    saveHook.discard();
+    discardSavedValue();
     onDiscard?.();
-  }, [onDiscard, saveHook.discard]);
+  }, [discardSavedValue, onDiscard]);
 
   useRegisterAdminForm({
     isDirty,

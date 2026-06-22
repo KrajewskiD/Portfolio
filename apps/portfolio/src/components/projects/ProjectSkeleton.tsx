@@ -17,9 +17,14 @@ function ProjectSkeleton() {
         {thumbnailWidths.map((width, index) => (
           <div
             key={index}
-            className={`site-project-thumb site-project-thumb--skeleton ${
+            className={`site-project-thumb site-project-thumb--skeleton shrink-0 ${
               index === 0 ? "site-project-thumb--active" : ""
             }`}
+            style={{
+              width: "14rem",
+              height: "14rem",
+              flex: "0 0 14rem",
+            }}
           >
             <div className="site-project-thumb__placeholder" />
 

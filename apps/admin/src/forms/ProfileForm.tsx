@@ -1,18 +1,15 @@
 import AdminEditLanguageBanner from "@admin/components/ui/AdminEditLanguageBanner";
-import AdminField from "@admin/components/ui/AdminField";
 import AdminFormActions from "@admin/components/ui/AdminFormActions";
 import AdminFormSaveActions from "@admin/components/ui/AdminFormSaveActions";
 import AdminFormShell from "@admin/components/ui/AdminFormShell";
-import AdminImagePicker from "@admin/components/ui/AdminImagePicker";
-import AdminInput from "@admin/components/ui/AdminInput";
-import AdminTextarea from "@admin/components/ui/AdminTextarea";
-import AdminTranslatableField from "@admin/components/ui/AdminTranslatableField";
+import ProfileDetailsFields from "@admin/components/profile/ProfileDetailsFields";
+import ProfileImageSection from "@admin/components/profile/ProfileImageSection";
 import { profileDraft } from "@admin/data/adminDrafts";
 import { createProfileTranslateFields } from "@admin/forms/profileTranslatableFields";
 import { useAdminForm } from "@admin/hooks/useAdminForm";
 import { usePendingSingleImage } from "@admin/hooks/usePendingSingleImage";
 import { useTranslateFields } from "@admin/hooks/useTranslateFields";
-import { useTranslationOverlay } from "@admin/context/TranslationOverlayContext";
+import { useTranslationOverlay } from "@admin/context/useTranslationOverlay";
 import {
   deleteProfileImage,
   getAdminProfile,
@@ -22,11 +19,6 @@ import {
 } from "@admin/services/profileContentService";
 import type { AdminFormProps } from "@admin/types/adminForms";
 import type { Profile } from "@shared/database/types/profile";
-import {
-  getLocalizedField,
-  getLocalizedKey,
-  getOppositeLocalizedKey,
-} from "@shared/utils/localizedField";
 import { useCallback, useMemo } from "react";
 
 type ProfileTextField =
@@ -110,12 +102,15 @@ function ProfileForm({ language }: AdminFormProps) {
 
   const { isOverlayOpen } = useTranslationOverlay();
 
-  const updateProfile = useCallback((field: ProfileTextField, value: string) => {
-    setProfile((current) => ({
-      ...current,
-      [field]: value,
-    }));
-  }, [setProfile]);
+  const updateProfile = useCallback(
+    (field: ProfileTextField, value: string) => {
+      setProfile((current) => ({
+        ...current,
+        [field]: value,
+      }));
+    },
+    [setProfile],
+  );
 
   const formDisabled = isLoading || isSaving || isOverlayOpen;
 
@@ -132,10 +127,6 @@ function ProfileForm({ language }: AdminFormProps) {
     disabled: formDisabled,
     fields: bulkTranslateFields,
   });
-
-  const applyOppositeField =
-    (plKey: ProfileTextField, enKey: ProfileTextField) => (text: string) =>
-      updateProfile(getOppositeLocalizedKey(language, plKey, enKey), text);
 
   return (
     <AdminFormShell
@@ -163,182 +154,28 @@ function ProfileForm({ language }: AdminFormProps) {
       <AdminEditLanguageBanner language={language} />
 
       <div className="grid gap-6 lg:grid-cols-2 lg:items-stretch">
-        <div className="admin-image-column admin-image-column--fluid">
-          <AdminImagePicker
-            label="Zdjęcie profilowe"
-            hint="Zapisuje się wyłącznie w buckecie profile-images jako profile/avatar.webp. Nie ma związku z miniaturami projektów."
-            imageUrl={profile.imageUrl}
-            selectedFile={pendingProfileImage}
-            imageMarkedForRemoval={profileImageMarkedForRemoval}
-            previewAlt={getLocalizedField(
-              profile,
-              language,
-              "imageAltPl",
-              "imageAltEn",
-            )}
-            emptyLabel="Brak zdjęcia profilowego"
-            disabled={isLoading || isSaving}
-            onFileSelect={(file) => {
-              setPendingProfileImage(file);
-              if (file) {
-                setProfileImageMarkedForRemoval(false);
-              }
-            }}
-            onImageMarkedForRemovalChange={setProfileImageMarkedForRemoval}
-          />
+        <ProfileImageSection
+          profile={profile}
+          language={language}
+          pendingFile={pendingProfileImage}
+          imageMarkedForRemoval={profileImageMarkedForRemoval}
+          disabled={isLoading || isSaving}
+          onFileSelect={(file) => {
+            setPendingProfileImage(file);
+            if (file) {
+              setProfileImageMarkedForRemoval(false);
+            }
+          }}
+          onImageMarkedForRemovalChange={setProfileImageMarkedForRemoval}
+          onUpdateImageAlt={updateProfile}
+        />
 
-          <AdminTranslatableField
-            id="profile-image-alt"
-            label="Opis alternatywny zdjęcia"
-            language={language}
-            disabled={formDisabled}
-            sourceText={getLocalizedField(
-              profile,
-              language,
-              "imageAltPl",
-              "imageAltEn",
-            )}
-            onApply={applyOppositeField("imageAltPl", "imageAltEn")}
-          >
-            <AdminInput
-              id="profile-image-alt"
-              value={getLocalizedField(
-                profile,
-                language,
-                "imageAltPl",
-                "imageAltEn",
-              )}
-              disabled={isLoading}
-              onChange={(event) =>
-                updateProfile(
-                  getLocalizedKey(language, "imageAltPl", "imageAltEn"),
-                  event.target.value,
-                )
-              }
-            />
-          </AdminTranslatableField>
-        </div>
-
-        <div className="flex flex-col gap-6">
-          <div className="admin-stack">
-            <AdminField id="profile-name" label="Imię i nazwisko">
-              <AdminInput
-                id="profile-name"
-                value={profile.name}
-                disabled={isLoading}
-                onChange={(event) => updateProfile("name", event.target.value)}
-              />
-            </AdminField>
-
-            <AdminField id="profile-email" label="Email kontaktowy">
-              <AdminInput
-                id="profile-email"
-                type="email"
-                value={profile.email}
-                disabled={isLoading}
-                onChange={(event) => updateProfile("email", event.target.value)}
-              />
-            </AdminField>
-
-            <AdminTranslatableField
-              id="profile-role"
-              label="Stanowisko"
-              language={language}
-              disabled={formDisabled}
-              sourceText={getLocalizedField(
-                profile,
-                language,
-                "rolePl",
-                "roleEn",
-              )}
-              onApply={applyOppositeField("rolePl", "roleEn")}
-            >
-              <AdminInput
-                id="profile-role"
-                value={getLocalizedField(profile, language, "rolePl", "roleEn")}
-                disabled={isLoading}
-                onChange={(event) =>
-                  updateProfile(
-                    getLocalizedKey(language, "rolePl", "roleEn"),
-                    event.target.value,
-                  )
-                }
-              />
-            </AdminTranslatableField>
-
-            <AdminTranslatableField
-              id="profile-description"
-              label="Opis"
-              language={language}
-              disabled={formDisabled}
-              sourceText={getLocalizedField(
-                profile,
-                language,
-                "descriptionPl",
-                "descriptionEn",
-              )}
-              onApply={applyOppositeField("descriptionPl", "descriptionEn")}
-            >
-              <AdminTextarea
-                id="profile-description"
-                rows={5}
-                value={getLocalizedField(
-                  profile,
-                  language,
-                  "descriptionPl",
-                  "descriptionEn",
-                )}
-                disabled={isLoading}
-                onChange={(event) =>
-                  updateProfile(
-                    getLocalizedKey(language, "descriptionPl", "descriptionEn"),
-                    event.target.value,
-                  )
-                }
-              />
-            </AdminTranslatableField>
-          </div>
-
-          <div className="mt-auto">
-            <AdminTranslatableField
-              id="profile-footer-description"
-              label="Opis w stopce"
-              language={language}
-              disabled={formDisabled}
-              sourceText={getLocalizedField(
-                profile,
-                language,
-                "footerDescriptionPl",
-                "footerDescriptionEn",
-              )}
-              onApply={applyOppositeField(
-                "footerDescriptionPl",
-                "footerDescriptionEn",
-              )}
-            >
-              <AdminInput
-                id="profile-footer-description"
-                value={getLocalizedField(
-                  profile,
-                  language,
-                  "footerDescriptionPl",
-                  "footerDescriptionEn",
-                )}
-                disabled={isLoading}
-                onChange={(event) =>
-                  updateProfile(
-                    getLocalizedKey(
-                      language,
-                      "footerDescriptionPl",
-                      "footerDescriptionEn",
-                    ),
-                    event.target.value,
-                  )
-                }
-              />
-            </AdminTranslatableField>
-          </div>
-        </div>
+        <ProfileDetailsFields
+          profile={profile}
+          language={language}
+          disabled={formDisabled}
+          onUpdate={updateProfile}
+        />
       </div>
     </AdminFormShell>
   );

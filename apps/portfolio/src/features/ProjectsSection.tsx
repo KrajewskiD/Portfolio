@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import ProjectListItem from "@portfolio/components/projects/ProjectListItem";
 import ProjectSkeleton from "@portfolio/components/projects/ProjectSkeleton";
@@ -38,21 +38,8 @@ function ProjectsSection({
     Record<string, ProjectTopicId>
   >({});
 
-  useEffect(() => {
-    if (!projects?.length) {
-      return;
-    }
-
-    setActiveProjectId((current) =>
-      current && projects.some((project) => project.id === current)
-        ? current
-        : projects[0].id,
-    );
-  }, [projects]);
-
-  const activeProject = projects?.find(
-    (project) => project.id === activeProjectId,
-  );
+  const activeProject =
+    projects?.find((project) => project.id === activeProjectId) ?? projects?.[0];
 
   return (
     <section id="projects" className="site-section--projects">
@@ -77,7 +64,7 @@ function ProjectsSection({
                   key={project.id}
                   project={project}
                   language={language}
-                  isActive={project.id === activeProjectId}
+                  isActive={project.id === activeProject?.id}
                   onSelect={() => setActiveProjectId(project.id)}
                 />
               ))}

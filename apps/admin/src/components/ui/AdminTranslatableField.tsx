@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { useTranslationOverlay } from "@admin/context/TranslationOverlayContext";
+import { useTranslationOverlay } from "@admin/context/useTranslationOverlay";
 import { useTranslateField } from "@admin/hooks/useTranslateField";
 import type { Language } from "@shared/database/types/language";
 

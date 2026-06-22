@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 
-import { useTranslationOverlay } from "@admin/context/TranslationOverlayContext";
+import { useTranslationOverlay } from "@admin/context/useTranslationOverlay";
 import { isTranslationCancelledError } from "@admin/services/translationService";
 
 type RunTranslationOptions = {

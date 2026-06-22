@@ -5,6 +5,7 @@ import { useProfileEmailReveal } from "../hooks/useProfileEmailReveal";
 import type { FooterLinkData } from "@shared/database/types/link";
 import type { Language } from "@shared/database/types/language";
 import type { Profile } from "@shared/database/types/profile";
+import { getLocalizedField } from "@shared/utils/localizedField";
 
 type AboutSectionProps = {
   profile?: Profile;
@@ -50,21 +51,15 @@ function AboutSection({
   } = useProfileEmailReveal();
 
   const role = profile
-    ? language === "pl"
-      ? profile.rolePl
-      : profile.roleEn
+    ? getLocalizedField(profile, language, "rolePl", "roleEn")
     : "";
 
   const description = profile
-    ? language === "pl"
-      ? profile.descriptionPl
-      : profile.descriptionEn
+    ? getLocalizedField(profile, language, "descriptionPl", "descriptionEn")
     : "";
 
   const imageAlt = profile
-    ? language === "pl"
-      ? profile.imageAltPl
-      : profile.imageAltEn
+    ? getLocalizedField(profile, language, "imageAltPl", "imageAltEn")
     : "";
 
   return (

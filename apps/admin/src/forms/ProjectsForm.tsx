@@ -1,252 +1,25 @@
-import { useCallback, useMemo, useState } from "react";
+import { useMemo } from "react";
 
-import ProjectMiniaturePanel from "@admin/components/projects/ProjectMiniaturePanel";
-import ProjectTechnologiesField from "@admin/components/projects/ProjectTechnologiesField";
-import ProjectTopicContentPanel, {
-  type ProjectTopicContentField,
-} from "@admin/components/projects/ProjectTopicContentPanel";
-import ProjectTopicImagePanel, {
-  type ProjectTopicImageField,
-} from "@admin/components/projects/ProjectTopicImagePanel";
-import ProjectVideoPanel from "@admin/components/projects/ProjectVideoPanel";
-import ProjectTopicTabs from "@admin/components/projects/ProjectTopicTabs";
-import AdminAddButton from "@admin/components/ui/AdminAddButton";
-import AdminDeleteButton from "@admin/components/ui/AdminDeleteButton";
-import AdminEditLanguageBanner from "@admin/components/ui/AdminEditLanguageBanner";
+import ProjectEditorLayout from "@admin/components/projects/ProjectEditorLayout";
+import ProjectFormActions from "@admin/components/projects/ProjectFormActions";
 import AdminEmptyMessage from "@admin/components/ui/AdminEmptyMessage";
-import AdminEntitySelect from "@admin/components/ui/AdminEntitySelect";
-import AdminField from "@admin/components/ui/AdminField";
-import AdminFormActions from "@admin/components/ui/AdminFormActions";
-import AdminFormSaveActions from "@admin/components/ui/AdminFormSaveActions";
 import AdminFormShell from "@admin/components/ui/AdminFormShell";
-import AdminInput from "@admin/components/ui/AdminInput";
-import AdminTranslatableField from "@admin/components/ui/AdminTranslatableField";
+import { projectDrafts } from "@admin/data/adminDrafts";
+import { useProjectMediaDrafts } from "@admin/forms/projects/useProjectMediaDrafts";
+import { useProjectsEditor } from "@admin/forms/projects/useProjectsEditor";
+import { useActiveTopicImageHandlers } from "@admin/hooks/useActiveTopicImageHandlers";
+import { useAdminForm } from "@admin/hooks/useAdminForm";
+import { useTranslationOverlay } from "@admin/context/useTranslationOverlay";
 import {
-  deleteAdminProject,
   getAdminProjects,
   saveAdminProjects,
 } from "@admin/database/projects/ProjectRepository";
-import { projectDrafts } from "@admin/data/adminDrafts";
-import { createProjectTranslateFields } from "@admin/forms/projectTranslatableFields";
-import { useActiveTopicImageHandlers } from "@admin/hooks/useActiveTopicImageHandlers";
-import { useAdminForm } from "@admin/hooks/useAdminForm";
-import { usePendingKeyedImages } from "@admin/hooks/usePendingKeyedImages";
-import { useTranslateFields } from "@admin/hooks/useTranslateFields";
-import { useTranslationOverlay } from "@admin/context/TranslationOverlayContext";
-import {
-  deleteProjectMiniature,
-  deleteProjectTopicImage,
-  deleteProjectVideo,
-  getProjectVideoPublicUrl,
-  getVersionedProjectImageUrl,
-  getVersionedProjectMiniatureUrl,
-  uploadProjectMiniature,
-  uploadProjectTopicImage,
-  uploadProjectVideo,
-} from "@admin/lib/imageStorage";
 import type { AdminFormProps } from "@admin/types/adminForms";
-import {
-  projectTopicOrder,
-  createEmptyProjectTopic,
-} from "@shared/constants/projectTopics";
-import { PROJECT_TITLE_MAX_LENGTH } from "@shared/constants/project";
-import { ensureUuid } from "@shared/database";
-import { DEFAULT_PROJECT_TOPIC_ID } from "@shared/database/types/projectTopic";
-import type { Project, ProjectTopicId } from "@shared/database/types/project";
-import { createEmptyProjectTechnology } from "@shared/database/types/project";
-import {
-  getLocalizedField,
-  getLocalizedKey,
-  getOppositeLocalizedKey,
-} from "@shared/utils/localizedField";
-
-type ProjectTextField = "code" | "projectUrl" | "titlePl" | "titleEn";
-type TopicTextField = ProjectTopicContentField | ProjectTopicImageField;
-
-function topicImageKey(projectId: string, topicId: ProjectTopicId) {
-  return `${projectId}:${topicId}`;
-}
-
-function projectVideoKey(projectId: string) {
-  return `${projectId}:video`;
-}
-
-function projectMiniatureKey(projectId: string) {
-  return `${projectId}:miniature`;
-}
+import type { Project } from "@shared/database/types/project";
 
 function ProjectsForm({ language }: AdminFormProps) {
-  const {
-    pendingFiles: pendingTopicImages,
-    setPendingFiles: setPendingTopicImages,
-    markedForRemovals: pendingTopicImageRemovals,
-    setMarkedForRemovals: setPendingTopicImageRemovals,
-    hasPendingEdits: hasPendingImageEdits,
-    discardPending: discardPendingImages,
-    clearKeysForPrefix,
-  } = usePendingKeyedImages();
-  const {
-    pendingFiles: pendingProjectVideos,
-    setPendingFiles: setPendingProjectVideos,
-    markedForRemovals: pendingProjectVideoRemovals,
-    setMarkedForRemovals: setPendingProjectVideoRemovals,
-    hasPendingEdits: hasPendingVideoEdits,
-    discardPending: discardPendingVideos,
-  } = usePendingKeyedImages();
-  const {
-    pendingFiles: pendingProjectMiniatures,
-    setPendingFiles: setPendingProjectMiniatures,
-    markedForRemovals: pendingProjectMiniatureRemovals,
-    setMarkedForRemovals: setPendingProjectMiniatureRemovals,
-    hasPendingEdits: hasPendingMiniatureEdits,
-    discardPending: discardPendingMiniatures,
-  } = usePendingKeyedImages();
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState<string>();
-
-  const prepareBeforeSave = useCallback(
-    async (currentProjects: Project[]) => {
-      const hasPendingImageUploads = Object.keys(pendingTopicImages).length > 0;
-      const hasPendingImageRemovals = Object.values(
-        pendingTopicImageRemovals,
-      ).some(Boolean);
-      const hasPendingVideoUploads = Object.keys(pendingProjectVideos).length > 0;
-      const hasPendingVideoRemovals = Object.values(
-        pendingProjectVideoRemovals,
-      ).some(Boolean);
-      const hasPendingMiniatureUploads =
-        Object.keys(pendingProjectMiniatures).length > 0;
-      const hasPendingMiniatureRemovals = Object.values(
-        pendingProjectMiniatureRemovals,
-      ).some(Boolean);
-
-      if (
-        !hasPendingImageUploads &&
-        !hasPendingImageRemovals &&
-        !hasPendingVideoUploads &&
-        !hasPendingVideoRemovals &&
-        !hasPendingMiniatureUploads &&
-        !hasPendingMiniatureRemovals
-      ) {
-        return currentProjects.map((project) => ({
-          ...project,
-          id: ensureUuid(project.id),
-        }));
-      }
-
-      const updatedProjects = await Promise.all(
-        currentProjects.map(async (project) => {
-          const originalId = project.id;
-          const normalizedId = ensureUuid(project.id);
-          const videoKey = projectVideoKey(originalId);
-          const miniatureKey = projectMiniatureKey(originalId);
-          const pendingVideoFile = pendingProjectVideos[videoKey];
-          const pendingVideoRemoval = pendingProjectVideoRemovals[videoKey];
-          const pendingMiniatureFile = pendingProjectMiniatures[miniatureKey];
-          const pendingMiniatureRemoval =
-            pendingProjectMiniatureRemovals[miniatureKey];
-          let nextVideoPath = project.videoPath;
-          let nextVideoUrl = project.videoUrl;
-          let nextMiniaturePath = project.miniaturePath;
-          let nextMiniatureUrl = project.miniatureUrl;
-
-          if (pendingVideoFile) {
-            nextVideoPath = await uploadProjectVideo(
-              normalizedId,
-              pendingVideoFile,
-            );
-            nextVideoUrl = getProjectVideoPublicUrl(nextVideoPath);
-          } else if (pendingVideoRemoval && project.videoPath) {
-            await deleteProjectVideo(project.videoPath);
-            nextVideoPath = undefined;
-            nextVideoUrl = undefined;
-          }
-
-          if (pendingMiniatureFile) {
-            if (project.miniaturePath && normalizedId !== originalId) {
-              await deleteProjectMiniature(project.miniaturePath);
-            }
-
-            nextMiniaturePath = await uploadProjectMiniature(
-              normalizedId,
-              pendingMiniatureFile,
-            );
-            nextMiniatureUrl = await getVersionedProjectMiniatureUrl(
-              nextMiniaturePath,
-            );
-          } else if (pendingMiniatureRemoval && project.miniaturePath) {
-            await deleteProjectMiniature(project.miniaturePath);
-            nextMiniaturePath = undefined;
-            nextMiniatureUrl = undefined;
-          }
-
-          return {
-            ...project,
-            id: normalizedId,
-            videoPath: nextVideoPath,
-            videoUrl: nextVideoUrl,
-            miniaturePath: nextMiniaturePath,
-            miniatureUrl: nextMiniatureUrl,
-            topics: await Promise.all(
-              project.topics.map(async (topic) => {
-                const key = topicImageKey(originalId, topic.id);
-                const file = pendingTopicImages[key];
-                const markedForRemoval = pendingTopicImageRemovals[key];
-
-                if (file) {
-                  const imagePath = await uploadProjectTopicImage(
-                    normalizedId,
-                    topic.id,
-                    file,
-                  );
-
-                  return {
-                    ...topic,
-                    imagePath,
-                    imageUrl: await getVersionedProjectImageUrl(imagePath),
-                  };
-                }
-
-                if (markedForRemoval && topic.imagePath) {
-                  await deleteProjectTopicImage(topic.imagePath);
-
-                  return {
-                    ...topic,
-                    imagePath: undefined,
-                    imageUrl: undefined,
-                  };
-                }
-
-                return topic;
-              }),
-            ),
-          };
-        }),
-      );
-
-      setPendingTopicImages({});
-      setPendingTopicImageRemovals({});
-      setPendingProjectVideos({});
-      setPendingProjectVideoRemovals({});
-      setPendingProjectMiniatures({});
-      setPendingProjectMiniatureRemovals({});
-      return updatedProjects;
-    },
-    [
-      pendingProjectMiniatureRemovals,
-      pendingProjectMiniatures,
-      pendingProjectVideoRemovals,
-      pendingProjectVideos,
-      pendingTopicImageRemovals,
-      pendingTopicImages,
-      setPendingProjectMiniatureRemovals,
-      setPendingProjectMiniatures,
-      setPendingProjectVideoRemovals,
-      setPendingProjectVideos,
-      setPendingTopicImageRemovals,
-      setPendingTopicImages,
-    ],
-  );
+  const media = useProjectMediaDrafts();
+  const { isOverlayOpen } = useTranslationOverlay();
 
   const {
     value: projects,
@@ -262,268 +35,50 @@ function ProjectsForm({ language }: AdminFormProps) {
     initialValue: projectDrafts,
     loadValue: getAdminProjects,
     saveValue: saveAdminProjects,
-    prepareBeforeSave,
-    extraDirty: hasPendingImageEdits || hasPendingVideoEdits || hasPendingMiniatureEdits,
-    onDiscard: () => {
-      discardPendingImages();
-      discardPendingVideos();
-      discardPendingMiniatures();
-    },
+    prepareBeforeSave: media.prepareBeforeSave,
+    extraDirty: media.hasPendingEdits,
+    onDiscard: media.discardAll,
   });
 
-  const { isOverlayOpen } = useTranslationOverlay();
+  const isBusy = isLoading || isSaving || isOverlayOpen;
 
-  const [activeProjectId, setActiveProjectId] = useState(
-    projectDrafts[0]?.id ?? "",
-  );
-  const [activeTopicId, setActiveTopicId] = useState<ProjectTopicId>(
-    DEFAULT_PROJECT_TOPIC_ID,
-  );
-
-  const activeProject = useMemo(
-    () =>
-      projects.find((project) => project.id === activeProjectId) ?? projects[0],
-    [activeProjectId, projects],
-  );
-
-  const activeTopic = activeProject
-    ? (activeProject.topics.find((topic) => topic.id === activeTopicId) ??
-      activeProject.topics[0])
-    : undefined;
-
-  const isBusy = isLoading || isSaving || isDeleting || isOverlayOpen;
-
-  function updateProject(field: ProjectTextField, value: string) {
-    if (!activeProject) {
-      return;
-    }
-
-    const nextValue =
-      field === "titlePl" || field === "titleEn"
-        ? value.slice(0, PROJECT_TITLE_MAX_LENGTH)
-        : value;
-
-    setProjects((currentProjects) =>
-      currentProjects.map((project) =>
-        project.id === activeProject.id
-          ? {
-              ...project,
-              [field]: nextValue,
-            }
-          : project,
-      ),
-    );
-  }
-
-  function addTechnology() {
-    if (!activeProject) {
-      return;
-    }
-
-    setProjects((currentProjects) =>
-      currentProjects.map((project) =>
-        project.id === activeProject.id
-          ? {
-              ...project,
-              technologies: [
-                ...project.technologies,
-                createEmptyProjectTechnology(),
-              ],
-            }
-          : project,
-      ),
-    );
-  }
-
-  function updateTechnology(
-    index: number,
-    field: "name" | "iconSlug",
-    value: string,
-  ) {
-    if (!activeProject) {
-      return;
-    }
-
-    setProjects((currentProjects) =>
-      currentProjects.map((project) =>
-        project.id === activeProject.id
-          ? {
-              ...project,
-              technologies: project.technologies.map((technology, technologyIndex) =>
-                technologyIndex === index
-                  ? {
-                      ...technology,
-                      [field]: value,
-                    }
-                  : technology,
-              ),
-            }
-          : project,
-      ),
-    );
-  }
-
-  function removeTechnology(index: number) {
-    if (!activeProject) {
-      return;
-    }
-
-    setProjects((currentProjects) =>
-      currentProjects.map((project) =>
-        project.id === activeProject.id
-          ? {
-              ...project,
-              technologies: project.technologies.filter(
-                (_, technologyIndex) => technologyIndex !== index,
-              ),
-            }
-          : project,
-      ),
-    );
-  }
-
-  function updateTopic(field: TopicTextField, value: string) {
-    if (!activeProject || !activeTopic) {
-      return;
-    }
-
-    updateProjectTopic(activeTopic.id, field, value);
-  }
-
-  function updateProjectTopic(
-    topicId: ProjectTopicId,
-    field: TopicTextField,
-    value: string,
-  ) {
-    if (!activeProject) {
-      return;
-    }
-
-    setProjects((currentProjects) =>
-      currentProjects.map((project) =>
-        project.id === activeProject.id
-          ? {
-              ...project,
-              topics: project.topics.map((topic) =>
-                topic.id === topicId
-                  ? {
-                      ...topic,
-                      [field]: value,
-                    }
-                  : topic,
-              ),
-            }
-          : project,
-      ),
-    );
-  }
-
-  const bulkTranslateFields = useMemo(
-    () =>
-      activeProject
-        ? createProjectTranslateFields(activeProject, language, {
-            onApplyTitle: (field, text) => updateProject(field, text),
-            onApplyTopic: (topicId, field, text) =>
-              updateProjectTopic(topicId, field, text),
-          })
-        : [],
-    [activeProject, language],
-  );
-
-  const bulkTranslate = useTranslateFields({
+  const editor = useProjectsEditor({
     language,
-    disabled: isBusy || !activeProject,
-    fields: bulkTranslateFields,
+    projects,
+    setProjects,
+    syncSavedValue,
+    clearKeysForProject: media.clearKeysForProject,
+    isBusy,
   });
 
-  function addProject() {
-    const nextIndex = projects.length + 1;
+  const isFormBusy = isBusy || editor.isDeleting;
 
-    const nextProject: Project = {
-      id: crypto.randomUUID(),
-      code: `PROJECT_${String(nextIndex).padStart(2, "0")}`,
-      titlePl: "Nowy projekt PL",
-      titleEn: "New project EN",
-      technologies: [],
-      topics: projectTopicOrder.map((topicId) =>
-        createEmptyProjectTopic(topicId),
-      ),
-    };
-
-    setProjects((currentProjects) => [...currentProjects, nextProject]);
-    setActiveProjectId(nextProject.id);
-    setActiveTopicId(DEFAULT_PROJECT_TOPIC_ID);
-  }
-
-  async function deleteProject() {
-    if (!activeProject) {
-      return;
-    }
-
-    setDeleteError(undefined);
-    setIsDeleting(true);
-
-    try {
-      await deleteAdminProject(activeProject.id);
-
-      const remainingProjects = projects.filter(
-        (project) => project.id !== activeProject.id,
-      );
-
-      syncSavedValue(remainingProjects);
-      clearKeysForPrefix(activeProject.id);
-      setActiveProjectId(remainingProjects[0]?.id ?? "");
-      setActiveTopicId(DEFAULT_PROJECT_TOPIC_ID);
-    } catch {
-      setDeleteError("Nie udało się usunąć projektu. Spróbuj ponownie.");
-    } finally {
-      setIsDeleting(false);
-    }
-  }
-
-  const activeTopicImageKey = activeProject
-    ? topicImageKey(
-        activeProject.id,
-        activeTopic?.id ?? DEFAULT_PROJECT_TOPIC_ID,
-      )
-    : "";
-
-  const activeProjectVideoKey = activeProject
-    ? projectVideoKey(activeProject.id)
-    : "";
-
-  const activeProjectMiniatureKey = activeProject
-    ? projectMiniatureKey(activeProject.id)
-    : "";
-
-  const { onFileSelect, onImageMarkedForRemovalChange } =
-    useActiveTopicImageHandlers(
-      activeTopicImageKey,
-      setPendingTopicImages,
-      setPendingTopicImageRemovals,
-    );
-
-  const {
-    onFileSelect: onVideoFileSelect,
-    onImageMarkedForRemovalChange: onVideoMarkedForRemovalChange,
-  } = useActiveTopicImageHandlers(
-    activeProjectVideoKey,
-    setPendingProjectVideos,
-    setPendingProjectVideoRemovals,
+  const topicImageHandlers = useActiveTopicImageHandlers(
+    editor.activeTopicImageKey,
+    media.topicImages.setPendingFiles,
+    media.topicImages.setMarkedForRemovals,
   );
 
-  const {
-    onFileSelect: onMiniatureFileSelect,
-    onImageMarkedForRemovalChange: onMiniatureMarkedForRemovalChange,
-  } = useActiveTopicImageHandlers(
-    activeProjectMiniatureKey,
-    setPendingProjectMiniatures,
-    setPendingProjectMiniatureRemovals,
+  const videoHandlers = useActiveTopicImageHandlers(
+    editor.activeProjectVideoKey,
+    media.videos.setPendingFiles,
+    media.videos.setMarkedForRemovals,
   );
 
-  const activeProjectTitle = activeProject
-    ? getLocalizedField(activeProject, language, "titlePl", "titleEn")
-    : "";
+  const miniatureHandlers = useActiveTopicImageHandlers(
+    editor.activeProjectMiniatureKey,
+    media.miniatures.setPendingFiles,
+    media.miniatures.setMarkedForRemovals,
+  );
+
+  const extraErrors = useMemo(
+    () =>
+      [
+        ...(editor.bulkTranslate.error ? [editor.bulkTranslate.error] : []),
+        ...(editor.deleteError ? [editor.deleteError] : []),
+      ],
+    [editor.bulkTranslate.error, editor.deleteError],
+  );
 
   return (
     <AdminFormShell
@@ -532,200 +87,81 @@ function ProjectsForm({ language }: AdminFormProps) {
       loadError={loadError}
       saveError={saveError}
       saveSuccess={saveSuccess}
-      extraErrors={[
-        ...(bulkTranslate.error ? [bulkTranslate.error] : []),
-        ...(deleteError ? [deleteError] : []),
-      ]}
+      extraErrors={extraErrors}
       actions={
-        <AdminFormActions>
-          <AdminEntitySelect
-            id="project-select"
-            ariaLabel="Projekt"
-            className="w-80 max-w-full"
-            value={activeProject?.id ?? ""}
-            disabled={isLoading || projects.length === 0}
-            items={projects}
-            getItemId={(project) => project.id}
-            getItemLabel={(project) =>
-              getLocalizedField(project, language, "titlePl", "titleEn")
-            }
-            onChange={(projectId) => {
-              setActiveProjectId(projectId);
-              setActiveTopicId(DEFAULT_PROJECT_TOPIC_ID);
-            }}
-          />
-          <AdminDeleteButton
-            label="Usuń projekt"
-            disabled={isBusy || !activeProject}
-            onClick={() => void deleteProject()}
-          />
-          <AdminAddButton
-            label="Dodaj projekt"
-            disabled={isBusy}
-            onClick={addProject}
-          />
-          <AdminFormSaveActions
-            language={language}
-            saveDisabled={isBusy || projects.length === 0}
-            isSaving={isSaving}
-            onSave={save}
-            translateDisabled={isBusy || !activeProject}
-            isBulkTranslating={bulkTranslate.isTranslating}
-            translateTitle="Przetłumacz wszystkie pola projektu przez Gemini AI"
-            onTranslateAll={bulkTranslate.onTranslateAll}
-          />
-        </AdminFormActions>
+        <ProjectFormActions
+          language={language}
+          projects={projects}
+          activeProjectId={editor.activeProjectId}
+          hasActiveProject={Boolean(editor.activeProject)}
+          isLoading={isLoading}
+          isSaving={isSaving}
+          isFormBusy={isFormBusy}
+          isBulkTranslating={editor.bulkTranslate.isTranslating}
+          onSelectProject={editor.selectProject}
+          onDeleteProject={() => void editor.deleteProject()}
+          onAddProject={editor.addProject}
+          onSave={save}
+          onTranslateAll={editor.bulkTranslate.onTranslateAll}
+        />
       }
     >
-      {!activeProject || !activeTopic ? (
+      {!editor.activeProject || !editor.activeTopic ? (
         <AdminEmptyMessage>
           Brak projektów. Dodaj pierwszy projekt, aby rozpocząć edycję.
         </AdminEmptyMessage>
       ) : (
-        <>
-          <AdminEditLanguageBanner language={language} />
-
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-stretch">
-            <div className="admin-stack min-w-0">
-              <AdminField id="project-code" label="Kod projektu">
-                <AdminInput
-                  id="project-code"
-                  value={activeProject.code ?? ""}
-                  onChange={(event) =>
-                    updateProject("code", event.target.value)
-                  }
-                />
-              </AdminField>
-
-              <AdminField
-                id="project-url"
-                label="Link do projektu"
-                hint="Bezpośredni adres URL do projektu, np. repozytorium, demo lub strona produktu."
-              >
-                <AdminInput
-                  id="project-url"
-                  type="url"
-                  value={activeProject.projectUrl ?? ""}
-                  placeholder="https://"
-                  disabled={isBusy}
-                  onChange={(event) =>
-                    updateProject("projectUrl", event.target.value)
-                  }
-                />
-              </AdminField>
-
-              <ProjectMiniaturePanel
-                miniatureUrl={activeProject.miniatureUrl}
-                projectTitle={activeProjectTitle}
-                selectedFile={
-                  pendingProjectMiniatures[activeProjectMiniatureKey] ?? null
-                }
-                imageMarkedForRemoval={
-                  pendingProjectMiniatureRemovals[activeProjectMiniatureKey] ??
-                  false
-                }
-                disabled={isBusy}
-                onFileSelect={onMiniatureFileSelect}
-                onImageMarkedForRemovalChange={onMiniatureMarkedForRemovalChange}
-              />
-
-              <ProjectTopicImagePanel
-                topic={activeTopic}
-                language={language}
-                disabled={isBusy}
-                selectedFile={pendingTopicImages[activeTopicImageKey] ?? null}
-                imageMarkedForRemoval={
-                  pendingTopicImageRemovals[activeTopicImageKey] ?? false
-                }
-                onFileSelect={onFileSelect}
-                onImageMarkedForRemovalChange={onImageMarkedForRemovalChange}
-                onChange={updateTopic}
-              />
-
-              <ProjectVideoPanel
-                videoUrl={activeProject.videoUrl}
-                selectedFile={pendingProjectVideos[activeProjectVideoKey] ?? null}
-                videoMarkedForRemoval={
-                  pendingProjectVideoRemovals[activeProjectVideoKey] ?? false
-                }
-                disabled={isBusy}
-                onFileSelect={onVideoFileSelect}
-                onVideoMarkedForRemovalChange={onVideoMarkedForRemovalChange}
-              />
-            </div>
-
-            <div className="flex min-h-full flex-col gap-6">
-              <div className="admin-stack">
-                <AdminTranslatableField
-                  id="project-title"
-                  label="Nazwa projektu"
-                  language={language}
-                  hint={`Maksymalnie ${PROJECT_TITLE_MAX_LENGTH} znaków.`}
-                  disabled={isBusy}
-                  sourceText={getLocalizedField(
-                    activeProject,
-                    language,
-                    "titlePl",
-                    "titleEn",
-                  )}
-                  onApply={(text) =>
-                    updateProject(
-                      getOppositeLocalizedKey(language, "titlePl", "titleEn"),
-                      text,
-                    )
-                  }
-                >
-                  <AdminInput
-                    id="project-title"
-                    maxLength={PROJECT_TITLE_MAX_LENGTH}
-                    value={getLocalizedField(
-                      activeProject,
-                      language,
-                      "titlePl",
-                      "titleEn",
-                    )}
-                    onChange={(event) =>
-                      updateProject(
-                        getLocalizedKey(language, "titlePl", "titleEn"),
-                        event.target.value,
-                      )
-                    }
-                  />
-                </AdminTranslatableField>
-
-                <ProjectTechnologiesField
-                  id="project-technologies"
-                  technologies={activeProject.technologies}
-                  disabled={isBusy}
-                  onAdd={addTechnology}
-                  onUpdate={updateTechnology}
-                  onRemove={removeTechnology}
-                />
-
-                <AdminField
-                  id="project-topic-tabs"
-                  label="Zakładka projektu"
-                  groupLabel
-                >
-                  <ProjectTopicTabs
-                    activeTopicId={activeTopic.id}
-                    language={language}
-                    labelledBy="project-topic-tabs-label"
-                    onChange={setActiveTopicId}
-                  />
-                </AdminField>
-              </div>
-
-              <ProjectTopicContentPanel
-                topic={activeTopic}
-                language={language}
-                fillHeight
-                disabled={isBusy}
-                onChange={updateTopic}
-              />
-            </div>
-          </div>
-        </>
+        <ProjectEditorLayout
+          language={language}
+          project={editor.activeProject}
+          topic={editor.activeTopic}
+          projectTitle={editor.activeProjectTitle}
+          disabled={isFormBusy}
+          miniature={{
+            selectedFile:
+              media.miniatures.pendingFiles[editor.activeProjectMiniatureKey] ??
+              null,
+            markedForRemoval:
+              media.miniatures.markedForRemovals[
+                editor.activeProjectMiniatureKey
+              ] ?? false,
+            handlers: {
+              onFileSelect: miniatureHandlers.onFileSelect,
+              onMarkedForRemovalChange:
+                miniatureHandlers.onImageMarkedForRemovalChange,
+            },
+          }}
+          topicImage={{
+            selectedFile:
+              media.topicImages.pendingFiles[editor.activeTopicImageKey] ?? null,
+            markedForRemoval:
+              media.topicImages.markedForRemovals[editor.activeTopicImageKey] ??
+              false,
+            handlers: {
+              onFileSelect: topicImageHandlers.onFileSelect,
+              onMarkedForRemovalChange:
+                topicImageHandlers.onImageMarkedForRemovalChange,
+            },
+          }}
+          video={{
+            selectedFile:
+              media.videos.pendingFiles[editor.activeProjectVideoKey] ?? null,
+            markedForRemoval:
+              media.videos.markedForRemovals[editor.activeProjectVideoKey] ??
+              false,
+            handlers: {
+              onFileSelect: videoHandlers.onFileSelect,
+              onMarkedForRemovalChange:
+                videoHandlers.onImageMarkedForRemovalChange,
+            },
+          }}
+          onUpdateProject={editor.updateProject}
+          onUpdateTopic={editor.updateTopic}
+          onTopicTabChange={editor.setActiveTopicId}
+          onAddTechnology={editor.addTechnology}
+          onUpdateTechnology={editor.updateTechnology}
+          onRemoveTechnology={editor.removeTechnology}
+        />
       )}
     </AdminFormShell>
   );

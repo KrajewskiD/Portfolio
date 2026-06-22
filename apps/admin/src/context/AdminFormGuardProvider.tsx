@@ -1,7 +1,5 @@
 import {
-  createContext,
   useCallback,
-  useContext,
   useMemo,
   useRef,
   useState,
@@ -11,22 +9,10 @@ import {
 import AdminUnsavedChangesDialog, {
   type UnsavedChangesDecision,
 } from "@admin/components/ui/AdminUnsavedChangesDialog";
-
-export type AdminFormGuardRegistration = {
-  isDirty: boolean;
-  save: () => Promise<boolean>;
-  discard: () => void;
-};
-
-type AdminFormGuardContextValue = {
-  registerForm: (registration: AdminFormGuardRegistration) => void;
-  clearForm: () => void;
-  confirmNavigation: () => Promise<boolean>;
-};
-
-const AdminFormGuardContext = createContext<AdminFormGuardContextValue | null>(
-  null,
-);
+import {
+  AdminFormGuardContext,
+  type AdminFormGuardRegistration,
+} from "@admin/context/adminFormGuardContext";
 
 export function AdminFormGuardProvider({ children }: { children: ReactNode }) {
   const registrationRef = useRef<AdminFormGuardRegistration | null>(null);
@@ -98,16 +84,4 @@ export function AdminFormGuardProvider({ children }: { children: ReactNode }) {
       />
     </AdminFormGuardContext.Provider>
   );
-}
-
-export function useAdminFormGuard() {
-  const context = useContext(AdminFormGuardContext);
-
-  if (!context) {
-    throw new Error(
-      "useAdminFormGuard must be used within AdminFormGuardProvider",
-    );
-  }
-
-  return context;
 }
