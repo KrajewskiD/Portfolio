@@ -35,8 +35,8 @@ export type Translations = {
   };
   header: {
     infoTitle: string;
-    infoLabel: string;
     infoEmptyMessage: string;
+    closeModalLabel: string;
   };
   notFound: {
     message: string;

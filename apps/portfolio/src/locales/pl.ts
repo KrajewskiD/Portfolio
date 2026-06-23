@@ -37,8 +37,8 @@ export const pl: Translations = {
   },
   header: {
     infoTitle: "O stronie",
-    infoLabel: "Więcej informacji",
-    infoEmptyMessage: "Brak dodatkowych informacji w profilu.",
+    infoEmptyMessage: "Brak projektów do wyświetlenia.",
+    closeModalLabel: "Zamknij",
   },
   notFound: {
     message: "Nie znaleziono strony.",

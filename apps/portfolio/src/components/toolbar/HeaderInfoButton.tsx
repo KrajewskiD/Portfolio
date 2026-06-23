@@ -1,58 +1,79 @@
-import { useCallback, useRef, useState } from "react";
+import { useState } from "react";
 
 import infoIcon from "@shared/assets/icons/info.svg";
+import { DEFAULT_PROJECT_TOPIC_ID } from "@shared/database/types/projectTopic";
+import type { Language } from "@shared/database/types/language";
+import type { Project, ProjectTopicId } from "@shared/database/types/project";
 
-import SiteInfoReveal from "@portfolio/components/SiteInfoReveal";
-import useDismissOnOutsidePointerDown from "@portfolio/hooks/useDismissOnOutsidePointerDown";
+import ProjectInfoCard from "@portfolio/components/projects/ProjectInfoCard";
+import ProjectModal from "@portfolio/components/projects/ProjectModal";
+import type { Translations } from "@portfolio/locales/translations";
 
 type HeaderInfoButtonProps = {
   title: string;
-  text: string;
+  closeLabel: string;
   emptyMessage: string;
+  project?: Project;
+  projectText: Translations["projects"];
+  language: Language;
 };
 
 function HeaderInfoButton({
   title,
-  text,
+  closeLabel,
   emptyMessage,
+  project,
+  projectText,
+  language,
 }: HeaderInfoButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const rootRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
-
-  const close = useCallback(() => {
-    setIsOpen(false);
-  }, []);
-
-  useDismissOnOutsidePointerDown(isOpen, close, rootRef, buttonRef);
+  const [activeTopicId, setActiveTopicId] = useState<ProjectTopicId>(
+    DEFAULT_PROJECT_TOPIC_ID,
+  );
 
   return (
-    <div ref={rootRef} className="site-chrome-info site-social-icon-scale">
-      <button
-        ref={buttonRef}
-        type="button"
-        className="site-chrome-info__trigger"
-        aria-expanded={isOpen}
-        onClick={() => setIsOpen((current) => !current)}
-      >
-        <span className="site-chrome-info__label">{title}</span>
+    <>
+      <div className="site-chrome-info site-social-icon-scale">
+        <button
+          type="button"
+          className="site-chrome-info__trigger"
+          aria-expanded={isOpen}
+          onClick={() => setIsOpen(true)}
+        >
+          <span className="site-chrome-info__label">{title}</span>
 
-        <span className="site-icon-link site-chrome-info__icon" aria-hidden>
-          <img
-            src={infoIcon}
-            alt=""
-            aria-hidden
-            className="site-icon-link__icon"
-          />
-        </span>
-      </button>
+          <span className="site-icon-link site-chrome-info__icon" aria-hidden>
+            <img
+              src={infoIcon}
+              alt=""
+              aria-hidden
+              className="site-icon-link__icon"
+            />
+          </span>
+        </button>
+      </div>
 
-      <SiteInfoReveal
+      <ProjectModal
         isOpen={isOpen}
-        text={text}
-        emptyMessage={emptyMessage}
-      />
-    </div>
+        closeLabel={closeLabel}
+        onClose={() => setIsOpen(false)}
+      >
+        {project ? (
+          <ProjectInfoCard
+            project={project}
+            language={language}
+            openProjectLinkLabel={projectText.openProjectLink}
+            topicSectionLabel={projectText.topicSectionLabel}
+            selectedTopicId={activeTopicId}
+            onTopicChange={setActiveTopicId}
+          />
+        ) : (
+          <div className="site-panel--empty-lg site-project-modal__empty">
+            <p className="site-text-muted">{emptyMessage}</p>
+          </div>
+        )}
+      </ProjectModal>
+    </>
   );
 }
 

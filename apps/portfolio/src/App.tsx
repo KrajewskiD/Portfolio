@@ -9,6 +9,7 @@ import { translations } from "./locales";
 import { navigationData } from "./data/navigation.data";
 import { useProfile } from "./hooks/useProfile";
 import { useFooterLinks } from "./hooks/useFooterLinks";
+import { useProjects } from "./hooks/useProjects";
 
 function detectPreferredLanguage(): Language {
   const preferredLanguages =
@@ -33,6 +34,12 @@ function App() {
     isError: areFooterLinksError,
   } = useFooterLinks();
 
+  const {
+    data: projects,
+    isPending: areProjectsPending,
+    isError: areProjectsError,
+  } = useProjects();
+
   const [language, setLanguage] = useState<Language>(() => {
     const savedLanguage = localStorage.getItem("language");
 
@@ -53,12 +60,14 @@ function App() {
     <BrowserRouter>
       <MainLayout
         profile={profile}
+        projects={projects}
         footerLinks={footerLinks}
         isProfileLoading={isProfileLoading}
         isProfileError={isProfileError}
         areFooterLinksLoading={areFooterLinksLoading}
         areFooterLinksError={areFooterLinksError}
         footerText={translation.footer}
+        projectText={translation.projects}
         navigationItems={navigationData}
         navigationText={translation.navigation}
         headerText={translation.header}
@@ -73,8 +82,11 @@ function App() {
                 language={language}
                 profile={profile}
                 footerLinks={footerLinks}
+                projects={projects}
                 isProfileLoading={isProfileLoading}
                 isProfileError={isProfileError}
+                areProjectsPending={areProjectsPending}
+                areProjectsError={areProjectsError}
                 socialLinksLabel={translation.footer.socialLinksLabel}
               />
             }

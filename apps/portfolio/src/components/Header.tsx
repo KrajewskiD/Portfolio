@@ -11,6 +11,7 @@ import useAnimatedWidth from "@portfolio/hooks/useAnimatedWidth";
 import useDismissOnOutsidePointerDown from "@portfolio/hooks/useDismissOnOutsidePointerDown";
 import type { NavigationLinkData } from "@shared/database/types/link";
 import type { Language } from "@shared/database/types/language";
+import type { Project } from "@shared/database/types/project";
 import type { Translations } from "../locales/translations";
 
 type HeaderProps = {
@@ -18,7 +19,8 @@ type HeaderProps = {
   language: Language;
   navigationText: Translations["navigation"];
   headerText: Translations["header"];
-  infoText: string;
+  projectText: Translations["projects"];
+  featuredProject?: Project;
   onLanguageChange: (language: Language) => void;
 };
 
@@ -27,7 +29,8 @@ function Header({
   language,
   navigationText,
   headerText,
-  infoText,
+  projectText,
+  featuredProject,
   onLanguageChange,
 }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -56,8 +59,11 @@ function Header({
     <header className="site-chrome max-sm:w-full">
       <HeaderInfoButton
         title={headerText.infoTitle}
-        text={infoText}
+        closeLabel={headerText.closeModalLabel}
         emptyMessage={headerText.infoEmptyMessage}
+        project={featuredProject}
+        projectText={projectText}
+        language={language}
       />
 
       <div

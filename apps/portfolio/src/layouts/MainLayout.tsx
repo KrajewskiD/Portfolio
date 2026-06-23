@@ -13,17 +13,20 @@ import type {
   NavigationLinkData,
 } from "@shared/database/types/link";
 import type { Profile } from "@shared/database/types/profile";
+import type { Project } from "@shared/database/types/project";
 import { getLocalizedField } from "@shared/utils/localizedField";
 
 type MainLayoutProps = {
   children: ReactNode;
   profile?: Profile;
+  projects?: Project[];
   footerLinks?: FooterLinkData[];
   isProfileLoading: boolean;
   isProfileError: boolean;
   areFooterLinksLoading: boolean;
   areFooterLinksError: boolean;
   footerText: Translations["footer"];
+  projectText: Translations["projects"];
   navigationItems: NavigationLinkData[];
   headerText: Translations["header"];
   language: Language;
@@ -34,12 +37,14 @@ type MainLayoutProps = {
 function MainLayout({
   children,
   profile,
+  projects,
   footerLinks,
   isProfileLoading,
   isProfileError,
   areFooterLinksLoading,
   areFooterLinksError,
   footerText,
+  projectText,
   navigationItems,
   language,
   navigationText,
@@ -66,14 +71,7 @@ function MainLayout({
         }
       : undefined;
 
-  const infoText = profile
-    ? getLocalizedField(
-        profile,
-        language,
-        "footerDescriptionPl",
-        "footerDescriptionEn",
-      )
-    : "";
+  const featuredProject = projects?.[0];
 
   return (
     <div className="site-layout">
@@ -84,7 +82,8 @@ function MainLayout({
         language={language}
         navigationText={navigationText}
         headerText={headerText}
-        infoText={infoText}
+        projectText={projectText}
+        featuredProject={featuredProject}
         onLanguageChange={onLanguageChange}
       />
 

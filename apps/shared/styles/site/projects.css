@@ -256,6 +256,12 @@
       font-size: 1.125rem;
       line-height: 1.85;
     }
+
+    .site-card--project-info {
+      width: min(100%, 56rem);
+      min-height: 0;
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
 
   @media (max-width: 639px) {
@@ -281,6 +287,10 @@
     .site-title--project {
       font-size: 1.5rem;
       line-height: 1.15;
+    }
+
+    .site-card--project-info {
+      width: 100%;
     }
   }
 
@@ -321,5 +331,68 @@
 
   .site-topic-list {
     @apply col-start-2 row-start-1 flex flex-col border-l border-border sm:flex-row sm:overflow-x-auto sm:border-b sm:border-l-0;
+  }
+
+  .site-project-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    pointer-events: none;
+  }
+
+  .site-project-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    border: none;
+    padding: 0;
+    background: rgb(0 0 0 / 0.72);
+    cursor: pointer;
+    pointer-events: auto;
+  }
+
+  .site-project-modal__dialog {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 80rem);
+    max-height: min(92vh, 60rem);
+    overflow: auto;
+    pointer-events: auto;
+    border-radius: 1.5rem;
+  }
+
+  .site-project-modal__close {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    z-index: 4;
+  }
+
+  .site-project-modal .site-card--project {
+    min-height: 0;
+    max-height: min(92vh, 60rem);
+  }
+
+  .site-project-modal .site-card--project-info {
+    max-height: none;
+  }
+
+  .site-project-modal__empty {
+    margin: 0;
+    min-height: 16rem;
+  }
+
+  @media (min-width: 1024px) {
+    .site-project-modal .site-card--project {
+      min-height: min(60vh, 42rem);
+    }
+
+    .site-project-modal__close {
+      top: 1.5rem;
+      right: 1.5rem;
+    }
   }
 }
