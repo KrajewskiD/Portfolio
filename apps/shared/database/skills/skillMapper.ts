@@ -15,6 +15,7 @@ export function mapSkillGroupRow(group: SkillGroupRow): SkillGroupData {
                 id: skill.id,
                 name: skill.technologies.name,
                 level: skill.level,
+                showLevel: skill.show_level ?? true,
               },
             ]
           : [],
@@ -47,6 +48,7 @@ export function mapSkillToRow(
     description_pl: "",
     description_en: "",
     level: skill.level,
+    show_level: skill.showLevel,
     display_order: displayOrder,
   };
 }

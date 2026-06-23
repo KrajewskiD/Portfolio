@@ -46,6 +46,7 @@ function SkillsSection({
                   key={skill.id}
                   name={skill.name}
                   level={skill.level}
+                  showLevel={skill.showLevel}
                   levelLabel={text.levelLabel}
                 />
               ))}

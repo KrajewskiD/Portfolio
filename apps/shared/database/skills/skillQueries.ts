@@ -14,6 +14,7 @@ const SKILL_GROUPS_SELECT = `
     description_pl,
     description_en,
     level,
+    show_level,
     display_order,
     technologies (
       name

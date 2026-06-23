@@ -37,10 +37,30 @@ export function useSkillsEditor({
     [activeGroup, setSkillGroups],
   );
 
+  const updateSkillShowLevel = useCallback(
+    (skillId: string, showLevel: boolean) => {
+      if (!activeGroup) {
+        return;
+      }
+
+      setSkillGroups((current) =>
+        patchSkillInGroups(
+          current,
+          activeGroup.id,
+          skillId,
+          "showLevel",
+          showLevel,
+        ),
+      );
+    },
+    [activeGroup, setSkillGroups],
+  );
+
   return {
     activeGroup,
     activeGroupId: activeGroup?.id ?? "",
     setActiveGroupId,
     updateSkillLevel,
+    updateSkillShowLevel,
   };
 }

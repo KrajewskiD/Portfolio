@@ -2,6 +2,7 @@ export type Skill = {
   id: string;
   name: string;
   level: number;
+  showLevel: boolean;
 };
 
 export type SkillGroupData = {

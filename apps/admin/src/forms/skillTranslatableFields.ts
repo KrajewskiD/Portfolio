@@ -4,8 +4,8 @@ export function patchSkillInGroups(
   groups: SkillGroupData[],
   groupId: string,
   skillId: string,
-  field: keyof Pick<Skill, "level">,
-  value: number,
+  field: keyof Pick<Skill, "level" | "showLevel">,
+  value: Skill[typeof field],
 ): SkillGroupData[] {
   return groups.map((group) =>
     group.id === groupId

@@ -1,7 +1,13 @@
 @layer components {
   .site-rich-text {
-    @apply text-foreground;
+    color: var(--color-reading);
+    font-weight: 400;
     text-wrap: pretty;
+  }
+
+  .site-rich-text p,
+  .site-rich-text li {
+    line-height: 1.625;
   }
 
   .site-rich-text > :first-child {
@@ -23,7 +29,7 @@
   }
 
   .site-rich-text li {
-    color: var(--color-foreground);
+    color: var(--color-reading);
   }
 
   .site-rich-text li + li {
@@ -90,7 +96,7 @@
 
   .site-body--panel.site-rich-text,
   .site-rich-text.site-body--panel {
-    @apply leading-7;
+    line-height: 1.625;
     text-align: justify;
   }
 
@@ -100,7 +106,7 @@
   }
 
   .site-hero-description__text.site-rich-text {
-    @apply leading-8;
+    line-height: 1.625;
     text-align: justify;
   }
 

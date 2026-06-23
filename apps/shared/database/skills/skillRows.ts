@@ -8,6 +8,7 @@ export type SkillGroupRow = {
     description_pl: string | null;
     description_en: string | null;
     level: number;
+    show_level: boolean | null;
     display_order: number;
     technologies: {
       name: string;

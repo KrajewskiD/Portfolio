@@ -9,8 +9,25 @@
     );
   }
 
+  .site-card--skill .site-title--skill-group {
+    margin: 0;
+    padding-bottom: 0.875rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-accent) 42%, var(--color-border));
+    font-size: 1.0625rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-align: center;
+    text-transform: uppercase;
+    color: var(--color-foreground);
+  }
+
   .site-skill-row {
-    @apply border-t border-border;
+    border-top: 1px solid
+      color-mix(in srgb, var(--color-foreground) 14%, var(--color-border));
+  }
+
+  .site-skill-row:first-child {
+    border-top: none;
   }
 
   .site-skill-item {

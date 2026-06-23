@@ -186,6 +186,7 @@
   }
 
   .site-hero-card__name {
+    @apply font-display;
     flex: 1 1 auto;
     min-width: 0;
     margin: 0;
@@ -275,6 +276,9 @@
 
   .site-hero-description__text {
     margin: 0;
+    color: var(--color-reading);
+    font-weight: 400;
+    line-height: 1.625;
     text-align: justify;
     text-wrap: pretty;
   }

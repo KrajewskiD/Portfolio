@@ -1,0 +1,23 @@
+@layer components {
+  .site-section-label,
+  .site-code,
+  .site-hero-card__label,
+  .site-chrome-info__label {
+    font-family: var(--font-mono);
+    letter-spacing: 0.06em;
+  }
+
+  .site-footer__name {
+    @apply font-display;
+  }
+}
+
+/* Heading display font must win over inherited body font-sans. */
+.site-title,
+.site-title--project,
+.site-title--skill-group,
+.site-hero-card__name,
+.site-project-thumb__name,
+.site-footer__name {
+  font-family: var(--font-display);
+}

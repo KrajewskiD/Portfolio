@@ -290,11 +290,13 @@ export const skillGroupDrafts: SkillGroupData[] = [
         id: "react",
         name: "React",
         level: 4,
+        showLevel: true,
       },
       {
         id: "typescript",
         name: "TypeScript",
         level: 4,
+        showLevel: true,
       },
     ],
   },

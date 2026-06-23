@@ -104,6 +104,7 @@ export function useSettingsSkillGroupsEditor({
         id: nextId,
         name: "Nowa umiejętność",
         level: 1,
+        showLevel: true,
       };
 
       setSettings((current) =>

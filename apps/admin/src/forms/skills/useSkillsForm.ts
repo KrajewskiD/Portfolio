@@ -30,6 +30,7 @@ export function useSkillsForm() {
     activeGroupId: editor.activeGroupId,
     setActiveGroupId: editor.setActiveGroupId,
     updateSkillLevel: editor.updateSkillLevel,
+    updateSkillShowLevel: editor.updateSkillShowLevel,
     isLoading: form.isLoading,
     isSaving: form.isSaving,
     loadError: form.loadError,

@@ -67,7 +67,7 @@ function ProjectTopicsGroup({
         ))}
       </div>
 
-      <div ref={panelRef} className="site-topic-panel">
+      <div ref={panelRef} className="site-topic-panel site-scrollbar">
         <p className="site-label text-sm">
           {projectTopicLabels[activeTopic.id][language]}
         </p>

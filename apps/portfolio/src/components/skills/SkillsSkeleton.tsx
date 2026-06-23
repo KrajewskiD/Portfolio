@@ -6,7 +6,7 @@ function SkillsSkeleton() {
     >
       {[0, 1].map((group) => (
         <article key={group} className="site-card--skill">
-          <div className="site-skeleton h-6 w-32" />
+          <div className="site-skeleton h-6 w-32 site-title--skill-group" />
 
           <div className="mt-3">
             {[0, 1, 2].map((skill) => (

@@ -15,6 +15,7 @@ function SkillsForm({ language }: AdminFormProps) {
     activeGroupId,
     setActiveGroupId,
     updateSkillLevel,
+    updateSkillShowLevel,
     isLoading,
     isSaving,
     loadError,
@@ -68,6 +69,7 @@ function SkillsForm({ language }: AdminFormProps) {
         skills={activeGroup.skills}
         disabled={isLoading}
         onLevelChange={updateSkillLevel}
+        onShowLevelChange={updateSkillShowLevel}
       />
     </AdminFormShell>
   );
