@@ -58,6 +58,7 @@ export function useProjectsEditor({
       selection.activeProject
         ? createProjectTranslateFields(selection.activeProject, language, {
             onApplyTitle: (field, text) => updateProject(field, text),
+            onApplyMiniatureAlt: (field, text) => updateProject(field, text),
             onApplyTopic: (topicId, field, text) =>
               updateProjectTopic(topicId, field, text),
           })

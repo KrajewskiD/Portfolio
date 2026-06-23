@@ -20,7 +20,6 @@ type ProjectEditorLayoutProps = {
   language: Language;
   project: Project;
   topic: ProjectTopicContent;
-  projectTitle: string;
   disabled?: boolean;
   miniature: ProjectMediaDraftState;
   topicImage: ProjectMediaDraftState;
@@ -40,7 +39,6 @@ function ProjectEditorLayout({
   language,
   project,
   topic,
-  projectTitle,
   disabled = false,
   miniature,
   topicImage,
@@ -66,11 +64,11 @@ function ProjectEditorLayout({
           <ProjectMediaColumn
             project={project}
             topic={topic}
-            projectTitle={projectTitle}
             language={language}
             disabled={disabled}
             miniature={miniature}
             topicImage={topicImage}
+            onMiniatureAltChange={onUpdateProject}
             onTopicChange={onUpdateTopic}
           />
         </div>

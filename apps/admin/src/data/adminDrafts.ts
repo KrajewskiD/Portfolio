@@ -23,6 +23,8 @@ export const projectDrafts: Project[] = [
     code: "PROJECT_01",
     titlePl: "Nazwa projektu PL",
     titleEn: "Project name EN",
+    miniatureAltPl: "Miniatura projektu PL",
+    miniatureAltEn: "Project thumbnail EN",
     technologies: [
       { name: "React", iconSlug: "logos/react" },
       { name: "TypeScript", iconSlug: "logos/typescript-icon" },
@@ -64,6 +66,8 @@ export const projectDrafts: Project[] = [
     code: "PROJECT_02",
     titlePl: "Panel administratora PL",
     titleEn: "Admin panel EN",
+    miniatureAltPl: "Miniatura panelu administratora PL",
+    miniatureAltEn: "Admin panel thumbnail EN",
     technologies: [
       { name: "React", iconSlug: "logos/react" },
       { name: "TypeScript", iconSlug: "logos/typescript-icon" },

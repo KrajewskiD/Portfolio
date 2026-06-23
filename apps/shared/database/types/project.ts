@@ -32,6 +32,8 @@ export type Project = {
   projectUrl?: string;
   titlePl: string;
   titleEn: string;
+  miniatureAltPl: string;
+  miniatureAltEn: string;
   technologies: ProjectTechnology[];
   miniaturePath?: string;
   miniatureUrl?: string;

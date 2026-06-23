@@ -8,7 +8,9 @@ function FooterIdentity({ name, description }: FooterIdentityProps) {
     <div>
       {name ? <p className="font-semibold text-foreground">{name}</p> : null}
       {description ? (
-        <p className="site-body--compact mt-2 text-muted">{description}</p>
+        <p className="site-body--compact site-footer__description mt-2 text-muted">
+          {description}
+        </p>
       ) : null}
     </div>
   );

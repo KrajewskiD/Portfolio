@@ -3,7 +3,8 @@
   .site-card--project,
   .site-panel--alert,
   .site-panel--empty,
-  .site-panel--empty-lg {
+  .site-panel--empty-lg,
+  .site-chrome-info__trigger {
     --card-gradient-angle: 145deg;
     --card-accent-x: 100%;
     --card-accent-y: 0%;

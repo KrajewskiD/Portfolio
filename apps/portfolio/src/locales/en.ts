@@ -35,6 +35,11 @@ export const en: Translations = {
     openMenu: "Open menu",
     closeMenu: "Close menu",
   },
+  header: {
+    infoTitle: "About the site",
+    infoLabel: "More information",
+    infoEmptyMessage: "No additional profile information available.",
+  },
   notFound: {
     message: "Page not found.",
     backHome: "Return to the home page",

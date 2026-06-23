@@ -234,6 +234,30 @@
     z-index: 1;
   }
 
+  @media (min-width: 1024px) {
+    .site-card--project .site-title--project {
+      font-size: clamp(2.25rem, 3vw, 3rem);
+      line-height: 1.05;
+    }
+
+    .site-card--project .site-topic-tab {
+      font-size: 1rem;
+    }
+
+    .site-card--project .site-topic-panel {
+      padding: 1.25rem;
+    }
+
+    .site-card--project .site-topic-panel .site-label {
+      font-size: 0.95rem;
+    }
+
+    .site-card--project .site-body--panel {
+      font-size: 1.125rem;
+      line-height: 1.85;
+    }
+  }
+
   @media (max-width: 639px) {
     .site-card--project {
       width: calc(100% - 1rem);

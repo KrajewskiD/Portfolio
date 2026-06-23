@@ -1,43 +1,16 @@
 @layer components {
-  @media (min-width: 640px) {
+  @media (max-width: 63.99rem) {
     .site-hero-card {
-      min-height: 20rem;
-    }
-
-    .site-hero-card__panel {
-      padding: 2.25rem 2.5rem 2.25rem 1.25rem;
-    }
-
-    .site-hero-card__social {
-      top: 2.25rem;
-      right: 2.5rem;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .site-hero-card {
-      min-height: 22rem;
-      grid-template-columns: minmax(11rem, 36%) minmax(0, 1fr);
-    }
-
-    .site-hero-card__panel {
-      padding: 2.5rem 3rem 2.5rem 1.5rem;
-    }
-
-    .site-hero-card__social {
-      top: 2.5rem;
-      right: 3rem;
-    }
-  }
-
-  @media (max-width: 639px) {
-    .site-hero-card {
-      grid-template-columns: 1fr;
-      grid-template-rows: auto 1fr;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
     }
 
     .site-hero-card__trapezoid {
-      min-height: 13rem;
+      width: 100%;
+      flex: 0 0 auto;
+      min-height: 0;
+      height: auto;
       border-radius: 1.5rem 1.5rem 0 0;
       filter: drop-shadow(0 14px 32px rgb(0 0 0 / 0.5));
     }
@@ -48,28 +21,141 @@
     }
 
     .site-hero-card__trapezoid-shape {
+      display: block;
+      height: auto;
+      min-height: 0;
+      overflow: visible;
       border-radius: 1.5rem 1.5rem 0 0;
-      clip-path: polygon(0 0, 100% 0, 100% 88%, 0 100%);
     }
 
-    .site-hero-card__panel {
-      padding: 1.5rem;
-      border-radius: 0 0 1.5rem 1.5rem;
+    .site-hero-card__trapezoid-shape::before,
+    .site-hero-card__trapezoid-shape::after {
+      border-radius: 1.5rem 1.5rem 0 0;
+      clip-path: none;
     }
 
     .site-hero-card__photo {
-      justify-content: center;
+      position: relative;
+      inset: auto;
+      display: block;
+      width: 100%;
+      height: auto;
+      clip-path: inset(0 round 1.5rem 1.5rem 0 0);
     }
 
     .site-hero-card__image {
-      height: 100%;
-      max-width: 70%;
-      object-position: center bottom;
+      display: block;
+      width: 100%;
+      height: auto;
+      vertical-align: top;
+    }
+
+    .site-hero-card__panel {
+      width: 100%;
+      flex: 1 1 auto;
+      padding: 1.5rem;
+      border-radius: 0 0 1.5rem 1.5rem;
     }
 
     .site-hero-card__social {
       top: 1.5rem;
       right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 40rem) and (max-width: 63.99rem) {
+    .site-hero-card__panel {
+      padding: 2rem;
+    }
+
+    .site-hero-card__social {
+      top: 2rem;
+      right: 2rem;
+    }
+
+    .site-hero-card__name-row {
+      margin-top: 0;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .site-hero-card {
+      display: grid;
+      grid-template-columns: minmax(12rem, 34%) minmax(0, 1fr);
+      grid-template-rows: unset;
+      min-height: 26rem;
+    }
+
+    .site-hero-card__trapezoid {
+      display: flex;
+      flex-direction: column;
+      align-self: stretch;
+      min-height: 100%;
+      height: auto;
+      border-radius: 1.5rem 0 0 1.5rem;
+      filter: drop-shadow(18px 0 36px rgb(0 0 0 / 0.55));
+    }
+
+    .site-hero-card__trapezoid::before {
+      border-radius: 1.5rem 0 0 1.5rem;
+    }
+
+    .site-hero-card__trapezoid-shape {
+      display: flex;
+      flex: 1 1 auto;
+      flex-direction: column;
+      min-height: 26rem;
+      height: auto;
+      overflow: visible;
+      border-radius: 1.5rem 0 0 1.5rem;
+    }
+
+    .site-hero-card__trapezoid-shape::before {
+      clip-path: polygon(0 0, 100% 0, 82% 100%, 0 100%);
+    }
+
+    .site-hero-card__photo {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      display: flex;
+      overflow: visible;
+      align-items: flex-end;
+      justify-content: flex-start;
+      width: auto;
+      height: auto;
+      clip-path: inset(0 -120% 0 0 round 1.5rem 0 0 1.5rem);
+    }
+
+    .site-hero-card__image {
+      display: block;
+      width: auto;
+      height: 106%;
+      max-width: 108%;
+      max-height: none;
+      object-fit: contain;
+      object-position: left bottom;
+      vertical-align: unset;
+    }
+
+    .site-hero-card__panel {
+      padding: 2.5rem 3rem 2.5rem 1.5rem;
+      border-radius: 0 1.5rem 1.5rem 0;
+    }
+
+    .site-hero-card__social {
+      top: 2.5rem;
+      right: 3rem;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .site-hero-card__image {
+      max-height: 26.5rem;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      object-position: bottom center;
     }
 
     .site-hero-card__label {

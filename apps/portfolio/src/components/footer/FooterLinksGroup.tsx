@@ -7,7 +7,7 @@ type FooterLinksGroupProps = {
 
 function FooterLinksGroup({ label, children }: FooterLinksGroupProps) {
   return (
-    <nav aria-label={label} className="flex flex-row items-center gap-4">
+    <nav aria-label={label} className="site-footer__links">
       {children}
     </nav>
   );

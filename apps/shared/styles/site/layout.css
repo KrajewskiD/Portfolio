@@ -44,6 +44,8 @@
 
   .site-body {
     @apply text-lg leading-8 text-foreground;
+    text-align: justify;
+    text-wrap: pretty;
   }
 
   .site-body--compact {
@@ -52,6 +54,15 @@
 
   .site-body--panel {
     @apply mt-2 leading-7 text-foreground;
+    text-align: justify;
+    text-wrap: pretty;
+  }
+
+  @media (max-width: 639px) {
+    .site-body,
+    .site-body--panel {
+      text-align: left;
+    }
   }
 
   .site-code {

@@ -9,7 +9,7 @@
     background-color: var(--color-surface);
   }
 
-  .site-hero-card__trapezoid-shape--skeleton {
+  .site-hero-card__trapezoid-shape--skeleton::before {
     background: rgb(228 229 232 / 0.08);
     box-shadow: none;
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;

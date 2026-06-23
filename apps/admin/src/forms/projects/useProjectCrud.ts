@@ -39,6 +39,8 @@ export function useProjectCrud({
       code: `PROJECT_${String(nextIndex).padStart(2, "0")}`,
       titlePl: "Nowy projekt PL",
       titleEn: "New project EN",
+      miniatureAltPl: "",
+      miniatureAltEn: "",
       technologies: [],
       topics: projectTopicOrder.map((topicId) =>
         createEmptyProjectTopic(topicId),

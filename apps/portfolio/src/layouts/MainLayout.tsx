@@ -25,6 +25,7 @@ type MainLayoutProps = {
   areFooterLinksError: boolean;
   footerText: Translations["footer"];
   navigationItems: NavigationLinkData[];
+  headerText: Translations["header"];
   language: Language;
   navigationText: Translations["navigation"];
   onLanguageChange: (language: Language) => void;
@@ -42,6 +43,7 @@ function MainLayout({
   navigationItems,
   language,
   navigationText,
+  headerText,
   onLanguageChange,
 }: MainLayoutProps) {
   const tiltRef = useRef<HTMLDivElement>(null);
@@ -64,6 +66,15 @@ function MainLayout({
         }
       : undefined;
 
+  const infoText = profile
+    ? getLocalizedField(
+        profile,
+        language,
+        "footerDescriptionPl",
+        "footerDescriptionEn",
+      )
+    : "";
+
   return (
     <div className="site-layout">
       <NoiseBackground />
@@ -72,6 +83,8 @@ function MainLayout({
         navigationItems={navigationItems}
         language={language}
         navigationText={navigationText}
+        headerText={headerText}
+        infoText={infoText}
         onLanguageChange={onLanguageChange}
       />
 

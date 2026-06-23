@@ -16,19 +16,27 @@ function ProjectThumbnail({
   onSelect,
 }: ProjectThumbnailProps) {
   const title = getLocalizedField(project, language, "titlePl", "titleEn");
+  const miniatureAlt = getLocalizedField(
+    project,
+    language,
+    "miniatureAltPl",
+    "miniatureAltEn",
+  );
+  const accessibleLabel = miniatureAlt ? `${title}. ${miniatureAlt}` : title;
 
   return (
     <button
       type="button"
       aria-pressed={isActive}
-      aria-label={title}
+      aria-label={accessibleLabel}
       className={`site-project-thumb shrink-0${isActive ? " site-project-thumb--active" : ""}`}
       onClick={onSelect}
     >
       {project.miniatureUrl ? (
         <img
           src={project.miniatureUrl}
-          alt={title}
+          alt=""
+          aria-hidden
           className="site-project-thumb__image"
         />
       ) : (

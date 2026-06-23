@@ -6,7 +6,7 @@ function FooterSkeleton() {
         <div className="site-skeleton mt-2 h-4 w-52" />
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="site-footer__links">
         <div className="site-skeleton h-6 w-20 sm:h-12 sm:rounded-pill" />
         <div className="site-skeleton h-6 w-20 sm:h-12 sm:rounded-pill" />
         <div className="site-skeleton h-6 w-20 sm:h-12 sm:rounded-pill" />

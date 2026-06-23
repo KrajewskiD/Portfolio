@@ -50,6 +50,14 @@
     text-underline-offset: 0.15em;
   }
 
+  .site-hero-info-reveal__text {
+    text-decoration: none;
+  }
+
+  .site-hero-email-reveal__field:hover .site-hero-info-reveal__text {
+    text-decoration: none;
+  }
+
   .site-hero-email-reveal__message {
     font-size: 0.875rem;
     font-weight: 500;
@@ -92,9 +100,9 @@
 
   .site-hero-card {
     @apply relative w-full rounded-3xl border border-accent shadow-card;
-    display: grid;
-    grid-template-columns: minmax(9rem, 38%) minmax(0, 1fr);
-    min-height: 18rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
     padding: 0;
     overflow: visible;
     background-clip: padding-box;
@@ -125,9 +133,8 @@
     position: relative;
     height: 100%;
     min-height: inherit;
-    overflow: hidden;
+    overflow: visible;
     border-radius: 1.5rem 0 0 1.5rem;
-    clip-path: polygon(0 0, 100% 0, 72% 100%, 0 100%);
   }
 
   .site-hero-card__photo {
@@ -143,7 +150,7 @@
     height: 94%;
     width: auto;
     max-width: 118%;
-    object-fit: cover;
+    object-fit: contain;
     object-position: left bottom;
   }
 
@@ -268,9 +275,15 @@
 
   .site-hero-description__text {
     margin: 0;
+    text-align: justify;
+    text-wrap: pretty;
   }
 
   @media (max-width: 639px) {
+    .site-hero-description__text {
+      text-align: left;
+    }
+
     .site-hero-description[data-collapsible="true"][data-state="collapsed"]
       .site-hero-description__text {
       display: -webkit-box;

@@ -61,6 +61,7 @@ function App() {
         footerText={translation.footer}
         navigationItems={navigationData}
         navigationText={translation.navigation}
+        headerText={translation.header}
         language={language}
         onLanguageChange={setLanguage}
       >

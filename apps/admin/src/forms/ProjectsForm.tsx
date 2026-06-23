@@ -55,7 +55,6 @@ function ProjectsForm({ language }: AdminFormProps) {
           language={language}
           project={editor.activeProject}
           topic={editor.activeTopic}
-          projectTitle={editor.activeProjectTitle}
           disabled={isFormBusy}
           miniature={mediaViewModel.miniature}
           topicImage={mediaViewModel.topicImage}

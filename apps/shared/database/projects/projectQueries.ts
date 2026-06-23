@@ -20,6 +20,8 @@ export async function getProjectsFromDatabase(
       project_url,
       title_pl,
       title_en,
+      miniature_alt_pl,
+      miniature_alt_en,
       display_order,
       miniature_path,
       project_topics (

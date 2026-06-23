@@ -4,6 +4,8 @@ export type ProjectRow = {
   project_url: string | null;
   title_pl: string;
   title_en: string;
+  miniature_alt_pl: string | null;
+  miniature_alt_en: string | null;
   display_order: number;
   miniature_path: string | null;
   project_topics: {

@@ -33,6 +33,11 @@ export type Translations = {
     openMenu: string;
     closeMenu: string;
   };
+  header: {
+    infoTitle: string;
+    infoLabel: string;
+    infoEmptyMessage: string;
+  };
   notFound: {
     message: string;
     backHome: string;
