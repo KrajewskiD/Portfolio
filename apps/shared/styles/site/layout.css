@@ -1,6 +1,5 @@
 @layer components {
   .site-layout {
-    --island-bg: #16171a;
     @apply relative isolate flex min-h-screen flex-col text-foreground;
     background: transparent;
   }

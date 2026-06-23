@@ -63,7 +63,19 @@
     @apply text-sm text-amber-300;
   }
 
-  .admin-alert-success {
-    @apply text-sm text-emerald-300;
+  .admin-markdown-preview {
+    @apply mt-3 rounded-2xl border border-white/10 bg-black/20 p-4;
+  }
+
+  .admin-markdown-preview__label {
+    @apply mb-2 text-xs font-semibold uppercase tracking-wide text-white/45;
+  }
+
+  .admin-markdown-preview .site-rich-text {
+    @apply text-sm leading-6 text-white/80;
+  }
+
+  .admin-markdown-preview .site-rich-text a {
+    color: rgb(255 107 74 / 0.92);
   }
 }

@@ -1,10 +1,11 @@
-import { useId } from "react";
+import { useEffect, useId, useRef } from "react";
 
 import {
   projectTopicIcons,
   projectTopicLabels,
   projectTopicOrder,
 } from "@shared/constants/projectTopics";
+import RichTextContent from "@shared/components/RichTextContent";
 import type { Language } from "@shared/database/types/language";
 import type {
   ProjectTopicContent,
@@ -30,6 +31,7 @@ function ProjectTopicsGroup({
   sectionLabel,
 }: ProjectTopicsGroupProps) {
   const groupId = useId();
+  const panelRef = useRef<HTMLDivElement>(null);
 
   const orderedTopics = projectTopicOrder
     .map((id) => topics.find((topic) => topic.id === id))
@@ -37,6 +39,10 @@ function ProjectTopicsGroup({
 
   const activeTopic =
     orderedTopics.find((topic) => topic.id === activeId) ?? orderedTopics[0];
+
+  useEffect(() => {
+    panelRef.current?.scrollTo({ top: 0 });
+  }, [activeId]);
 
   if (!activeTopic) {
     return null;
@@ -61,19 +67,20 @@ function ProjectTopicsGroup({
         ))}
       </div>
 
-      <div className="site-topic-panel">
+      <div ref={panelRef} className="site-topic-panel">
         <p className="site-label text-sm">
           {projectTopicLabels[activeTopic.id][language]}
         </p>
 
-        <p className="site-body--panel">
-          {getLocalizedField(
+        <RichTextContent
+          className="site-body--panel"
+          content={getLocalizedField(
             activeTopic,
             language,
             "contentPl",
             "contentEn",
           )}
-        </p>
+        />
       </div>
     </div>
   );

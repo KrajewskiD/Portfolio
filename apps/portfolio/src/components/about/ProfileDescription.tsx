@@ -1,5 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 
+import RichTextContent from "@shared/components/RichTextContent";
+
 type ProfileDescriptionProps = {
   text: string;
   expandLabel: string;
@@ -15,7 +17,7 @@ function ProfileDescription({
   collapseLabel,
 }: ProfileDescriptionProps) {
   const contentId = useId();
-  const contentRef = useRef<HTMLParagraphElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -60,13 +62,13 @@ function ProfileDescription({
       data-collapsible={isCollapsible ? "true" : "false"}
       data-state={descriptionState}
     >
-      <p
+      <div
         ref={contentRef}
         id={contentId}
         className="site-hero-description__text"
       >
-        {text}
-      </p>
+        <RichTextContent content={text} />
+      </div>
 
       {isCollapsible ? (
         <button

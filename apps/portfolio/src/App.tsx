@@ -7,6 +7,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import type { Language } from "@shared/database/types/language";
 import { translations } from "./locales";
 import { navigationData } from "./data/navigation.data";
+import { useMainPage } from "./hooks/useMainPage";
 import { useProfile } from "./hooks/useProfile";
 import { useFooterLinks } from "./hooks/useFooterLinks";
 import { useProjects } from "./hooks/useProjects";
@@ -39,6 +40,7 @@ function App() {
     isPending: areProjectsPending,
     isError: areProjectsError,
   } = useProjects();
+  const { data: mainPage } = useMainPage();
 
   const [language, setLanguage] = useState<Language>(() => {
     const savedLanguage = localStorage.getItem("language");
@@ -59,8 +61,8 @@ function App() {
   return (
     <BrowserRouter>
       <MainLayout
+        mainPage={mainPage}
         profile={profile}
-        projects={projects}
         footerLinks={footerLinks}
         isProfileLoading={isProfileLoading}
         isProfileError={isProfileError}

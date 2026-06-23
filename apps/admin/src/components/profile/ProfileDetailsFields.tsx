@@ -1,7 +1,5 @@
-import {
-  AdminLocalizedInput,
-  AdminLocalizedTextarea,
-} from "@admin/components/ui/AdminLocalizedField";
+import { AdminLocalizedMarkdownField } from "@admin/components/ui/AdminLocalizedMarkdownField";
+import { AdminLocalizedInput } from "@admin/components/ui/AdminLocalizedField";
 import AdminTextField from "@admin/components/ui/AdminTextField";
 import type { Language } from "@shared/database/types/language";
 import type { Profile } from "@shared/database/types/profile";
@@ -61,7 +59,7 @@ function ProfileDetailsFields({
           onChange={onUpdate}
         />
 
-        <AdminLocalizedTextarea
+        <AdminLocalizedMarkdownField
           id="profile-description"
           label="Opis"
           language={language}

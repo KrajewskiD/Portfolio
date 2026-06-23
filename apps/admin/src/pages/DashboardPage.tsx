@@ -4,6 +4,7 @@ import { TranslationOverlayProvider } from "@admin/context/TranslationOverlayPro
 import { useDashboardPage } from "@admin/hooks/useDashboardPage";
 import DashboardActions from "../components/DashboardActions";
 import DashboardTabs from "../components/DashboardTabs";
+import AboutSiteForm from "../forms/AboutSiteForm";
 import ProfileForm from "../forms/ProfileForm";
 import ProjectsForm from "../forms/ProjectsForm";
 import SettingsForm from "../forms/SettingsForm";
@@ -34,6 +35,8 @@ function DashboardPageContent() {
     switch (activeTabId) {
       case "profile":
         return <ProfileForm {...formProps} />;
+      case "about-site":
+        return <AboutSiteForm {...formProps} />;
       case "projects":
         return <ProjectsForm {...formProps} />;
       case "skills":

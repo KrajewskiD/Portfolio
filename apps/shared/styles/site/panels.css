@@ -4,7 +4,9 @@
   .site-panel--alert,
   .site-panel--empty,
   .site-panel--empty-lg,
-  .site-chrome-info__trigger {
+  .site-chrome-info__trigger,
+  .site-island,
+  .site-island__menu-panel {
     --card-gradient-angle: 145deg;
     --card-accent-x: 100%;
     --card-accent-y: 0%;
@@ -26,6 +28,10 @@
 
   .site-card--project {
     @apply relative isolate grid w-full min-w-0 overflow-hidden rounded-3xl border border-accent shadow-card lg:min-h-[60vh] lg:grid-cols-2;
+  }
+
+  .site-card--project.site-card--project-info {
+    @apply lg:min-h-0 lg:grid-cols-1;
   }
 
   .site-panel--alert {

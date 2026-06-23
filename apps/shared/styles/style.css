@@ -1,4 +1,5 @@
 @import "./fonts.css";
+@import "./site/rich-text.css";
 
 @theme {
   /* Colors */
@@ -8,6 +9,7 @@
   --color-muted: #8a8d93;
   --color-subtle: #8a8d93;
   --color-border: #2a2c31;
+  --island-bg: #16171a;
   --color-skeleton: rgb(228 229 232 / 0.08);
   --color-accent: #ff6b4a;
   --color-accent-soft: color-mix(

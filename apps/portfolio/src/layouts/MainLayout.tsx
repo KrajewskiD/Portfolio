@@ -12,14 +12,15 @@ import type {
   FooterLinkData,
   NavigationLinkData,
 } from "@shared/database/types/link";
+import type { MainPage } from "@shared/database/types/mainPage";
 import type { Profile } from "@shared/database/types/profile";
-import type { Project } from "@shared/database/types/project";
+import { getAboutSiteProject } from "@shared/utils/aboutSiteProject";
 import { getLocalizedField } from "@shared/utils/localizedField";
 
 type MainLayoutProps = {
   children: ReactNode;
+  mainPage?: MainPage;
   profile?: Profile;
-  projects?: Project[];
   footerLinks?: FooterLinkData[];
   isProfileLoading: boolean;
   isProfileError: boolean;
@@ -36,8 +37,8 @@ type MainLayoutProps = {
 
 function MainLayout({
   children,
+  mainPage,
   profile,
-  projects,
   footerLinks,
   isProfileLoading,
   isProfileError,
@@ -71,7 +72,7 @@ function MainLayout({
         }
       : undefined;
 
-  const featuredProject = projects?.[0];
+  const featuredProject = mainPage ? getAboutSiteProject(mainPage) : undefined;
 
   return (
     <div className="site-layout">
@@ -99,6 +100,8 @@ function MainLayout({
           />
         </div>
       </ParchmentScroll>
+
+      <div id="site-portal-root" />
     </div>
   );
 }

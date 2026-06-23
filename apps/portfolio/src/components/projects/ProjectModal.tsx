@@ -12,6 +12,10 @@ type ProjectModalProps = {
   children: ReactNode;
 };
 
+function getPortalRoot(): HTMLElement {
+  return document.getElementById("site-portal-root") ?? document.body;
+}
+
 function ProjectModal({
   isOpen,
   closeLabel,
@@ -73,7 +77,7 @@ function ProjectModal({
         {children}
       </div>
     </div>,
-    document.body,
+    getPortalRoot(),
   );
 }
 

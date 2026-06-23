@@ -2,7 +2,7 @@ import { projectTopicLabels } from "@shared/constants/projectTopics";
 import type { Language } from "@shared/database/types/language";
 import type { ProjectTopicContent } from "@shared/database/types/project";
 
-import { AdminLocalizedTextarea } from "@admin/components/ui/AdminLocalizedField";
+import { AdminLocalizedMarkdownField } from "@admin/components/ui/AdminLocalizedMarkdownField";
 import type { ProjectTopicContentField } from "@admin/forms/projects/projectEditorTypes";
 
 type ProjectTopicContentPanelProps = {
@@ -22,11 +22,11 @@ function ProjectTopicContentPanel({
   const fieldId = `${topic.id}-content`;
 
   return (
-    <AdminLocalizedTextarea
+    <AdminLocalizedMarkdownField
       id={fieldId}
       label={topicLabel}
       language={language}
-      rows={4}
+      rows={8}
       disabled={disabled}
       source={topic}
       plKey="contentPl"

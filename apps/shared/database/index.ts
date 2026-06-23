@@ -5,6 +5,7 @@ export {
   normalizeFooterLinkIds,
   normalizeSkillGroupIds,
 } from "./ids";
+export { getMainPageFromDatabase } from "./mainPage";
 export { getProfileFromDatabase } from "./profile";
 export { getProjectsFromDatabase } from "./projects";
 export { getSkillGroupsFromDatabase } from "./skills";
