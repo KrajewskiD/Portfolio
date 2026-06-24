@@ -6,7 +6,5 @@ import { AuthContext } from "./AuthContext";
 export function AuthProvider({ children }: { children: ReactNode }) {
   const value = useAuthState();
 
-  return (
-    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

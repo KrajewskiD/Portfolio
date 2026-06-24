@@ -25,7 +25,10 @@ type UseSessionTimeoutParams = {
   isLoading: boolean;
 };
 
-export function useSessionTimeout({ session, isLoading }: UseSessionTimeoutParams) {
+export function useSessionTimeout({
+  session,
+  isLoading,
+}: UseSessionTimeoutParams) {
   useEffect(() => {
     if (isLoading) {
       return;

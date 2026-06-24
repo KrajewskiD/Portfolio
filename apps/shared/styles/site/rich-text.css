@@ -81,7 +81,11 @@
     overflow-x: auto;
     border-radius: 0.75rem;
     border: 1px solid var(--color-border);
-    background: color-mix(in srgb, var(--color-background) 55%, var(--color-surface));
+    background: color-mix(
+      in srgb,
+      var(--color-background) 55%,
+      var(--color-surface)
+    );
     padding: 0.875rem 1rem;
   }
 

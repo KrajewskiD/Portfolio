@@ -20,8 +20,12 @@ function SiteTooltip({
   const isControlled = visible !== undefined;
   const bubbleClassName = [
     "site-tooltip__bubble",
-    align === "end" ? "site-tooltip__bubble--end" : "site-tooltip__bubble--center",
-    isControlled ? "site-tooltip__bubble--visible" : "site-tooltip__bubble--hover",
+    align === "end"
+      ? "site-tooltip__bubble--end"
+      : "site-tooltip__bubble--center",
+    isControlled
+      ? "site-tooltip__bubble--visible"
+      : "site-tooltip__bubble--hover",
   ]
     .filter(Boolean)
     .join(" ");

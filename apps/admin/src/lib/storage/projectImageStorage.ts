@@ -37,7 +37,9 @@ export async function getVersionedProjectMiniatureUrl(
   );
 }
 
-export async function getVersionedProjectImageUrl(path: string): Promise<string> {
+export async function getVersionedProjectImageUrl(
+  path: string,
+): Promise<string> {
   return getVersionedStorageUrl(
     PROJECT_IMAGES_BUCKET,
     path,
@@ -54,7 +56,7 @@ export async function uploadProjectTopicImage(
   await assertWebpImageFile(file);
   assertBucket(PROJECT_IMAGES_BUCKET, "project-images");
 
-  const path = `${projectId}/${topicId}.webp`;
+  const path = `${projectId}/${topicId}-${crypto.randomUUID()}.webp`;
 
   await uploadStorageFile({
     bucket: PROJECT_IMAGES_BUCKET,
@@ -74,7 +76,7 @@ export async function uploadProjectMiniature(
   await assertWebpImageFile(file);
   assertBucket(PROJECT_MINIATURES_BUCKET, "project-miniatures");
 
-  const path = getProjectMiniatureStoragePath(projectId);
+  const path = getProjectMiniatureStoragePath(projectId, crypto.randomUUID());
 
   await uploadStorageFile({
     bucket: PROJECT_MINIATURES_BUCKET,
@@ -96,11 +98,11 @@ export async function deleteProjectMiniature(path: string): Promise<void> {
   await deleteStorageFiles(PROJECT_MINIATURES_BUCKET, [path]);
 }
 
-export async function deleteProjectMiniatures(projectId: string): Promise<void> {
-  await deleteStorageFiles(PROJECT_MINIATURES_BUCKET, [
-    getProjectMiniatureStoragePath(projectId),
-    `${projectId}.webp`,
-  ]);
+export async function deleteProjectMiniatures(
+  projectId: string,
+): Promise<void> {
+  await deleteStorageFolder(PROJECT_MINIATURES_BUCKET, projectId);
+  await deleteStorageFiles(PROJECT_MINIATURES_BUCKET, [`${projectId}.webp`]);
 }
 
 export async function deleteProjectImages(projectId: string): Promise<void> {

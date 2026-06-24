@@ -80,7 +80,11 @@ function createTopicTranslateFields(
 export function createProjectTranslateFields(
   project: Project,
   language: Language,
-  { onApplyTitle, onApplyMiniatureAlt, onApplyTopic }: ProjectTranslateCallbacks,
+  {
+    onApplyTitle,
+    onApplyMiniatureAlt,
+    onApplyTopic,
+  }: ProjectTranslateCallbacks,
 ): TranslateFieldItem[] {
   const titleFields = createTranslateFields(
     project,

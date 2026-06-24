@@ -6,7 +6,10 @@ import type {
   ProjectTopicImageField,
 } from "@admin/forms/projects/projectEditorTypes";
 import type { Language } from "@shared/database/types/language";
-import type { Project, ProjectTopicContent } from "@shared/database/types/project";
+import type {
+  Project,
+  ProjectTopicContent,
+} from "@shared/database/types/project";
 
 type ProjectMediaColumnProps = {
   project: Project;
@@ -15,7 +18,10 @@ type ProjectMediaColumnProps = {
   disabled?: boolean;
   miniature: ProjectMediaDraftState;
   topicImage: ProjectMediaDraftState;
-  onMiniatureAltChange: (field: ProjectMiniatureAltField, value: string) => void;
+  onMiniatureAltChange: (
+    field: ProjectMiniatureAltField,
+    value: string,
+  ) => void;
   onTopicChange: (field: ProjectTopicImageField, value: string) => void;
 };
 

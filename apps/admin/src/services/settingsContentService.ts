@@ -91,8 +91,8 @@ export async function saveAdminSettings({
     }),
   );
 
-  await syncDeletedSkillGroups(skillGroups);
-  await syncDeletedFooterLinks(normalizedFooterLinks);
   await saveAdminSkillGroups(skillGroups);
   await saveAdminFooterLinks(normalizedFooterLinks);
+  await syncDeletedSkillGroups(skillGroups);
+  await syncDeletedFooterLinks(normalizedFooterLinks);
 }

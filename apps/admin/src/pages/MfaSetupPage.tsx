@@ -4,15 +4,8 @@ import MfaCodeInput from "../components/MfaCodeInput";
 import AuthButton from "../components/AuthButton";
 
 function MfaSetupPage() {
-  const {
-    enrollment,
-    code,
-    setCode,
-    errorMessage,
-    isLoading,
-    enroll,
-    verify,
-  } = useMfaSetup();
+  const { enrollment, code, setCode, errorMessage, isLoading, enroll, verify } =
+    useMfaSetup();
 
   return (
     <AuthLayout

@@ -7,7 +7,7 @@ import ProfileEmailReveal from "./ProfileEmailReveal";
 import ProfileLink from "./ProfileLink";
 import ProfileMailLoadingDots from "./ProfileMailLoadingDots";
 
-type ProfileSocialLinksProps = {
+export type ProfileSocialLinksProps = {
   links?: FooterLinkData[];
   socialLinksLabel: string;
   emailLabel: string;

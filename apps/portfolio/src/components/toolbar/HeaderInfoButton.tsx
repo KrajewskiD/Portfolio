@@ -37,7 +37,9 @@ function HeaderInfoButton({
         <button
           type="button"
           className="site-chrome-info__trigger"
+          aria-label={title}
           aria-expanded={isOpen}
+          title={title}
           onClick={() => setIsOpen(true)}
         >
           <span className="site-chrome-info__label">{title}</span>

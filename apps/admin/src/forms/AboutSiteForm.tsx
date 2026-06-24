@@ -22,8 +22,21 @@ import {
   type ProjectTechnology,
 } from "@shared/database/types/project";
 import { DEFAULT_PROJECT_TOPIC_ID } from "@shared/database/types/projectTopic";
-import type { ProjectTextField, TopicTextField } from "./projects/projectEditorTypes";
-import { applyAboutSiteProject, getAboutSiteProject } from "@shared/utils/aboutSiteProject";
+import type {
+  ProjectTextField,
+  TopicTextField,
+} from "./projects/projectEditorTypes";
+import {
+  applyAboutSiteProject,
+  getAboutSiteProject,
+} from "@shared/utils/aboutSiteProject";
+import {
+  appendTechnologyToProject,
+  removeTechnologyFromProject,
+  updateProjectFieldValue,
+  updateProjectTopicFieldValue,
+  updateTechnologyInProject,
+} from "./projects/projectEditorMutations";
 
 function AboutSiteForm({ language }: AdminFormProps) {
   const { isOverlayOpen } = useTranslationOverlay();
@@ -51,10 +64,9 @@ function AboutSiteForm({ language }: AdminFormProps) {
   }
 
   function updateProject(field: ProjectTextField, value: string) {
-    updateProjectValue((project) => ({
-      ...project,
-      [field]: value,
-    }));
+    updateProjectValue((project) =>
+      updateProjectFieldValue(project, field, value),
+    );
   }
 
   function updateTopic(field: TopicTextField, value: string) {
@@ -62,19 +74,15 @@ function AboutSiteForm({ language }: AdminFormProps) {
       return;
     }
 
-    updateProjectValue((project) => ({
-      ...project,
-      topics: project.topics.map((topic) =>
-        topic.id === activeTopic.id ? { ...topic, [field]: value } : topic,
-      ),
-    }));
+    updateProjectValue((project) =>
+      updateProjectTopicFieldValue(project, activeTopic.id, field, value),
+    );
   }
 
   function addTechnology() {
-    updateProjectValue((project) => ({
-      ...project,
-      technologies: [...project.technologies, createEmptyProjectTechnology()],
-    }));
+    updateProjectValue((project) =>
+      appendTechnologyToProject(project, createEmptyProjectTechnology()),
+    );
   }
 
   function updateTechnology(
@@ -82,40 +90,29 @@ function AboutSiteForm({ language }: AdminFormProps) {
     field: keyof Pick<ProjectTechnology, "name" | "iconSlug">,
     value: string,
   ) {
-    updateProjectValue((project) => ({
-      ...project,
-      technologies: project.technologies.map((technology, currentIndex) =>
-        currentIndex === index ? { ...technology, [field]: value } : technology,
-      ),
-    }));
+    updateProjectValue((project) =>
+      updateTechnologyInProject(project, index, field, value),
+    );
   }
 
   function removeTechnology(index: number) {
-    updateProjectValue((project) => ({
-      ...project,
-      technologies: project.technologies.filter((_, currentIndex) => currentIndex !== index),
-    }));
+    updateProjectValue((project) =>
+      removeTechnologyFromProject(project, index),
+    );
   }
 
   const bulkTranslate = useTranslateFields({
     language,
     disabled: formDisabled,
-    fields: createProjectTranslateFields(
-      aboutSiteProject,
-      language,
-      {
-        onApplyTitle: (field, text) => updateProject(field, text),
-        onApplyMiniatureAlt: () => {},
-        onApplyTopic: (topicId, field, text) => {
-          updateProjectValue((project) => ({
-            ...project,
-            topics: project.topics.map((topic) =>
-              topic.id === topicId ? { ...topic, [field]: text } : topic,
-            ),
-          }));
-        },
+    fields: createProjectTranslateFields(aboutSiteProject, language, {
+      onApplyTitle: (field, text) => updateProject(field, text),
+      onApplyMiniatureAlt: (field, text) => updateProject(field, text),
+      onApplyTopic: (topicId, field, text) => {
+        updateProjectValue((project) =>
+          updateProjectTopicFieldValue(project, topicId, field, text),
+        );
       },
-    ),
+    }),
   });
 
   return (

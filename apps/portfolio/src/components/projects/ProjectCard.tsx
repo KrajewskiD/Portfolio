@@ -7,7 +7,9 @@ type ProjectCardProps = {
 
 function ProjectCard({ children, className = "" }: ProjectCardProps) {
   return (
-    <article className={["site-card--project", className].filter(Boolean).join(" ")}>
+    <article
+      className={["site-card--project", className].filter(Boolean).join(" ")}
+    >
       {children}
     </article>
   );

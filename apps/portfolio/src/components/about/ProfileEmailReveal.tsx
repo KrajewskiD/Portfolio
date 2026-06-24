@@ -41,10 +41,7 @@ function ProfileEmailReveal({
         align="end"
         className="site-tooltip--field"
       >
-        <div
-          className="site-hero-email-reveal__field"
-          aria-live="polite"
-        >
+        <div className="site-hero-email-reveal__field" aria-live="polite">
           {panelState === "success" && email ? (
             <>
               <span className="site-hero-email-reveal__value">{email}</span>
@@ -73,7 +70,9 @@ function ProfileEmailReveal({
               </button>
             </>
           ) : (
-            <span className="site-hero-email-reveal__message">{panelMessage}</span>
+            <span className="site-hero-email-reveal__message">
+              {panelMessage}
+            </span>
           )}
         </div>
       </SiteTooltip>

@@ -17,7 +17,9 @@ function SkillItem({
     <div className="site-skill-row">
       <div className="site-skill-item">
         <span className="site-skill-name">{name}</span>
-        {showLevel ? <SkillLevel level={level} levelLabel={levelLabel} /> : null}
+        {showLevel ? (
+          <SkillLevel level={level} levelLabel={levelLabel} />
+        ) : null}
       </div>
     </div>
   );

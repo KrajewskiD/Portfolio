@@ -1,9 +1,6 @@
 import { normalizeProjectTopics } from "../../constants/projectTopics";
 import type { MainPage } from "../types/mainPage";
-import type {
-  ProjectTechnology,
-  ProjectTopicContent,
-} from "../types/project";
+import type { ProjectTechnology, ProjectTopicContent } from "../types/project";
 import type { MainPageRow } from "./mainPageRows";
 
 function mapAboutSiteTechnologies(value: unknown): ProjectTechnology[] {
@@ -59,7 +56,9 @@ export function mapMainPageRow(data: MainPageRow): MainPage {
     aboutSiteProjectUrl: data.about_site_project_url ?? "",
     aboutSiteTitlePl: data.about_site_title_pl ?? "",
     aboutSiteTitleEn: data.about_site_title_en ?? "",
-    aboutSiteTechnologies: mapAboutSiteTechnologies(data.about_site_technologies),
+    aboutSiteTechnologies: mapAboutSiteTechnologies(
+      data.about_site_technologies,
+    ),
     aboutSiteTopics: normalizeProjectTopics({
       id: "about-site",
       titlePl: "",

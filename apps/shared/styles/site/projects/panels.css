@@ -1,0 +1,31 @@
+@layer components {
+  @media (min-width: 1024px) {
+    .site-card--project .site-topic-panel {
+      flex: 1 1 0;
+      min-height: 0;
+      width: 100%;
+      max-width: 100%;
+      margin-top: 0.75rem;
+      border-left-width: 0;
+      border-top: 1px solid var(--color-border);
+      overflow-y: scroll;
+      overscroll-behavior: contain;
+      scrollbar-gutter: stable;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
+  .site-project-modal .site-topic-panel {
+    flex: 1 1 0;
+    width: 100%;
+    max-width: 100%;
+    min-height: 0;
+    margin-top: 0.75rem;
+    border-left-width: 0;
+    border-top: 1px solid var(--color-border);
+    overflow-y: scroll;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    -webkit-overflow-scrolling: touch;
+  }
+}

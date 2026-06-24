@@ -54,7 +54,9 @@ function ProjectSkeleton() {
                   }`}
                 >
                   <div className="site-skeleton h-5 w-5 sm:hidden" />
-                  <div className={`site-skeleton hidden h-5 ${width} sm:block`} />
+                  <div
+                    className={`site-skeleton hidden h-5 ${width} sm:block`}
+                  />
                 </div>
               ))}
             </div>

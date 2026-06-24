@@ -1,10 +1,13 @@
 import { supabase } from "@admin/lib/supabase";
-import { deleteStorageFiles, uploadStorageFile } from "@admin/lib/storageOperations";
 import {
-  PROFILE_IMAGE_STORAGE_PATH,
+  deleteStorageFiles,
+  uploadStorageFile,
+} from "@admin/lib/storageOperations";
+import {
   PROFILE_IMAGES_BUCKET,
   assertValidProfileImagePath,
   createBucketUrlResolver,
+  getProfileImageStoragePath,
 } from "@shared/database";
 import { WEBP_IMAGE_ACCEPT } from "@shared/utils/webpImage";
 
@@ -17,7 +20,9 @@ export const getProfileImagePublicUrl = createBucketUrlResolver(
   PROFILE_IMAGES_BUCKET,
 );
 
-export async function getVersionedProfileImageUrl(path: string): Promise<string> {
+export async function getVersionedProfileImageUrl(
+  path: string,
+): Promise<string> {
   return getVersionedStorageUrl(
     PROFILE_IMAGES_BUCKET,
     path,
@@ -30,7 +35,7 @@ export async function uploadProfileImage(file: File): Promise<string> {
   await assertWebpImageFile(file);
   assertBucket(PROFILE_IMAGES_BUCKET, "profile-images");
 
-  const path = PROFILE_IMAGE_STORAGE_PATH;
+  const path = getProfileImageStoragePath(crypto.randomUUID());
 
   await uploadStorageFile({
     bucket: PROFILE_IMAGES_BUCKET,

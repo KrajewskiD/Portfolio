@@ -1,4 +1,7 @@
-import { assertValidProfileImagePath, getProfileFromDatabase } from "@shared/database";
+import {
+  assertValidProfileImagePath,
+  getProfileFromDatabase,
+} from "@shared/database";
 import { hydrateProfileImage } from "@shared/database/profile/hydrateProfileImage";
 import { mapProfileToRow } from "@shared/database/profile/profileMapper";
 import { supabase } from "@admin/lib/supabase";
@@ -6,9 +9,13 @@ import { getProfileImagePublicUrl } from "@admin/lib/imageStorage";
 import type { Profile } from "@shared/database/types/profile";
 
 export async function getAdminProfile(): Promise<Profile> {
-  const profile = await getProfileFromDatabase(supabase, getProfileImagePublicUrl, {
-    includeEmail: true,
-  });
+  const profile = await getProfileFromDatabase(
+    supabase,
+    getProfileImagePublicUrl,
+    {
+      includeEmail: true,
+    },
+  );
 
   return hydrateProfileImage(supabase, profile, {
     getProfileImagePublicUrl,

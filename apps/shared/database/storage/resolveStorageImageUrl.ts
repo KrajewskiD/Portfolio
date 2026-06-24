@@ -4,12 +4,11 @@ export type ResolveStorageImageUrlOptions = {
   forceVersion?: string | number;
 };
 
-export function appendCacheBust(
-  url: string,
-  version: string | number,
-): string {
+export function appendCacheBust(url: string, version: string | number): string {
   const [base] = url.split("?");
-  const params = new URLSearchParams(url.includes("?") ? url.split("?")[1] : "");
+  const params = new URLSearchParams(
+    url.includes("?") ? url.split("?")[1] : "",
+  );
   params.set("v", String(version));
 
   return `${base}?${params.toString()}`;

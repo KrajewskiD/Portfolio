@@ -1,6 +1,4 @@
-import {
-  validateWebpImageFile,
-} from "@shared/utils/webpImage";
+import { validateWebpImageFile } from "@shared/utils/webpImage";
 
 export function assertBucket(bucket: string, expectedBucket: string): void {
   if (bucket !== expectedBucket) {

@@ -50,11 +50,7 @@ function ProjectTopicsGroup({
 
   return (
     <div className="site-topic-group">
-      <div
-        role="group"
-        aria-label={sectionLabel}
-        className="site-topic-list"
-      >
+      <div role="group" aria-label={sectionLabel} className="site-topic-list">
         {orderedTopics.map((topic) => (
           <ProjectTopic
             key={topic.id}

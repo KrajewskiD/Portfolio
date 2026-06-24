@@ -22,6 +22,87 @@ type AdminImagePickerProps = {
   onImageMarkedForRemovalChange?: (marked: boolean) => void;
 };
 
+type AdminImagePickerControlsProps = {
+  selectedFile?: File | null;
+  imageMarkedForRemoval: boolean;
+  disabled: boolean;
+  openPicker: () => void;
+  onFileSelect: (file: File | null) => void;
+  onImageMarkedForRemovalChange?: (marked: boolean) => void;
+};
+
+function AdminImagePickerControls({
+  selectedFile,
+  imageMarkedForRemoval,
+  disabled,
+  openPicker,
+  onFileSelect,
+  onImageMarkedForRemovalChange,
+}: AdminImagePickerControlsProps) {
+  return (
+    <AdminImagePreviewSelectCorner>
+      {selectedFile ? (
+        <AdminImagePreviewSelectButton
+          label="Anuluj"
+          variant="ghost"
+          disabled={disabled}
+          onClick={() => onFileSelect(null)}
+        />
+      ) : null}
+
+      {imageMarkedForRemoval && onImageMarkedForRemovalChange ? (
+        <AdminImagePreviewSelectButton
+          label="Cofnij"
+          variant="ghost"
+          disabled={disabled}
+          onClick={() => onImageMarkedForRemovalChange(false)}
+        />
+      ) : null}
+
+      <AdminImagePreviewSelectButton disabled={disabled} onClick={openPicker} />
+    </AdminImagePreviewSelectCorner>
+  );
+}
+
+type AdminImagePickerMessagesProps = {
+  fileError?: string;
+  selectedFile?: File | null;
+  selectedFileHint?: string;
+  isAnimatedWebp: boolean | null;
+  imageMarkedForRemoval: boolean;
+};
+
+function AdminImagePickerMessages({
+  fileError,
+  selectedFile,
+  selectedFileHint,
+  isAnimatedWebp,
+  imageMarkedForRemoval,
+}: AdminImagePickerMessagesProps) {
+  return (
+    <AdminFilePickerMessages
+      fileError={fileError}
+      selectedFileName={selectedFile?.name}
+      selectedFileHint={
+        selectedFileHint ? (
+          <span
+            className={
+              isAnimatedWebp ? "text-emerald-300/90" : "text-amber-300/90"
+            }
+          >
+            {selectedFileHint}
+          </span>
+        ) : undefined
+      }
+      markedForRemovalMessage={
+        imageMarkedForRemoval
+          ? "Zdjęcie zostanie usunięte po kliknięciu „Zapisz”."
+          : undefined
+      }
+    />
+  );
+}
+
 function AdminImagePicker({
   label,
   hint,
@@ -76,53 +157,22 @@ function AdminImagePicker({
           onChange={handleInputChange}
         />
 
-        <AdminImagePreviewSelectCorner>
-          {selectedFile ? (
-            <AdminImagePreviewSelectButton
-              label="Anuluj"
-              variant="ghost"
-              disabled={disabled}
-              onClick={() => onFileSelect(null)}
-            />
-          ) : null}
-
-          {imageMarkedForRemoval && onImageMarkedForRemovalChange ? (
-            <AdminImagePreviewSelectButton
-              label="Cofnij"
-              variant="ghost"
-              disabled={disabled}
-              onClick={() => onImageMarkedForRemovalChange(false)}
-            />
-          ) : null}
-
-          <AdminImagePreviewSelectButton
-            disabled={disabled}
-            onClick={openPicker}
-          />
-        </AdminImagePreviewSelectCorner>
+        <AdminImagePickerControls
+          selectedFile={selectedFile}
+          imageMarkedForRemoval={imageMarkedForRemoval}
+          disabled={disabled}
+          openPicker={openPicker}
+          onFileSelect={onFileSelect}
+          onImageMarkedForRemovalChange={onImageMarkedForRemovalChange}
+        />
       </AdminImagePreview>
 
-      <AdminFilePickerMessages
+      <AdminImagePickerMessages
         fileError={fileError}
-        selectedFileName={selectedFile?.name}
-        selectedFileHint={
-          selectedFileHint ? (
-            <span
-              className={
-                isAnimatedWebp
-                  ? "text-emerald-300/90"
-                  : "text-amber-300/90"
-              }
-            >
-              {selectedFileHint}
-            </span>
-          ) : undefined
-        }
-        markedForRemovalMessage={
-          imageMarkedForRemoval
-            ? "Zdjęcie zostanie usunięte po kliknięciu „Zapisz”."
-            : undefined
-        }
+        selectedFile={selectedFile}
+        selectedFileHint={selectedFileHint}
+        isAnimatedWebp={isAnimatedWebp}
+        imageMarkedForRemoval={imageMarkedForRemoval}
       />
     </AdminField>
   );

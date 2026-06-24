@@ -11,6 +11,12 @@ import { useMainPage } from "./hooks/useMainPage";
 import { useProfile } from "./hooks/useProfile";
 import { useFooterLinks } from "./hooks/useFooterLinks";
 import { useProjects } from "./hooks/useProjects";
+import { useSkillGroups } from "./hooks/useSkillGroups";
+import {
+  getLanguageFromUrl,
+  scrollToHashSection,
+  updateLanguageUrl,
+} from "./utils/languageUrl";
 
 function detectPreferredLanguage(): Language {
   const preferredLanguages =
@@ -40,23 +46,66 @@ function App() {
     isPending: areProjectsPending,
     isError: areProjectsError,
   } = useProjects();
+  const {
+    data: skillGroups,
+    isPending: areSkillGroupsPending,
+    isError: areSkillGroupsError,
+  } = useSkillGroups();
   const { data: mainPage } = useMainPage();
 
   const [language, setLanguage] = useState<Language>(() => {
-    const savedLanguage = localStorage.getItem("language");
-
-    if (savedLanguage === "pl" || savedLanguage === "en") {
-      return savedLanguage;
-    }
-
-    return detectPreferredLanguage();
+    return getLanguageFromUrl() ?? detectPreferredLanguage();
   });
 
   const translation = translations[language];
+
   useEffect(() => {
     document.documentElement.lang = language;
-    localStorage.setItem("language", language);
   }, [language]);
+
+  useEffect(() => {
+    function syncLanguageFromUrl() {
+      const urlLanguage = getLanguageFromUrl();
+
+      if (urlLanguage) {
+        setLanguage(urlLanguage);
+      }
+
+      scrollToHashSection();
+    }
+
+    syncLanguageFromUrl();
+
+    window.addEventListener("hashchange", syncLanguageFromUrl);
+    window.addEventListener("popstate", syncLanguageFromUrl);
+
+    return () => {
+      window.removeEventListener("hashchange", syncLanguageFromUrl);
+      window.removeEventListener("popstate", syncLanguageFromUrl);
+    };
+  }, []);
+
+  const handleLanguageChange = (nextLanguage: Language) => {
+    setLanguage(nextLanguage);
+    updateLanguageUrl(nextLanguage);
+  };
+
+  const homePage = (
+    <HomePage
+      language={language}
+      profile={profile}
+      footerLinks={footerLinks}
+      projects={projects}
+      skillGroups={skillGroups}
+      isProfileLoading={isProfileLoading}
+      isProfileError={isProfileError}
+      areProjectsPending={areProjectsPending}
+      areProjectsError={areProjectsError}
+      areSkillGroupsPending={areSkillGroupsPending}
+      areSkillGroupsError={areSkillGroupsError}
+      socialLinksLabel={translation.footer.socialLinksLabel}
+    />
+  );
 
   return (
     <BrowserRouter>
@@ -69,30 +118,18 @@ function App() {
         areFooterLinksLoading={areFooterLinksLoading}
         areFooterLinksError={areFooterLinksError}
         footerText={translation.footer}
+        aboutText={translation.about}
         projectText={translation.projects}
         navigationItems={navigationData}
         navigationText={translation.navigation}
         headerText={translation.header}
         language={language}
-        onLanguageChange={setLanguage}
+        onLanguageChange={handleLanguageChange}
       >
         <Routes>
-          <Route
-            path="/"
-            element={
-              <HomePage
-                language={language}
-                profile={profile}
-                footerLinks={footerLinks}
-                projects={projects}
-                isProfileLoading={isProfileLoading}
-                isProfileError={isProfileError}
-                areProjectsPending={areProjectsPending}
-                areProjectsError={areProjectsError}
-                socialLinksLabel={translation.footer.socialLinksLabel}
-              />
-            }
-          />
+          <Route path="/" element={homePage} />
+          <Route path="/pl" element={homePage} />
+          <Route path="/en" element={homePage} />
           <Route
             path="*"
             element={

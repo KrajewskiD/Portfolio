@@ -1,11 +1,11 @@
+import type { ReactNode } from "react";
 import type { Language } from "@shared/database/types/language";
 
 import AdminInput from "./AdminInput";
-import AdminTranslatableField from "./AdminTranslatableField";
 import AdminTextarea from "./AdminTextarea";
-import { useLocalizedFieldState } from "./adminLocalizedFieldState";
+import AdminLocalizedFieldShell from "./AdminLocalizedFieldShell";
 
-type AdminLocalizedInputProps<
+type AdminLocalizedFieldBaseProps<
   TPl extends string,
   TEn extends string,
   TSource extends Record<TPl | TEn, string>,
@@ -19,6 +19,13 @@ type AdminLocalizedInputProps<
   plKey: TPl;
   enKey: TEn;
   onChange: (field: TPl | TEn, value: string) => void;
+};
+
+type AdminLocalizedInputProps<
+  TPl extends string,
+  TEn extends string,
+  TSource extends Record<TPl | TEn, string>,
+> = AdminLocalizedFieldBaseProps<TPl, TEn, TSource> & {
   maxLength?: number;
 };
 
@@ -38,46 +45,44 @@ export function AdminLocalizedInput<
   onChange,
   maxLength,
 }: AdminLocalizedInputProps<TPl, TEn, TSource>) {
-  const { localizedKey, oppositeKey, localizedValue, sourceText } =
-    useLocalizedFieldState(source, language, plKey, enKey);
-
   return (
-    <AdminTranslatableField
+    <AdminLocalizedFieldShell
       id={id}
       label={label}
       hint={hint}
       language={language}
       disabled={disabled}
-      sourceText={sourceText}
-      onApply={(text) => onChange(oppositeKey, text)}
+      source={source}
+      plKey={plKey}
+      enKey={enKey}
+      onChange={onChange}
     >
-      <AdminInput
-        id={id}
-        maxLength={maxLength}
-        value={localizedValue}
-        disabled={disabled}
-        onChange={(event) => onChange(localizedKey, event.target.value)}
-      />
-    </AdminTranslatableField>
+      {({
+        id: inputId,
+        disabled: isDisabled,
+        localizedValue,
+        onLocalizedChange,
+      }) => (
+        <AdminInput
+          id={inputId}
+          maxLength={maxLength}
+          value={localizedValue}
+          disabled={isDisabled}
+          onChange={(event) => onLocalizedChange(event.target.value)}
+        />
+      )}
+    </AdminLocalizedFieldShell>
   );
 }
 
-type AdminLocalizedTextareaProps<
+export type AdminLocalizedTextareaProps<
   TPl extends string,
   TEn extends string,
   TSource extends Record<TPl | TEn, string>,
-> = {
-  id: string;
-  label: string;
-  hint?: string;
-  language: Language;
-  disabled?: boolean;
-  source: TSource;
-  plKey: TPl;
-  enKey: TEn;
-  onChange: (field: TPl | TEn, value: string) => void;
+> = AdminLocalizedFieldBaseProps<TPl, TEn, TSource> & {
   rows?: number;
   className?: string;
+  after?: (localizedValue: string) => ReactNode;
 };
 
 export function AdminLocalizedTextarea<
@@ -96,28 +101,38 @@ export function AdminLocalizedTextarea<
   onChange,
   rows = 5,
   className,
+  after,
 }: AdminLocalizedTextareaProps<TPl, TEn, TSource>) {
-  const { localizedKey, oppositeKey, localizedValue, sourceText } =
-    useLocalizedFieldState(source, language, plKey, enKey);
-
   return (
-    <AdminTranslatableField
+    <AdminLocalizedFieldShell
       id={id}
       label={label}
       hint={hint}
       language={language}
       className={className}
       disabled={disabled}
-      sourceText={sourceText}
-      onApply={(text) => onChange(oppositeKey, text)}
+      source={source}
+      plKey={plKey}
+      enKey={enKey}
+      onChange={onChange}
     >
-      <AdminTextarea
-        id={id}
-        rows={rows}
-        value={localizedValue}
-        disabled={disabled}
-        onChange={(event) => onChange(localizedKey, event.target.value)}
-      />
-    </AdminTranslatableField>
+      {({
+        id: textareaId,
+        disabled: isDisabled,
+        localizedValue,
+        onLocalizedChange,
+      }) => (
+        <>
+          <AdminTextarea
+            id={textareaId}
+            rows={rows}
+            value={localizedValue}
+            disabled={isDisabled}
+            onChange={(event) => onLocalizedChange(event.target.value)}
+          />
+          {after?.(localizedValue)}
+        </>
+      )}
+    </AdminLocalizedFieldShell>
   );
 }

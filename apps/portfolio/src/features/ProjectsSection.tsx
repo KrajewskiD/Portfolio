@@ -31,7 +31,8 @@ function ProjectsSection({
   >({});
 
   const activeProject =
-    projects?.find((project) => project.id === activeProjectId) ?? projects?.[0];
+    projects?.find((project) => project.id === activeProjectId) ??
+    projects?.[0];
 
   return (
     <section id="projects" className="site-section--projects">

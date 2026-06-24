@@ -12,10 +12,7 @@ type ProfileImageSectionProps = {
   disabled?: boolean;
   onFileSelect: (file: File | null) => void;
   onImageMarkedForRemovalChange: (marked: boolean) => void;
-  onUpdateImageAlt: (
-    field: "imageAltPl" | "imageAltEn",
-    value: string,
-  ) => void;
+  onUpdateImageAlt: (field: "imageAltPl" | "imageAltEn", value: string) => void;
 };
 
 function ProfileImageSection({

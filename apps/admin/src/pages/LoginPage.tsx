@@ -12,7 +12,11 @@ function LoginPage() {
       title="Panel administratora"
       description="Zaloguj się kontem GitHub, aby zarządzać treścią portfolio."
     >
-      <AuthButton type="button" onClick={() => void signIn()} disabled={isLoading}>
+      <AuthButton
+        type="button"
+        onClick={() => void signIn()}
+        disabled={isLoading}
+      >
         {isLoading ? (
           <>
             Logowanie

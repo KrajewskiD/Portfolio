@@ -1,9 +1,7 @@
 import { useLocalFilePreview } from "@admin/hooks/useLocalFilePreview";
 import { useValidatedFilePicker } from "@admin/hooks/useValidatedFilePicker";
 import { useAnimatedWebpCheck } from "@admin/hooks/useAnimatedWebpCheck";
-import {
-  validateWebpImageFile,
-} from "@shared/utils/webpImage";
+import { validateWebpImageFile } from "@shared/utils/webpImage";
 
 type UseAdminImagePickerParams = {
   imageUrl?: string;
@@ -22,16 +20,12 @@ export function useAdminImagePicker({
   onImageMarkedForRemovalChange,
 }: UseAdminImagePickerParams) {
   const localPreviewUrl = useLocalFilePreview(selectedFile);
-  const {
-    fileError,
-    handleInputChange,
-    inputRef,
-    openPicker,
-  } = useValidatedFilePicker({
-    validate: validateWebpImageFile,
-    onValidFile: onFileSelect,
-    onClear: () => onFileSelect(null),
-  });
+  const { fileError, handleInputChange, inputRef, openPicker } =
+    useValidatedFilePicker({
+      validate: validateWebpImageFile,
+      onValidFile: onFileSelect,
+      onClear: () => onFileSelect(null),
+    });
 
   const { isAnimatedWebp, selectedFileHint } =
     useAnimatedWebpCheck(selectedFile);

@@ -82,11 +82,11 @@ function useParchmentScroll(tiltRef: RefObject<HTMLElement | null>) {
       window.removeEventListener("resize", schedule);
       observer.disconnect();
 
-      tiltRoot?.querySelectorAll<HTMLElement>(PARCHMENT_ITEM_SELECTOR).forEach(
-        (element) => {
+      tiltRoot
+        ?.querySelectorAll<HTMLElement>(PARCHMENT_ITEM_SELECTOR)
+        .forEach((element) => {
           element.style.removeProperty("transform");
-        },
-      );
+        });
     };
   }, [tiltRef]);
 }

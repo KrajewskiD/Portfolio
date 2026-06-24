@@ -1,8 +1,6 @@
 import { useCallback, useRef, useState, type ChangeEvent } from "react";
 
-type ValidationResult =
-  | { valid: true }
-  | { valid: false; message: string };
+type ValidationResult = { valid: true } | { valid: false; message: string };
 
 type UseValidatedFilePickerOptions = {
   validate: (file: File) => Promise<ValidationResult> | ValidationResult;

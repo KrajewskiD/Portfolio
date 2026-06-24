@@ -7,6 +7,23 @@ export type WebpImageValidationResult =
 const INVALID_PREFIX_EXTENSION_PATTERN =
   /\.(png|jpe?g|gif|bmp|svg|avif|heic|heif)\.webp$/i;
 
+function readAsciiChunk(bytes: Uint8Array, start: number, end: number): string {
+  return String.fromCharCode(...bytes.slice(start, end));
+}
+
+function hasWebpSignature(buffer: ArrayBuffer): boolean {
+  if (buffer.byteLength < 12) {
+    return false;
+  }
+
+  const bytes = new Uint8Array(buffer);
+
+  return (
+    readAsciiChunk(bytes, 0, 4) === "RIFF" &&
+    readAsciiChunk(bytes, 8, 12) === "WEBP"
+  );
+}
+
 export function validateWebpImageFileName(
   fileName: string,
 ): WebpImageValidationResult {
@@ -54,11 +71,7 @@ export async function validateWebpImageSignature(
     };
   }
 
-  const bytes = new Uint8Array(buffer);
-  const header = String.fromCharCode(bytes[0], bytes[1], bytes[2], bytes[3]);
-  const format = String.fromCharCode(bytes[8], bytes[9], bytes[10], bytes[11]);
-
-  if (header !== "RIFF" || format !== "WEBP") {
+  if (!hasWebpSignature(buffer)) {
     return {
       valid: false,
       message: "Plik nie jest prawidłowym obrazem WebP.",
@@ -75,15 +88,17 @@ export async function isAnimatedWebpFile(file: File): Promise<boolean> {
     return false;
   }
 
-  const bytes = new Uint8Array(buffer);
-  const header = String.fromCharCode(bytes[0], bytes[1], bytes[2], bytes[3]);
-  const format = String.fromCharCode(bytes[8], bytes[9], bytes[10], bytes[11]);
-
-  if (header !== "RIFF" || format !== "WEBP") {
+  if (!hasWebpSignature(buffer)) {
     return false;
   }
 
-  const chunkType = String.fromCharCode(bytes[12], bytes[13], bytes[14], bytes[15]);
+  const bytes = new Uint8Array(buffer);
+  const chunkType = String.fromCharCode(
+    bytes[12],
+    bytes[13],
+    bytes[14],
+    bytes[15],
+  );
 
   if (chunkType === "VP8X") {
     return (bytes[20] & 0x02) !== 0;

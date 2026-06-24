@@ -41,11 +41,10 @@ export function useProjectsForm(language: Language) {
   const mediaViewModel = useProjectMediaViewModel(editor, media);
 
   const extraErrors = useMemo(
-    () =>
-      [
-        ...(editor.bulkTranslate.error ? [editor.bulkTranslate.error] : []),
-        ...(editor.deleteError ? [editor.deleteError] : []),
-      ],
+    () => [
+      ...(editor.bulkTranslate.error ? [editor.bulkTranslate.error] : []),
+      ...(editor.deleteError ? [editor.deleteError] : []),
+    ],
     [editor.bulkTranslate.error, editor.deleteError],
   );
 

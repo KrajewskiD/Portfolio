@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, type MouseEvent } from "react";
 
 import HeaderInfoButton from "./toolbar/HeaderInfoButton";
 import LanguageSelector from "./toolbar/LanguageSelector";
@@ -9,6 +9,7 @@ import MenuToggle from "./navigation/MenuToggle";
 import useActiveNavSection from "@portfolio/hooks/useActiveNavSection";
 import useAnimatedWidth from "@portfolio/hooks/useAnimatedWidth";
 import useDismissOnOutsidePointerDown from "@portfolio/hooks/useDismissOnOutsidePointerDown";
+import { createLanguageSectionHref } from "@portfolio/utils/languageUrl";
 import type { NavigationLinkData } from "@shared/database/types/link";
 import type { Language } from "@shared/database/types/language";
 import type { Project } from "@shared/database/types/project";
@@ -43,28 +44,32 @@ function Header({
     setIsMenuOpen(false);
   }, []);
 
-  useDismissOnOutsidePointerDown(
-    isMenuOpen,
-    closeMenu,
-    menuRef,
-    menuToggleRef,
-  );
+  useDismissOnOutsidePointerDown(isMenuOpen, closeMenu, menuRef, menuToggleRef);
 
   const getLabel = (item: NavigationLinkData) =>
     language === "pl" ? item.labelPl : item.labelEn;
+
+  const scrollToTop = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      return;
+    }
+
+    event.preventDefault();
+    window.history.replaceState(window.history.state, "", `/${language}`);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   useAnimatedWidth(islandRef);
 
   return (
     <header className="site-chrome max-sm:w-full">
-      <HeaderInfoButton
-        title={headerText.infoTitle}
-        closeLabel={headerText.closeModalLabel}
-        emptyMessage={headerText.infoEmptyMessage}
-        project={featuredProject}
-        projectText={projectText}
-        language={language}
-      />
+      <a
+        className="site-chrome__wordmark"
+        href={`/${language}`}
+        onClick={scrollToTop}
+      >
+        Krajewski
+      </a>
 
       <div
         ref={islandRef}
@@ -82,6 +87,13 @@ function Header({
               closeLabel={navigationText.closeMenu}
               onToggle={() => setIsMenuOpen((current) => !current)}
             />
+            <a
+              className="site-island__mobile-wordmark"
+              href={`/${language}`}
+              onClick={scrollToTop}
+            >
+              Krajewski
+            </a>
           </div>
 
           <NavigationLinks className="site-island__links max-sm:hidden">
@@ -89,13 +101,22 @@ function Header({
               <NavigationItem
                 key={item.id}
                 label={getLabel(item)}
-                href={item.href}
+                href={createLanguageSectionHref(item.href, language)}
                 isActive={item.id === activeSectionId}
               />
             ))}
           </NavigationLinks>
 
           <LanguageSelector language={language} onChange={onLanguageChange} />
+
+          <HeaderInfoButton
+            title={headerText.infoTitle}
+            closeLabel={headerText.closeModalLabel}
+            emptyMessage={headerText.infoEmptyMessage}
+            project={featuredProject}
+            projectText={projectText}
+            language={language}
+          />
         </nav>
 
         {isMenuOpen ? (
@@ -105,7 +126,7 @@ function Header({
                 <NavigationItem
                   key={item.id}
                   label={getLabel(item)}
-                  href={item.href}
+                  href={createLanguageSectionHref(item.href, language)}
                   mobile
                   isActive={item.id === activeSectionId}
                   onNavigate={closeMenu}

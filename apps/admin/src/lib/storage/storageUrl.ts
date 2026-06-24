@@ -15,7 +15,5 @@ export async function getVersionedStorageUrl(
     { forceVersion },
   );
 
-  return (
-    versionedUrl ?? appendCacheBust(getPublicUrl(path), forceVersion)
-  );
+  return versionedUrl ?? appendCacheBust(getPublicUrl(path), forceVersion);
 }

@@ -70,7 +70,11 @@ function ProjectContentColumn({
           onRemove={onRemoveTechnology}
         />
 
-        <AdminField id="project-topic-tabs" label="Zakładka projektu" groupLabel>
+        <AdminField
+          id="project-topic-tabs"
+          label="Zakładka projektu"
+          groupLabel
+        >
           <ProjectTopicTabs
             activeTopicId={topic.id}
             language={language}

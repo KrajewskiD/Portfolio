@@ -49,6 +49,10 @@ export async function getProjectsFromDatabase(
   }
 
   return data.map((project) =>
-    mapProjectRow(project, getProjectImagePublicUrl, getProjectMiniaturePublicUrl),
+    mapProjectRow(
+      project,
+      getProjectImagePublicUrl,
+      getProjectMiniaturePublicUrl,
+    ),
   );
 }

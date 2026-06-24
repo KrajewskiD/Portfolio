@@ -4,7 +4,10 @@ import { adminRoute, getAdminUrl } from "@shared/config/routes";
 import { useAdminFormGuard } from "@admin/context/useAdminFormGuard";
 import { useGuardedNavigation } from "@admin/hooks/useGuardedNavigation";
 import { useTranslationOverlay } from "@admin/context/useTranslationOverlay";
-import { dashboardTabs, type DashboardTabId } from "@admin/config/dashboardTabs";
+import {
+  dashboardTabs,
+  type DashboardTabId,
+} from "@admin/config/dashboardTabs";
 import { signOut } from "@admin/services/authService";
 import type { Language } from "@shared/database/types/language";
 

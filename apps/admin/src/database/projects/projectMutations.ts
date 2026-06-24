@@ -1,4 +1,7 @@
-import { deleteProjectImages, deleteProjectMiniatures } from "@admin/lib/imageStorage";
+import {
+  deleteProjectImages,
+  deleteProjectMiniatures,
+} from "@admin/lib/imageStorage";
 import { supabase } from "@admin/lib/supabase";
 import { getOrCreateTechnologyId } from "@shared/database";
 import {
@@ -9,6 +12,21 @@ import type {
   Project,
   ProjectTechnology,
 } from "@shared/database/types/project";
+
+type ProjectTechnologyRelationRow = {
+  technology_id: string;
+};
+
+type ProjectTechnologyRow = ProjectTechnologyRelationRow & {
+  display_order: number;
+  project_id: string;
+};
+
+type ProjectTechnologySyncPlan = {
+  obsoleteTechnologyIds: string[];
+  rowsToInsert: ProjectTechnologyRow[];
+  rowsToUpdate: ProjectTechnologyRow[];
+};
 
 function uniqueTechnologies(
   technologies: ProjectTechnology[],
@@ -73,25 +91,40 @@ export async function saveProjectTopics(project: Project): Promise<void> {
   }
 }
 
-export async function saveProjectTechnologies(project: Project): Promise<void> {
-  const { error: deleteError } = await supabase
+async function deleteAllProjectTechnologies(projectId: string): Promise<void> {
+  const { error } = await supabase
     .from("project_technologies")
     .delete()
-    .eq("project_id", project.id);
+    .eq("project_id", projectId);
 
-  if (deleteError) {
-    throw deleteError;
+  if (error) {
+    throw error;
+  }
+}
+
+async function loadProjectTechnologyRelations(
+  projectId: string,
+): Promise<ProjectTechnologyRelationRow[]> {
+  const { data: existingRows, error } = await supabase
+    .from("project_technologies")
+    .select("technology_id")
+    .eq("project_id", projectId)
+    .overrideTypes<ProjectTechnologyRelationRow[]>();
+
+  if (error) {
+    throw error;
   }
 
-  const technologies = uniqueTechnologies(project.technologies);
+  return existingRows ?? [];
+}
 
-  if (technologies.length === 0) {
-    return;
-  }
-
-  const rows = await Promise.all(
+async function createProjectTechnologyRows(
+  projectId: string,
+  technologies: ProjectTechnology[],
+): Promise<ProjectTechnologyRow[]> {
+  return Promise.all(
     technologies.map(async (technology, index) => ({
-      project_id: project.id,
+      project_id: projectId,
       technology_id: await getOrCreateTechnologyId(
         supabase,
         technology.name,
@@ -100,20 +133,112 @@ export async function saveProjectTechnologies(project: Project): Promise<void> {
       display_order: index + 1,
     })),
   );
+}
 
-  const { error: insertError } = await supabase
+function createProjectTechnologySyncPlan(
+  rows: ProjectTechnologyRow[],
+  existingRows: ProjectTechnologyRelationRow[],
+): ProjectTechnologySyncPlan {
+  const existingTechnologyIds = new Set(
+    existingRows.map((row) => row.technology_id),
+  );
+  const rowsToInsert = rows.filter(
+    (row) => !existingTechnologyIds.has(row.technology_id),
+  );
+  const rowsToUpdate = rows.filter((row) =>
+    existingTechnologyIds.has(row.technology_id),
+  );
+  const nextTechnologyIds = new Set(rows.map((row) => row.technology_id));
+  const obsoleteTechnologyIds = existingRows
+    .map((row) => row.technology_id)
+    .filter((technologyId) => !nextTechnologyIds.has(technologyId));
+
+  return {
+    obsoleteTechnologyIds,
+    rowsToInsert,
+    rowsToUpdate,
+  };
+}
+
+async function insertProjectTechnologyRows(
+  rowsToInsert: ProjectTechnologyRow[],
+): Promise<void> {
+  if (rowsToInsert.length === 0) {
+    return;
+  }
+
+  const { error } = await supabase
     .from("project_technologies")
-    .insert(rows);
+    .insert(rowsToInsert);
 
-  if (insertError) {
-    throw insertError;
+  if (error) {
+    throw error;
   }
 }
 
-export async function deleteProject(projectId: string): Promise<void> {
-  await deleteProjectImages(projectId);
-  await deleteProjectMiniatures(projectId);
+async function updateProjectTechnologyRows(
+  rowsToUpdate: ProjectTechnologyRow[],
+): Promise<void> {
+  for (const row of rowsToUpdate) {
+    const { error } = await supabase
+      .from("project_technologies")
+      .update({ display_order: row.display_order })
+      .eq("project_id", row.project_id)
+      .eq("technology_id", row.technology_id);
 
+    if (error) {
+      throw error;
+    }
+  }
+}
+
+async function deleteObsoleteProjectTechnologyRows(
+  projectId: string,
+  obsoleteTechnologyIds: string[],
+): Promise<void> {
+  if (obsoleteTechnologyIds.length === 0) {
+    return;
+  }
+
+  const { error } = await supabase
+    .from("project_technologies")
+    .delete()
+    .eq("project_id", projectId)
+    .in("technology_id", obsoleteTechnologyIds);
+
+  if (error) {
+    throw error;
+  }
+}
+
+async function applyProjectTechnologySyncPlan(
+  projectId: string,
+  syncPlan: ProjectTechnologySyncPlan,
+): Promise<void> {
+  await insertProjectTechnologyRows(syncPlan.rowsToInsert);
+  await updateProjectTechnologyRows(syncPlan.rowsToUpdate);
+  await deleteObsoleteProjectTechnologyRows(
+    projectId,
+    syncPlan.obsoleteTechnologyIds,
+  );
+}
+
+export async function saveProjectTechnologies(project: Project): Promise<void> {
+  const technologies = uniqueTechnologies(project.technologies);
+
+  if (technologies.length === 0) {
+    await deleteAllProjectTechnologies(project.id);
+    return;
+  }
+
+  const existingRows = await loadProjectTechnologyRelations(project.id);
+  const rows = await createProjectTechnologyRows(project.id, technologies);
+  const syncPlan = createProjectTechnologySyncPlan(rows, existingRows);
+
+  await applyProjectTechnologySyncPlan(project.id, syncPlan);
+}
+
+export async function deleteProject(projectId: string): Promise<void> {
   const { error: technologiesError } = await supabase
     .from("project_technologies")
     .delete()
@@ -139,5 +264,12 @@ export async function deleteProject(projectId: string): Promise<void> {
 
   if (projectError) {
     throw projectError;
+  }
+
+  try {
+    await deleteProjectImages(projectId);
+    await deleteProjectMiniatures(projectId);
+  } catch (error) {
+    console.error("Project deleted but storage cleanup failed:", error);
   }
 }

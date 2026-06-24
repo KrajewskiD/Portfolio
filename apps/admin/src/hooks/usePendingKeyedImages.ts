@@ -5,6 +5,32 @@ export type PendingFileHandlers = {
   onMarkedForRemovalChange: (marked: boolean) => void;
 };
 
+function omitKey<T>(record: Record<string, T>, key: string): Record<string, T> {
+  if (!(key in record)) {
+    return record;
+  }
+
+  const next = { ...record };
+  delete next[key];
+  return next;
+}
+
+function omitKeysForPrefix<T>(
+  record: Record<string, T>,
+  prefix: string,
+): Record<string, T> {
+  const keyPrefix = `${prefix}:`;
+  const nextEntries = Object.entries(record).filter(
+    ([key]) => !key.startsWith(keyPrefix),
+  );
+
+  if (nextEntries.length === Object.keys(record).length) {
+    return record;
+  }
+
+  return Object.fromEntries(nextEntries);
+}
+
 export function usePendingKeyedImages() {
   const [pendingFiles, setPendingFiles] = useState<Record<string, File>>({});
   const [markedForRemovals, setMarkedForRemovals] = useState<
@@ -21,29 +47,8 @@ export function usePendingKeyedImages() {
   }, []);
 
   const clearKeysForPrefix = useCallback((prefix: string) => {
-    setPendingFiles((current) => {
-      const next = { ...current };
-
-      for (const key of Object.keys(next)) {
-        if (key.startsWith(`${prefix}:`)) {
-          delete next[key];
-        }
-      }
-
-      return next;
-    });
-
-    setMarkedForRemovals((current) => {
-      const next = { ...current };
-
-      for (const key of Object.keys(next)) {
-        if (key.startsWith(`${prefix}:`)) {
-          delete next[key];
-        }
-      }
-
-      return next;
-    });
+    setPendingFiles((current) => omitKeysForPrefix(current, prefix));
+    setMarkedForRemovals((current) => omitKeysForPrefix(current, prefix));
   }, []);
 
   const getHandlers = useCallback(
@@ -51,9 +56,7 @@ export function usePendingKeyedImages() {
       onFileSelect: (file) => {
         setPendingFiles((current) => {
           if (!file) {
-            const next = { ...current };
-            delete next[key];
-            return next;
+            return omitKey(current, key);
           }
 
           return { ...current, [key]: file };
@@ -65,9 +68,7 @@ export function usePendingKeyedImages() {
               return current;
             }
 
-            const next = { ...current };
-            delete next[key];
-            return next;
+            return omitKey(current, key);
           });
         }
       },
@@ -81,9 +82,7 @@ export function usePendingKeyedImages() {
             return current;
           }
 
-          const next = { ...current };
-          delete next[key];
-          return next;
+          return omitKey(current, key);
         });
       },
     }),

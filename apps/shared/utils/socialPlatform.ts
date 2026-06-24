@@ -1,8 +1,6 @@
 export type SocialPlatform = "github" | "linkedin" | "youtube";
 
-export function getSocialPlatformFromUrl(
-  href: string,
-): SocialPlatform | null {
+export function getSocialPlatformFromUrl(href: string): SocialPlatform | null {
   const normalized = href.toLowerCase();
 
   if (normalized.includes("youtube.com") || normalized.includes("youtu.be")) {

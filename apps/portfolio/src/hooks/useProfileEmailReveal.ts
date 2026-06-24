@@ -2,7 +2,12 @@ import { useEffect, useRef, useState } from "react";
 
 import { fetchProfileContactEmail } from "@portfolio/services/profileEmailService";
 
-export type EmailPanelState = "hidden" | "loading" | "success" | "empty" | "error";
+export type EmailPanelState =
+  | "hidden"
+  | "loading"
+  | "success"
+  | "empty"
+  | "error";
 
 const COPY_TOAST_MS = 2500;
 
@@ -112,8 +117,7 @@ export function useProfileEmailReveal() {
     email,
     panelState,
     isCopied,
-    isMailExpanded:
-      panelState !== "hidden" && panelState !== "loading",
+    isMailExpanded: panelState !== "hidden" && panelState !== "loading",
     isMailLoading: panelState === "loading",
     handleMailClick,
     handleCopyEmail,

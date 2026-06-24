@@ -1,0 +1,99 @@
+@layer components {
+  .site-topic-tab {
+    @apply cursor-pointer border-l-2 border-transparent p-3 sm:shrink-0 sm:whitespace-nowrap sm:border-l-0 sm:px-3 sm:py-3;
+    border-bottom-width: 0;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    letter-spacing: 0.03em;
+    transition:
+      box-shadow 0.2s ease,
+      opacity 0.2s ease,
+      color 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .site-topic-tab__icon {
+    filter: brightness(0) invert(1);
+  }
+
+  .site-topic-tab--active {
+    border-left-color: var(--color-accent);
+    box-shadow: inset 0 -2px 0 var(--color-accent);
+    @apply font-semibold text-foreground;
+  }
+
+  @media (max-width: 639px) {
+    .site-topic-tab--active {
+      box-shadow: none;
+    }
+  }
+
+  @media (min-width: 640px) {
+    .site-topic-tab--active {
+      border-left-color: transparent;
+    }
+  }
+
+  .site-topic-tab--inactive {
+    @apply opacity-50;
+  }
+
+  .site-topic-tab--inactive:hover {
+    @apply opacity-100;
+  }
+
+  .site-topic-group {
+    @apply mt-6 grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-start gap-4 sm:block;
+  }
+
+  .site-topic-panel {
+    @apply col-start-1 row-start-1 min-w-0 rounded-xl border-l-2 p-4 sm:mt-5;
+    border-left-color: var(--color-accent-soft);
+  }
+
+  .site-card--project .site-topic-panel {
+    padding: 1.125rem 1.25rem 1.375rem;
+    background: color-mix(in srgb, var(--color-background) 32%, transparent);
+  }
+
+  .site-card--project .site-topic-group {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .site-card--project .site-topic-list {
+    min-width: 0;
+    max-width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+
+  .site-card--project .site-topic-panel .site-label {
+    display: none;
+  }
+
+  .site-card--project .site-body--panel,
+  .site-card--project .site-rich-text.site-body--panel {
+    margin-top: 0;
+    font-size: 1.0625rem;
+    font-weight: 400;
+    line-height: 1.625;
+    text-align: left;
+  }
+
+  .site-card--project .site-rich-text p strong:only-child {
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+
+  .site-topic-list {
+    @apply col-start-2 row-start-1 flex min-w-0 max-w-full flex-col border-l border-border sm:flex-row sm:flex-nowrap sm:overflow-x-auto sm:border-l-0;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+
+  .site-topic-list::-webkit-scrollbar {
+    display: none;
+  }
+}

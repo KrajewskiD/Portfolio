@@ -6,7 +6,10 @@ import NoiseBackground from "@portfolio/components/NoiseBackground";
 import ParchmentScroll from "@portfolio/components/ParchmentScroll";
 import useCardGradientVariation from "@portfolio/hooks/useCardGradientVariation";
 import type { Translations } from "@portfolio/locales/translations";
-import type { FooterData } from "@shared/database/types/footer";
+import {
+  buildFeaturedProject,
+  buildFooterData,
+} from "@portfolio/utils/mainLayoutViewModels";
 import type { Language } from "@shared/database/types/language";
 import type {
   FooterLinkData,
@@ -14,8 +17,6 @@ import type {
 } from "@shared/database/types/link";
 import type { MainPage } from "@shared/database/types/mainPage";
 import type { Profile } from "@shared/database/types/profile";
-import { getAboutSiteProject } from "@shared/utils/aboutSiteProject";
-import { getLocalizedField } from "@shared/utils/localizedField";
 
 type MainLayoutProps = {
   children: ReactNode;
@@ -27,6 +28,7 @@ type MainLayoutProps = {
   areFooterLinksLoading: boolean;
   areFooterLinksError: boolean;
   footerText: Translations["footer"];
+  aboutText: Translations["about"];
   projectText: Translations["projects"];
   navigationItems: NavigationLinkData[];
   headerText: Translations["header"];
@@ -45,6 +47,7 @@ function MainLayout({
   areFooterLinksLoading,
   areFooterLinksError,
   footerText,
+  aboutText,
   projectText,
   navigationItems,
   language,
@@ -56,23 +59,8 @@ function MainLayout({
 
   useCardGradientVariation();
 
-  const footer: FooterData | undefined =
-    profile || footerLinks?.length
-      ? {
-          name: profile?.name ?? "",
-          description: profile
-            ? getLocalizedField(
-                profile,
-                language,
-                "footerDescriptionPl",
-                "footerDescriptionEn",
-              )
-            : "",
-          links: footerLinks ?? [],
-        }
-      : undefined;
-
-  const featuredProject = mainPage ? getAboutSiteProject(mainPage) : undefined;
+  const footer = buildFooterData({ footerLinks, language, profile });
+  const featuredProject = buildFeaturedProject(mainPage);
 
   return (
     <div className="site-layout">
@@ -96,6 +84,7 @@ function MainLayout({
             footer={footer}
             isLoading={isProfileLoading || areFooterLinksLoading}
             isError={isProfileError && areFooterLinksError}
+            emailText={aboutText}
             socialLinksLabel={footerText.socialLinksLabel}
           />
         </div>

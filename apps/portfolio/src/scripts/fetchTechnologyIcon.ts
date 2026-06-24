@@ -75,10 +75,10 @@ export function createTechnologyIconAltText(label: string): string {
   return `${label} icon`;
 }
 
-export function createAccessibleTechnologyIconSvg(
-  markup: string,
-  label: string,
-): SVGSVGElement | null {
+function parseTechnologyIconSvg(markup: string): {
+  document: Document;
+  svg: SVGSVGElement;
+} | null {
   const document = new DOMParser().parseFromString(markup, "image/svg+xml");
   const parseError = document.querySelector("parsererror");
 
@@ -92,6 +92,20 @@ export function createAccessibleTechnologyIconSvg(
     return null;
   }
 
+  return { document, svg };
+}
+
+export function createAccessibleTechnologyIconSvg(
+  markup: string,
+  label: string,
+): SVGSVGElement | null {
+  const parsedIcon = parseTechnologyIconSvg(markup);
+
+  if (!parsedIcon) {
+    return null;
+  }
+
+  const { document, svg } = parsedIcon;
   const altText = createTechnologyIconAltText(label);
 
   svg.setAttribute("role", "img");
@@ -103,7 +117,10 @@ export function createAccessibleTechnologyIconSvg(
   if (existingTitle) {
     existingTitle.textContent = altText;
   } else {
-    const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+    const title = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "title",
+    );
     title.textContent = altText;
     svg.prepend(title);
   }
@@ -125,18 +142,13 @@ export async function fetchTechnologyIconElement(
     return createAccessibleTechnologyIconSvg(markup, label);
   }
 
-  const document = new DOMParser().parseFromString(markup, "image/svg+xml");
-  const parseError = document.querySelector("parsererror");
+  const parsedIcon = parseTechnologyIconSvg(markup);
 
-  if (parseError) {
+  if (!parsedIcon) {
     return null;
   }
 
-  const svg = document.querySelector("svg");
-
-  if (!svg) {
-    return null;
-  }
+  const { svg } = parsedIcon;
 
   svg.setAttribute("aria-hidden", "true");
   svg.setAttribute("focusable", "false");

@@ -12,7 +12,13 @@ type AdminTextFieldProps = {
   onChange: (value: string) => void;
 } & Pick<
   ComponentProps<typeof AdminInput>,
-  "type" | "placeholder" | "maxLength" | "min" | "max" | "className" | "aria-label"
+  | "type"
+  | "placeholder"
+  | "maxLength"
+  | "min"
+  | "max"
+  | "className"
+  | "aria-label"
 >;
 
 function AdminTextField({

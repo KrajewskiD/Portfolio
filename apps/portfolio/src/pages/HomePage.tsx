@@ -6,17 +6,20 @@ import type { FooterLinkData } from "@shared/database/types/link";
 import type { Language } from "@shared/database/types/language";
 import type { Profile } from "@shared/database/types/profile";
 import type { Project } from "@shared/database/types/project";
-import { useSkillGroups } from "../hooks/useSkillGroups";
+import type { SkillGroupData } from "@shared/database/types/skill";
 
 type HomePageProps = {
   language: Language;
   profile?: Profile;
   footerLinks?: FooterLinkData[];
   projects?: Project[];
+  skillGroups?: SkillGroupData[];
   isProfileLoading: boolean;
   isProfileError: boolean;
   areProjectsPending: boolean;
   areProjectsError: boolean;
+  areSkillGroupsPending: boolean;
+  areSkillGroupsError: boolean;
   socialLinksLabel: string;
 };
 
@@ -25,18 +28,15 @@ function HomePage({
   profile,
   footerLinks,
   projects,
+  skillGroups,
   isProfileLoading,
   isProfileError,
   areProjectsPending,
   areProjectsError,
+  areSkillGroupsPending,
+  areSkillGroupsError,
   socialLinksLabel,
 }: HomePageProps) {
-  const {
-    data: skillGroups,
-    isPending: areSkillGroupsPending,
-    isError: areSkillGroupsError,
-  } = useSkillGroups();
-
   const translation = translations[language];
 
   return (

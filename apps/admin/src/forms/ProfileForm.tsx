@@ -29,7 +29,9 @@ function ProfileForm({ language }: AdminFormProps) {
       loadError={loadError}
       saveError={saveError}
       saveSuccess={saveSuccess}
-      extraErrors={editor.bulkTranslate.error ? [editor.bulkTranslate.error] : []}
+      extraErrors={
+        editor.bulkTranslate.error ? [editor.bulkTranslate.error] : []
+      }
       actions={
         <AdminFormActions>
           <AdminFormSaveActions

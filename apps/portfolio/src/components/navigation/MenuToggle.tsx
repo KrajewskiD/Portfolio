@@ -8,10 +8,7 @@ type MenuToggleProps = {
 };
 
 const MenuToggle = forwardRef<HTMLButtonElement, MenuToggleProps>(
-  function MenuToggle(
-    { isOpen, openLabel, closeLabel, onToggle },
-    ref,
-  ) {
+  function MenuToggle({ isOpen, openLabel, closeLabel, onToggle }, ref) {
     return (
       <button
         ref={ref}

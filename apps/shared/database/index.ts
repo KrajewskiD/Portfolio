@@ -20,6 +20,7 @@ export {
   PROFILE_IMAGE_STORAGE_PATH,
   LEGACY_PROFILE_IMAGE_STORAGE_PATH,
   assertValidProfileImagePath,
+  getProfileImageStoragePath,
   getProjectMiniatureStoragePath,
   isProjectMiniatureStoragePath,
   isProfileImageStoragePath,

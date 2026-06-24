@@ -27,14 +27,15 @@ function ProjectMiniaturePanel({
   onFileSelect,
   onImageMarkedForRemovalChange,
 }: ProjectMiniaturePanelProps) {
-  const projectTitle = getLocalizedField(project, language, "titlePl", "titleEn");
+  const projectTitle = getLocalizedField(
+    project,
+    language,
+    "titlePl",
+    "titleEn",
+  );
   const previewAlt =
-    getLocalizedField(
-      project,
-      language,
-      "miniatureAltPl",
-      "miniatureAltEn",
-    ) || projectTitle;
+    getLocalizedField(project, language, "miniatureAltPl", "miniatureAltEn") ||
+    projectTitle;
 
   return (
     <div className="admin-image-column admin-image-column--fluid">
