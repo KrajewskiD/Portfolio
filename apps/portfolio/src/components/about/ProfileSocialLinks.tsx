@@ -1,11 +1,9 @@
-import mailIcon from "@shared/assets/icons/mail.svg";
 import type { FooterLinkData } from "@shared/database/types/link";
 
 import type { EmailPanelState } from "@portfolio/hooks/useProfileEmailReveal";
 
-import ProfileEmailReveal from "./ProfileEmailReveal";
+import ProfileEmailAction from "./ProfileEmailAction";
 import ProfileLink from "./ProfileLink";
-import ProfileMailLoadingDots from "./ProfileMailLoadingDots";
 
 export type ProfileSocialLinksProps = {
   links?: FooterLinkData[];
@@ -43,44 +41,30 @@ function ProfileSocialLinks({
   return (
     <div className="site-hero-card__social site-social-icon-scale">
       <nav aria-label={socialLinksLabel} className="site-hero-card__links">
-        <button
-          type="button"
-          className={`site-icon-link${
-            isMailLoading ? " site-icon-link--loading" : ""
-          }`}
-          aria-label={emailLabel}
-          aria-busy={isMailLoading}
-          aria-expanded={isMailExpanded}
-          disabled={isMailLoading}
-          onClick={onMailClick}
-        >
-          {isMailLoading ? (
-            <ProfileMailLoadingDots />
-          ) : (
-            <img
-              src={mailIcon}
-              alt=""
-              aria-hidden
-              className="site-icon-link__icon"
-            />
-          )}
-        </button>
+        <ProfileEmailAction
+          emailLabel={emailLabel}
+          copyEmailLabel={copyEmailLabel}
+          emailCopiedMessage={emailCopiedMessage}
+          emailEmptyMessage={emailEmptyMessage}
+          emailLoadErrorMessage={emailLoadErrorMessage}
+          panelState={panelState}
+          email={email}
+          isCopied={isCopied}
+          isMailExpanded={isMailExpanded}
+          isMailLoading={isMailLoading}
+          align="right"
+          direction="bottom"
+          panelOffsetX="-64px"
+          panelOffsetY="-4px"
+          size="1.28em"
+          onMailClick={onMailClick}
+          onCopyEmail={onCopyEmail}
+        />
 
         {links?.map((link) => (
           <ProfileLink key={link.id} label={link.label} href={link.href} />
         ))}
       </nav>
-
-      <ProfileEmailReveal
-        panelState={panelState}
-        email={email}
-        copyEmailLabel={copyEmailLabel}
-        emailCopiedMessage={emailCopiedMessage}
-        emailEmptyMessage={emailEmptyMessage}
-        emailLoadErrorMessage={emailLoadErrorMessage}
-        isCopied={isCopied}
-        onCopyEmail={onCopyEmail}
-      />
     </div>
   );
 }

@@ -49,6 +49,13 @@
       box-shadow 0.2s ease;
   }
 
+  .site-profile-email-action__button.site-icon-link {
+    width: var(--profile-email-action-size);
+    height: var(--profile-email-action-size);
+    min-width: var(--profile-email-action-size);
+    min-height: var(--profile-email-action-size);
+  }
+
   .site-icon-link--loading {
     cursor: wait;
   }
@@ -71,6 +78,11 @@
     height: 0.64em;
     filter: brightness(0) invert(1);
     opacity: 0.88;
+  }
+
+  .site-profile-email-action__icon.site-icon-link__icon {
+    width: calc(var(--profile-email-action-size) * 0.48);
+    height: calc(var(--profile-email-action-size) * 0.48);
   }
 
   .site-icon-link:hover .site-icon-link__icon {

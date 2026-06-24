@@ -25,6 +25,7 @@ function Footer({
     email,
     panelState,
     isCopied,
+    isMailExpanded,
     isMailLoading,
     handleMailClick,
     handleCopyEmail,
@@ -48,6 +49,7 @@ function Footer({
               email={email}
               panelState={panelState}
               isCopied={isCopied}
+              isMailExpanded={isMailExpanded}
               isMailLoading={isMailLoading}
               onMailClick={() => void handleMailClick()}
               onCopyEmail={() => void handleCopyEmail()}

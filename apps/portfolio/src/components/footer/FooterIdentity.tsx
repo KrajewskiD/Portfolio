@@ -1,7 +1,5 @@
-import ProfileEmailReveal from "@portfolio/components/about/ProfileEmailReveal";
-import ProfileMailLoadingDots from "@portfolio/components/about/ProfileMailLoadingDots";
+import ProfileEmailAction from "@portfolio/components/about/ProfileEmailAction";
 import type { EmailPanelState } from "@portfolio/hooks/useProfileEmailReveal";
-import mailIcon from "@shared/assets/icons/mail.svg";
 
 type FooterIdentityProps = {
   name: string;
@@ -13,6 +11,7 @@ type FooterIdentityProps = {
   emailLabel: string;
   emailLoadErrorMessage: string;
   isCopied: boolean;
+  isMailExpanded: boolean;
   isMailLoading: boolean;
   panelState: EmailPanelState;
   onCopyEmail: () => void;
@@ -29,6 +28,7 @@ function FooterIdentity({
   emailLabel,
   emailLoadErrorMessage,
   isCopied,
+  isMailExpanded,
   isMailLoading,
   panelState,
   onCopyEmail,
@@ -42,35 +42,21 @@ function FooterIdentity({
             {name}
           </p>
 
-          <button
-            type="button"
-            className="site-footer__mail-button"
-            aria-label={emailLabel}
-            aria-busy={isMailLoading}
-            aria-expanded={panelState !== "hidden"}
-            disabled={isMailLoading}
-            onClick={onMailClick}
-          >
-            {isMailLoading ? (
-              <ProfileMailLoadingDots />
-            ) : (
-              <img
-                src={mailIcon}
-                alt=""
-                aria-hidden
-                className="site-footer__mail-icon"
-              />
-            )}
-          </button>
-
-          <ProfileEmailReveal
-            panelState={panelState}
-            email={email}
+          <ProfileEmailAction
+            className="site-footer__email-action"
+            emailLabel={emailLabel}
             copyEmailLabel={copyEmailLabel}
             emailCopiedMessage={emailCopiedMessage}
             emailEmptyMessage={emailEmptyMessage}
             emailLoadErrorMessage={emailLoadErrorMessage}
+            panelState={panelState}
+            email={email}
             isCopied={isCopied}
+            isMailExpanded={isMailExpanded}
+            isMailLoading={isMailLoading}
+            direction="right"
+            size="2.625rem"
+            onMailClick={onMailClick}
             onCopyEmail={onCopyEmail}
           />
         </div>
