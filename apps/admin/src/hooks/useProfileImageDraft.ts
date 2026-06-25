@@ -70,6 +70,8 @@ export function useProfileImageDraft() {
 
       return {
         value: nextProfile,
+        cleanupErrorMessage:
+          "Zapisano zmiany, ale nie udało się posprzątać zdjęć profilowych w storage. Sprawdź bucket.",
         onSaveSuccess: async () => {
           const uniquePathsToDelete = [
             ...new Set(pathsToDeleteAfterSave),

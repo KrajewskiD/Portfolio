@@ -11,6 +11,7 @@ export type UseAdminFormSaveOptions<T> = {
 
 export type AdminFormSavePreparation<T> = {
   value: T;
+  cleanupErrorMessage?: string;
   onSaveSuccess?: () => Promise<void> | void;
   onSaveError?: () => Promise<void> | void;
 };
@@ -191,11 +192,6 @@ export function useAdminFormSave<T>({
         prepareBeforeSave ? await prepareBeforeSave(value) : value,
       );
       const preparedValue = preparation.value;
-      const showCleanupError = () => {
-        setSaveError(
-          "Zapisano zmiany, ale nie udało się posprzątać plików w storage. Sprawdź bucket.",
-        );
-      };
 
       await savePreparedValue(preparation, saveValue);
       const cleanupSucceeded = await runPostSaveCleanup(preparation);
@@ -211,7 +207,10 @@ export function useAdminFormSave<T>({
       }
 
       if (!cleanupSucceeded) {
-        showCleanupError();
+        setSaveError(
+          preparation.cleanupErrorMessage ??
+            "Zapisano zmiany, ale nie udało się wykonać czynności końcowych.",
+        );
         return true;
       }
 

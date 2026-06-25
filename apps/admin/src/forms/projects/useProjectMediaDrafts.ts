@@ -224,6 +224,8 @@ export function useProjectMediaDrafts() {
 
         return {
           value: updatedProjects,
+          cleanupErrorMessage:
+            "Zapisano zmiany, ale nie udało się posprzątać plików projektów w storage. Sprawdź bucket.",
           onSaveSuccess: async () => {
             await cleanupObsoleteProjectMedia(cleanupPlan);
             discardAll();

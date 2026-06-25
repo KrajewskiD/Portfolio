@@ -1,4 +1,4 @@
-import { supabase } from "@admin/lib/supabase";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 type UploadStorageFileParams = {
   bucket: string;
@@ -9,58 +9,66 @@ type UploadStorageFileParams = {
   errorLabel?: string;
 };
 
-export async function uploadStorageFile({
-  bucket,
-  path,
-  file,
-  contentType,
-  cacheControl,
-  errorLabel,
-}: UploadStorageFileParams): Promise<void> {
-  const { error } = await supabase.storage.from(bucket).upload(path, file, {
-    upsert: true,
+export function createStorageOperations(supabase: SupabaseClient) {
+  async function uploadStorageFile({
+    bucket,
+    path,
+    file,
     contentType,
-    ...(cacheControl ? { cacheControl } : {}),
-  });
+    cacheControl,
+    errorLabel,
+  }: UploadStorageFileParams): Promise<void> {
+    const { error } = await supabase.storage.from(bucket).upload(path, file, {
+      upsert: true,
+      contentType,
+      ...(cacheControl ? { cacheControl } : {}),
+    });
 
-  if (error) {
-    throw new Error(
-      errorLabel ? `${errorLabel}: ${error.message}` : error.message,
-    );
-  }
-}
-
-export async function deleteStorageFiles(
-  bucket: string,
-  paths: string[],
-): Promise<void> {
-  if (paths.length === 0) {
-    return;
+    if (error) {
+      throw new Error(
+        errorLabel ? `${errorLabel}: ${error.message}` : error.message,
+      );
+    }
   }
 
-  const { error } = await supabase.storage.from(bucket).remove(paths);
+  async function deleteStorageFiles(
+    bucket: string,
+    paths: string[],
+  ): Promise<void> {
+    if (paths.length === 0) {
+      return;
+    }
 
-  if (error) {
-    throw error;
-  }
-}
+    const { error } = await supabase.storage.from(bucket).remove(paths);
 
-export async function deleteStorageFolder(
-  bucket: string,
-  folderPath: string,
-): Promise<void> {
-  const { data: files, error: listError } = await supabase.storage
-    .from(bucket)
-    .list(folderPath);
-
-  if (listError) {
-    throw listError;
+    if (error) {
+      throw error;
+    }
   }
 
-  if (!files?.length) {
-    return;
+  async function deleteStorageFolder(
+    bucket: string,
+    folderPath: string,
+  ): Promise<void> {
+    const { data: files, error: listError } = await supabase.storage
+      .from(bucket)
+      .list(folderPath);
+
+    if (listError) {
+      throw listError;
+    }
+
+    if (!files?.length) {
+      return;
+    }
+
+    const paths = files.map((file) => `${folderPath}/${file.name}`);
+    await deleteStorageFiles(bucket, paths);
   }
 
-  const paths = files.map((file) => `${folderPath}/${file.name}`);
-  await deleteStorageFiles(bucket, paths);
+  return {
+    uploadStorageFile,
+    deleteStorageFiles,
+    deleteStorageFolder,
+  };
 }

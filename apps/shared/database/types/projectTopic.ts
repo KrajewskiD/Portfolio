@@ -1,7 +1,4 @@
-export type ProjectTopicId =
-  | "overview"
-  | "features"
-  | "technologies"
-  | "architecture";
-
-export const DEFAULT_PROJECT_TOPIC_ID: ProjectTopicId = "overview";
+export {
+  DEFAULT_PROJECT_TOPIC_ID,
+  type ProjectTopicId,
+} from "../../constants/projectTopicIds";

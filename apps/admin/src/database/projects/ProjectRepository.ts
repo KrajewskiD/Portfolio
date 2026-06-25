@@ -1,4 +1,6 @@
 import {
+  deleteProjectImages,
+  deleteProjectMiniatures,
   getProjectImagePublicUrl,
   getProjectMiniaturePublicUrl,
 } from "@admin/lib/imageStorage";
@@ -10,11 +12,14 @@ import {
 import type { Project } from "@shared/database/types/project";
 
 import {
-  deleteProject as deleteProjectRow,
-  saveProjectTechnologies,
-  saveProjectTopics,
-  updateProject,
+  cleanupDeletedProjectMedia,
+  deleteProjectData,
 } from "./projectMutations";
+
+const projectMediaCleaner = {
+  deleteProjectImages,
+  deleteProjectMiniatures,
+};
 
 export async function getAdminProjects(): Promise<Project[]> {
   const projects = await getProjectsFromDatabase(
@@ -30,13 +35,16 @@ export async function getAdminProjects(): Promise<Project[]> {
 }
 
 export async function saveAdminProjects(projects: Project[]): Promise<void> {
-  for (const [index, project] of projects.entries()) {
-    await updateProject(project, index + 1);
-    await saveProjectTopics(project);
-    await saveProjectTechnologies(project);
+  const { error } = await supabase.rpc("save_admin_projects", {
+    projects_payload: projects,
+  });
+
+  if (error) {
+    throw error;
   }
 }
 
 export async function deleteAdminProject(projectId: string): Promise<void> {
-  await deleteProjectRow(projectId);
+  await deleteProjectData(supabase, projectId);
+  await cleanupDeletedProjectMedia(projectId, projectMediaCleaner);
 }

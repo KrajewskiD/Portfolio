@@ -1,9 +1,5 @@
 import { supabase } from "@admin/lib/supabase";
-import {
-  deleteStorageFiles,
-  deleteStorageFolder,
-  uploadStorageFile,
-} from "@admin/lib/storageOperations";
+import { createStorageOperations } from "@admin/lib/storageOperations";
 import {
   PROJECT_IMAGES_BUCKET,
   PROJECT_MINIATURES_BUCKET,
@@ -15,6 +11,9 @@ import { WEBP_IMAGE_ACCEPT } from "@shared/utils/webpImage";
 import { STORAGE_UPLOAD_CACHE_CONTROL } from "./storageConstants";
 import { assertBucket, assertWebpImageFile } from "./storageValidation";
 import { getVersionedStorageUrl } from "./storageUrl";
+
+const { deleteStorageFiles, deleteStorageFolder, uploadStorageFile } =
+  createStorageOperations(supabase);
 
 export const getProjectImagePublicUrl = createBucketUrlResolver(
   supabase,

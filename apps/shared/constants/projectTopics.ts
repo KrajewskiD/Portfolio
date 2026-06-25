@@ -1,5 +1,9 @@
 import type { Project, ProjectTopicContent } from "../database/types/project";
-import type { ProjectTopicId } from "../database/types/projectTopic";
+import {
+  DEFAULT_PROJECT_TOPIC_ID,
+  projectTopicIds,
+  type ProjectTopicId,
+} from "./projectTopicIds";
 
 import overviewIcon from "../assets/icons/overview.svg";
 import featuresIcon from "../assets/icons/features.svg";
@@ -7,7 +11,7 @@ import technologiesIcon from "../assets/icons/technologies.svg";
 import architectureIcon from "../assets/icons/architecture.svg";
 
 export type { ProjectTopicId };
-export { DEFAULT_PROJECT_TOPIC_ID } from "../database/types/projectTopic";
+export { DEFAULT_PROJECT_TOPIC_ID };
 
 export const projectTopicDefinitions = {
   overview: {
@@ -35,9 +39,7 @@ export const projectTopicDefinitions = {
   { labelPl: string; labelEn: string; icon: string }
 >;
 
-export const projectTopicOrder = Object.keys(
-  projectTopicDefinitions,
-) as ProjectTopicId[];
+export const projectTopicOrder = [...projectTopicIds];
 
 export const projectTopicIcons: Record<ProjectTopicId, string> =
   Object.fromEntries(

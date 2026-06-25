@@ -1,8 +1,5 @@
 import { supabase } from "@admin/lib/supabase";
-import {
-  deleteStorageFiles,
-  uploadStorageFile,
-} from "@admin/lib/storageOperations";
+import { createStorageOperations } from "@admin/lib/storageOperations";
 import {
   PROFILE_IMAGES_BUCKET,
   assertValidProfileImagePath,
@@ -14,6 +11,9 @@ import { WEBP_IMAGE_ACCEPT } from "@shared/utils/webpImage";
 import { STORAGE_UPLOAD_CACHE_CONTROL } from "./storageConstants";
 import { assertBucket, assertWebpImageFile } from "./storageValidation";
 import { getVersionedStorageUrl } from "./storageUrl";
+
+const { deleteStorageFiles, uploadStorageFile } =
+  createStorageOperations(supabase);
 
 export const getProfileImagePublicUrl = createBucketUrlResolver(
   supabase,

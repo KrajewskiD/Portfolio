@@ -1,14 +1,10 @@
 import AdminTranslationOverlay from "@admin/components/ui/AdminTranslationOverlay";
 import { AdminFormGuardProvider } from "@admin/context/AdminFormGuardProvider";
 import { TranslationOverlayProvider } from "@admin/context/TranslationOverlayProvider";
+import { getDashboardForm } from "@admin/config/dashboardTabs";
 import { useDashboardPage } from "@admin/hooks/useDashboardPage";
 import DashboardActions from "../components/DashboardActions";
 import DashboardTabs from "../components/DashboardTabs";
-import AboutSiteForm from "../forms/AboutSiteForm";
-import ProfileForm from "../forms/ProfileForm";
-import ProjectsForm from "../forms/ProjectsForm";
-import SettingsForm from "../forms/SettingsForm";
-import SkillsForm from "../forms/SkillsForm";
 import AdminLayout from "../layouts/AdminLayout";
 
 function DashboardPageContent() {
@@ -28,22 +24,13 @@ function DashboardPageContent() {
   } = useDashboardPage();
 
   function renderActiveForm() {
-    const formProps = {
-      language: editLanguage,
-    };
+    const ActiveForm = getDashboardForm(activeTabId);
 
-    switch (activeTabId) {
-      case "profile":
-        return <ProfileForm {...formProps} />;
-      case "about-site":
-        return <AboutSiteForm {...formProps} />;
-      case "projects":
-        return <ProjectsForm {...formProps} />;
-      case "skills":
-        return <SkillsForm {...formProps} />;
-      case "settings":
-        return <SettingsForm {...formProps} />;
+    if (!ActiveForm) {
+      return null;
     }
+
+    return <ActiveForm language={editLanguage} />;
   }
 
   return (
