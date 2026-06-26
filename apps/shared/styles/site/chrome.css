@@ -88,34 +88,38 @@
     display: inline-flex;
     align-items: center;
     pointer-events: auto;
-    border: 1px solid var(--chrome-accent-border);
-    border-radius: 9999px;
-    padding: 0.55rem 1.05rem 0.65rem;
-    background-color: var(--color-surface);
-    box-shadow: var(--shadow-card-sm);
+    border: 1px solid transparent;
+    border-radius: 0;
+    padding: 0.375rem 0.125rem;
+    margin: -0.375rem -0.125rem;
+    background-color: transparent;
+    background-image: none;
+    box-shadow: none;
     font-family: var(--font-display);
     font-size: 1.35rem;
     font-style: italic;
     font-weight: 700;
     line-height: 1;
     letter-spacing: 0;
-    color: var(--color-foreground);
+    color: var(--color-accent);
     text-decoration: none;
+    -webkit-text-stroke: 0.12em var(--island-bg);
+    paint-order: stroke fill;
     text-shadow:
       0 1px 0 rgb(255 255 255 / 0.06),
       0 -1px 2px rgb(0 0 0 / 0.52);
     transition:
-      border-color 0.2s ease,
-      box-shadow 0.2s ease,
       color 0.2s ease,
       text-shadow 0.2s ease;
   }
 
   .site-chrome__wordmark:hover,
   .site-chrome__wordmark:focus-visible {
-    border-color: var(--color-accent);
+    border-color: transparent;
+    background-color: transparent;
     color: var(--color-accent);
-    box-shadow: var(--shadow-card);
+    box-shadow: none;
+    -webkit-text-stroke: 0.12em var(--island-bg);
     text-shadow:
       0 1px 0 rgb(255 255 255 / 0.08),
       0 -1px 2px rgb(0 0 0 / 0.4);
@@ -385,15 +389,26 @@
       font-weight: 700;
       line-height: 1;
       letter-spacing: 0;
-      color: var(--color-foreground);
+      color: var(--color-accent);
       text-decoration: none;
       white-space: nowrap;
-      transition: color 0.2s ease;
+      -webkit-text-stroke: 0.12em var(--island-bg);
+      paint-order: stroke fill;
+      text-shadow:
+        0 1px 0 rgb(255 255 255 / 0.06),
+        0 -1px 2px rgb(0 0 0 / 0.52);
+      transition:
+        color 0.2s ease,
+        text-shadow 0.2s ease;
     }
 
     .site-island__mobile-wordmark:hover,
     .site-island__mobile-wordmark:focus-visible {
       color: var(--color-accent);
+      -webkit-text-stroke: 0.12em var(--island-bg);
+      text-shadow:
+        0 1px 0 rgb(255 255 255 / 0.08),
+        0 -1px 2px rgb(0 0 0 / 0.4);
     }
   }
 
