@@ -34,8 +34,7 @@
     height: 1.28em;
     padding: 0;
     border-radius: 9999px;
-    border: 1px solid
-      color-mix(in srgb, var(--color-border) 65%, var(--island-bg));
+    border: 1px solid var(--chrome-accent-border);
     background-color: var(--island-bg);
     color: var(--color-foreground);
     cursor: pointer;
@@ -61,7 +60,7 @@
   }
 
   .site-icon-link:hover {
-    border-color: var(--color-accent-soft);
+    border-color: var(--color-accent);
     color: var(--color-accent);
     background-color: color-mix(
       in srgb,

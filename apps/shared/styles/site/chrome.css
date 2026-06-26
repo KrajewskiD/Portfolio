@@ -113,7 +113,7 @@
 
   .site-chrome__wordmark:hover,
   .site-chrome__wordmark:focus-visible {
-    border-color: var(--color-accent-soft);
+    border-color: var(--color-accent);
     color: var(--color-accent);
     box-shadow: var(--shadow-card);
     text-shadow:
@@ -185,7 +185,7 @@
 
   .site-chrome-info__trigger:hover,
   .site-chrome-info__trigger:focus-visible {
-    border-color: var(--color-accent-soft);
+    border-color: var(--color-accent);
     box-shadow: var(--shadow-card);
   }
 
@@ -196,7 +196,7 @@
 
   .site-chrome-info__trigger:hover .site-chrome-info__icon,
   .site-chrome-info__trigger:focus-visible .site-chrome-info__icon {
-    border-color: var(--color-accent-soft);
+    border-color: var(--color-accent);
     color: var(--color-accent);
     background-color: color-mix(
       in srgb,
@@ -410,12 +410,16 @@
     width: 2.25rem;
     align-items: center;
     justify-content: center;
+    border: 1px solid var(--chrome-accent-border);
     border-radius: 9999px;
     color: var(--color-foreground);
-    transition: background-color 0.2s ease;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease;
   }
 
   .site-island__menu-toggle:hover {
+    border-color: var(--color-accent);
     background-color: color-mix(
       in srgb,
       var(--color-foreground) 8%,
@@ -445,8 +449,7 @@
     align-items: stretch;
     gap: 0.125rem;
     border-radius: 9999px;
-    border: 1px solid
-      color-mix(in srgb, var(--color-border) 88%, var(--color-foreground) 12%);
+    border: 1px solid var(--chrome-accent-border);
     background-color: var(--island-bg);
     padding: 0.25rem;
     box-shadow:
