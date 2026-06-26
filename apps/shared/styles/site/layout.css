@@ -4,9 +4,15 @@
     background: transparent;
   }
 
-  .site-layout > :not(.site-noise):not(.site-chrome) {
+  .site-layout > :not(.site-noise):not(.site-chrome):not(#site-portal-root) {
     position: relative;
     z-index: 1;
+  }
+
+  #site-portal-root {
+    position: relative;
+    z-index: 60;
+    isolation: isolate;
   }
 
   .site-main {

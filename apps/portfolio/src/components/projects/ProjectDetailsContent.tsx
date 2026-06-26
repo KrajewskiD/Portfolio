@@ -1,7 +1,7 @@
 import ProjectDetails from "@portfolio/components/projects/ProjectDetails";
 import ProjectExternalLink from "@portfolio/components/projects/ProjectExternalLink";
+import ProjectTechnologies from "@portfolio/components/projects/ProjectTechnologies";
 import ProjectTopicsGroup from "@portfolio/components/projects/ProjectTopicsGroup";
-import TechnologyTag from "@portfolio/components/projects/TechnologyTag";
 import { useProjectTopic } from "@portfolio/hooks/useProjectTopic";
 import type { Language } from "@shared/database/types/language";
 import type { Project, ProjectTopicId } from "@shared/database/types/project";
@@ -15,6 +15,7 @@ type ProjectDetailsContentProps = {
   topicSectionLabel: string;
   selectedTopicId: ProjectTopicId;
   onTopicChange: (topicId: ProjectTopicId) => void;
+  showTechnologies?: boolean;
 };
 
 function ProjectDetailsContent({
@@ -24,6 +25,7 @@ function ProjectDetailsContent({
   topicSectionLabel,
   selectedTopicId,
   onTopicChange,
+  showTechnologies = true,
 }: ProjectDetailsContentProps) {
   const { activeTopicId } = useProjectTopic({
     topics: project.topics,
@@ -40,13 +42,11 @@ function ProjectDetailsContent({
     <ProjectDetails
       code={project.code ?? ""}
       title={projectTitle}
-      technologies={project.technologies.map((technology) => (
-        <TechnologyTag
-          key={technology.name}
-          label={technology.name}
-          iconSlug={technology.iconSlug}
-        />
-      ))}
+      technologies={
+        showTechnologies ? (
+          <ProjectTechnologies technologies={project.technologies} />
+        ) : null
+      }
       topics={
         <ProjectTopicsGroup
           topics={project.topics}

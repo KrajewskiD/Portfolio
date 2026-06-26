@@ -1,6 +1,7 @@
 import ProjectCard from "@portfolio/components/projects/ProjectCard";
 import ProjectDetailsContent from "@portfolio/components/projects/ProjectDetailsContent";
 import ProjectImage from "@portfolio/components/projects/ProjectImage";
+import ProjectTechnologies from "@portfolio/components/projects/ProjectTechnologies";
 import { useProjectTopic } from "@portfolio/hooks/useProjectTopic";
 import { getLocalizedField } from "@shared/utils/localizedField";
 import type { Language } from "@shared/database/types/language";
@@ -47,6 +48,9 @@ function ProjectListItem({
         imageUrl={activeTopic.imageUrl}
         alt={imageAlt}
         fallbackLabel={noImage}
+        technologies={
+          <ProjectTechnologies technologies={project.technologies} />
+        }
       />
 
       <ProjectDetailsContent
@@ -56,6 +60,7 @@ function ProjectListItem({
         topicSectionLabel={topicSectionLabel}
         selectedTopicId={activeTopicId}
         onTopicChange={onTopicChange}
+        showTechnologies={false}
       />
     </ProjectCard>
   );

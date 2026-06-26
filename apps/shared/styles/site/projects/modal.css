@@ -1,4 +1,11 @@
 @layer components {
+  html.site-modal-open .site-chrome,
+  html.site-modal-open .site-chrome *,
+  html.site-modal-open .site-parchment-sheet,
+  html.site-modal-open .site-parchment-sheet * {
+    pointer-events: none !important;
+  }
+
   .site-project-modal {
     position: fixed;
     inset: 0;
@@ -17,7 +24,7 @@
     border: none;
     padding: 0;
     background: rgb(0 0 0 / 0.72);
-    cursor: pointer;
+    cursor: default;
     pointer-events: auto;
   }
 
@@ -34,6 +41,9 @@
     pointer-events: auto;
     border-radius: 1.5rem;
     background: transparent;
+    --modal-close-inset: 1rem;
+    --modal-close-size: 2.625rem;
+    --modal-tech-close-gap: 1rem;
   }
 
   .site-project-modal__close {
@@ -87,34 +97,71 @@
     line-height: 1.15;
   }
 
+  .site-project-details__head {
+    @apply min-w-0;
+  }
+
+  .site-project-details__head-main {
+    @apply min-w-0;
+  }
+
+  .site-project-modal .site-card--project-info .site-project-details__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-right: calc(
+      var(--modal-close-inset) + var(--modal-close-size)
+    );
+  }
+
+  .site-project-modal .site-card--project-info .site-project-details__head-aside {
+    flex-shrink: 0;
+    margin-right: var(--modal-tech-close-gap);
+  }
+
+  .site-project-modal .site-card--project-info .site-project-technologies {
+    flex-shrink: 0;
+    margin-top: 0;
+  }
+
   .site-project-modal .site-project-technologies {
     flex-shrink: 0;
     margin-top: 1rem;
   }
 
-  .site-project-modal .site-topic-group {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    width: 100%;
-    min-height: 0;
-    min-width: 0;
-    margin-top: 1rem;
-    overflow: hidden;
+  @media (min-width: 640px) {
+    .site-project-modal .site-project-topics {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      width: 100%;
+      min-height: 0;
+      min-width: 0;
+      margin-top: 0.25rem;
+      overflow: hidden;
+    }
+
+    .site-project-modal .site-topic-list {
+      flex-shrink: 0;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      flex-flow: row nowrap;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+      border-left-width: 0;
+      grid-column: unset;
+      grid-row: unset;
+    }
   }
 
-  .site-project-modal .site-topic-list {
-    flex-shrink: 0;
-    width: 100%;
-    max-width: 100%;
+  .site-project-modal .site-project-topics {
+    margin-top: 0.25rem;
+    min-height: 0;
     min-width: 0;
-    flex-flow: row nowrap;
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    scrollbar-width: none;
-    border-left-width: 0;
-    grid-column: unset;
-    grid-row: unset;
+    overflow: hidden;
   }
 
   .site-project-modal .site-topic-list::-webkit-scrollbar {
@@ -155,6 +202,7 @@
       width: min(100%, 48rem);
       height: min(42rem, calc(100dvh - 3rem));
       max-height: calc(100dvh - 3rem);
+      --modal-close-inset: 1.125rem;
     }
 
     .site-project-modal .site-project-details {
@@ -170,8 +218,12 @@
       font-size: 1.875rem;
     }
 
+    .site-project-modal .site-project-topics {
+      margin-top: 0.25rem;
+    }
+
     .site-project-modal .site-topic-panel-shell {
-      margin-top: 1rem;
+      margin-top: 0.75rem;
     }
   }
 
@@ -193,6 +245,16 @@
       padding: 1rem 1.125rem 1.125rem;
     }
 
+    .site-project-modal .site-card--project-info .site-project-details__head {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.75rem;
+    }
+
+    .site-project-modal .site-card--project-info .site-project-details__head-aside {
+      margin-right: 0;
+    }
+
     .site-project-modal .site-project-details__actions {
       right: calc(1.125rem + 11px);
       bottom: calc(1.125rem + 8px);
@@ -202,6 +264,19 @@
       display: flex;
       justify-content: center;
       min-width: 0;
+    }
+
+    .site-project-modal
+      .site-card--project-info
+      .site-project-details__head-aside
+      .site-project-technologies {
+      justify-content: flex-start;
+    }
+
+    .site-project-modal
+      .site-card--project-info
+      .site-project-technologies__card {
+      margin-inline: 0;
     }
 
     .site-project-modal .site-project-technologies__card {
@@ -234,35 +309,6 @@
     .site-project-modal .site-tag__icon-image {
       width: 1.75rem;
       height: 1.75rem;
-    }
-
-    .site-project-modal .site-topic-group {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: start;
-      gap: 1rem;
-    }
-
-    .site-project-modal .site-topic-list {
-      grid-column: 2;
-      grid-row: 1;
-      width: auto;
-      max-width: none;
-      flex-direction: column;
-      overflow-x: visible;
-      border-left-width: 1px;
-    }
-
-    .site-project-modal .site-topic-panel-shell {
-      grid-column: 1;
-      grid-row: 1;
-      margin-top: 0;
-    }
-
-    .site-project-modal .site-topic-panel {
-      border-top-width: 0;
-      border-left-width: 2px;
-      border-left-color: var(--color-accent-soft);
     }
   }
 

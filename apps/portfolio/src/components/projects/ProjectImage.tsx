@@ -1,10 +1,18 @@
+import type { ReactNode } from "react";
+
 type ProjectImageProps = {
   imageUrl?: string;
   alt: string;
   fallbackLabel: string;
+  technologies?: ReactNode;
 };
 
-function ProjectImage({ imageUrl, alt, fallbackLabel }: ProjectImageProps) {
+function ProjectImage({
+  imageUrl,
+  alt,
+  fallbackLabel,
+  technologies,
+}: ProjectImageProps) {
   return (
     <div className="site-project-image">
       <div className="site-project-image__frame">
@@ -13,6 +21,10 @@ function ProjectImage({ imageUrl, alt, fallbackLabel }: ProjectImageProps) {
         ) : (
           <p className="site-text-muted">{fallbackLabel}</p>
         )}
+
+        {technologies ? (
+          <div className="site-project-image__technologies">{technologies}</div>
+        ) : null}
       </div>
     </div>
   );

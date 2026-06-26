@@ -26,6 +26,19 @@ function ProjectSkeleton() {
         <div className="site-project-image">
           <div className="site-project-image__frame site-project-image__frame--skeleton">
             <div className="site-skeleton size-full rounded-2xl" />
+
+            <div className="site-project-image__technologies">
+              <div className="site-project-technologies">
+                <div className="site-project-technologies__card">
+                  {[0, 1, 2].map((index) => (
+                    <div
+                      key={index}
+                      className="site-skeleton h-8 w-8 rounded-lg"
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -34,15 +47,7 @@ function ProjectSkeleton() {
 
           <div className="site-skeleton mt-3 h-10 w-3/4" />
 
-          <div className="site-project-technologies">
-            <div className="site-project-technologies__card">
-              {[0, 1, 2].map((index) => (
-                <div key={index} className="site-skeleton h-8 w-8 rounded-lg" />
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-6 grid grid-cols-[1fr_auto] gap-4 sm:block">
+          <div className="site-project-topics">
             <div className="site-topic-list">
               {topics.map((width, index) => (
                 <div
@@ -61,10 +66,12 @@ function ProjectSkeleton() {
               ))}
             </div>
 
-            <div className="site-topic-panel col-start-1 row-start-1 space-y-4">
-              <div className="site-skeleton h-5 w-28" />
-              <div className="site-skeleton h-5 w-full" />
-              <div className="site-skeleton h-5 w-4/5" />
+            <div className="site-topic-panel-shell">
+              <div className="site-topic-panel space-y-4">
+                <div className="site-skeleton h-5 w-28" />
+                <div className="site-skeleton h-5 w-full" />
+                <div className="site-skeleton h-5 w-4/5" />
+              </div>
             </div>
           </div>
         </div>

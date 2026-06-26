@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 type ProjectDetailsProps = {
   code: string;
   title: string;
-  technologies: ReactNode;
+  technologies?: ReactNode;
   topics: ReactNode;
   externalLink?: ReactNode;
 };
@@ -18,12 +18,18 @@ function ProjectDetails({
   return (
     <div className="site-project-details">
       <div className="site-project-details__content">
-        <p className="site-code">{code}</p>
+        <div className="site-project-details__head">
+          <div className="site-project-details__head-main">
+            <p className="site-code">{code}</p>
 
-        <h3 className="site-title--project">{title}</h3>
+            <h3 className="site-title--project">{title}</h3>
+          </div>
 
-        <div className="site-project-technologies">
-          <div className="site-project-technologies__card">{technologies}</div>
+          {technologies ? (
+            <div className="site-project-details__head-aside">
+              {technologies}
+            </div>
+          ) : null}
         </div>
 
         {topics}
