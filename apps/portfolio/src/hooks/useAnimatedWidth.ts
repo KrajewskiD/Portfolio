@@ -9,7 +9,10 @@ function clearInlineWidth(element: HTMLElement) {
   element.classList.remove("site-island--resizing");
 }
 
-function useAnimatedWidth(ref: RefObject<HTMLElement | null>) {
+function useAnimatedWidth(
+  ref: RefObject<HTMLElement | null>,
+  syncKey?: unknown,
+) {
   const committedWidthRef = useRef<number | null>(null);
   const isFirstRenderRef = useRef(true);
 
@@ -91,7 +94,7 @@ function useAnimatedWidth(ref: RefObject<HTMLElement | null>) {
       removeTransitionListener?.();
       mediaQuery.removeEventListener("change", syncWidth);
     };
-  });
+  }, [ref, syncKey]);
 }
 
 export default useAnimatedWidth;

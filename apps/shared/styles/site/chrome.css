@@ -86,8 +86,7 @@
     display: inline-flex;
     align-items: center;
     pointer-events: auto;
-    border: 1px solid
-      color-mix(in srgb, var(--color-border) 65%, var(--island-bg));
+    border: 1px solid var(--chrome-accent-border);
     border-radius: 9999px;
     padding: 0.55rem 1.05rem 0.65rem;
     background-color: var(--color-surface);
@@ -100,10 +99,14 @@
     letter-spacing: 0;
     color: var(--color-foreground);
     text-decoration: none;
+    text-shadow:
+      0 1px 0 rgb(255 255 255 / 0.06),
+      0 -1px 2px rgb(0 0 0 / 0.52);
     transition:
       border-color 0.2s ease,
       box-shadow 0.2s ease,
-      color 0.2s ease;
+      color 0.2s ease,
+      text-shadow 0.2s ease;
   }
 
   .site-chrome__wordmark:hover,
@@ -111,6 +114,9 @@
     border-color: var(--color-accent-soft);
     color: var(--color-accent);
     box-shadow: var(--shadow-card);
+    text-shadow:
+      0 1px 0 rgb(255 255 255 / 0.08),
+      0 -1px 2px rgb(0 0 0 / 0.4);
   }
 
   @media (max-width: 639px) {
@@ -148,8 +154,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.625rem;
-    border: 1px solid
-      color-mix(in srgb, var(--color-border) 65%, var(--island-bg));
+    border: 1px solid var(--chrome-accent-border);
     border-radius: 9999px;
     background-color: var(--color-surface);
     padding: 0.25rem 0.3rem 0.25rem 0.95rem;
@@ -252,10 +257,10 @@
     pointer-events: auto;
     width: fit-content;
     max-width: calc(100% - 1rem);
-    border: 1px solid color-mix(in srgb, var(--color-border) 62%, #767b84);
+    border: 1px solid var(--chrome-accent-border);
     border-top-width: 0;
     border-radius: 0 0 1.5rem 1.5rem;
-    box-shadow: var(--shadow-card);
+    box-shadow: var(--shadow-island);
   }
 
   .site-island::before,
@@ -266,7 +271,7 @@
     width: calc(var(--island-notch) + var(--island-notch-overlap));
     height: calc(var(--island-notch) + var(--island-notch-overlap));
     pointer-events: none;
-    background-color: var(--color-surface);
+    background-color: var(--island-bg);
     background-image: var(--island-surface);
     background-repeat: no-repeat;
     background-size: auto;
@@ -424,10 +429,13 @@
   }
 
   .site-island .site-lang-toggle {
+    position: relative;
+    isolation: isolate;
     flex-shrink: 0;
+    width: 7.125rem;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items: center;
+    align-items: stretch;
     gap: 0.125rem;
     border-radius: 9999px;
     border: 1px solid
@@ -440,6 +448,31 @@
       inset 0 1px 0 rgb(255 255 255 / 0.05);
   }
 
+  .site-island .site-lang-toggle__indicator {
+    position: absolute;
+    top: 0.25rem;
+    bottom: 0.25rem;
+    left: 0.25rem;
+    z-index: 0;
+    width: calc((100% - 0.5rem - 0.125rem) / 2);
+    border-radius: 9999px;
+    background-color: rgb(255 107 74 / 0.16);
+    transform: translate3d(0, 0, 0);
+    transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  .site-island .site-lang-toggle__indicator[data-position="en"] {
+    transform: translate3d(calc(100% + 0.125rem), 0, 0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-island .site-lang-toggle__indicator {
+      transition: none;
+    }
+  }
+
   @media (max-width: 639px) {
     .site-island .site-lang-toggle {
       margin-left: auto;
@@ -447,63 +480,47 @@
   }
 
   .site-island .site-lang-button {
+    position: relative;
+    z-index: 1;
     display: inline-flex;
-    min-width: 0;
+    width: 100%;
     min-height: 1.875rem;
     align-items: center;
     justify-content: center;
     border: none;
     border-radius: 9999px;
-    padding: 0.375rem 0.75rem;
+    padding: 0.375rem 0;
     font-size: 0.8125rem;
     font-weight: 600;
     line-height: 1;
     text-align: center;
-    transition:
-      color 0.2s ease,
-      background-color 0.2s ease;
+    background-color: transparent;
+    transition: color 0.32s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   @media (max-width: 639px) {
     .site-island .site-lang-button {
       min-height: 1.75rem;
-      padding: 0.35rem 0.55rem;
+      padding: 0.35rem 0;
       font-size: 0.75rem;
     }
   }
 
   .site-island .site-lang-button--active {
     color: var(--color-accent);
-    background-color: rgb(255 107 74 / 0.16);
   }
 
   .site-island .site-lang-button--inactive {
     color: var(--color-subtle);
-    background-color: transparent;
   }
 
   .site-island .site-lang-button--inactive:hover {
     color: var(--color-foreground);
-    background-color: color-mix(
-      in srgb,
-      var(--color-foreground) 8%,
-      transparent
-    );
   }
 
-  .site-lang-toggle {
-    @apply flex items-center gap-1;
-  }
-
-  .site-lang-button {
-    @apply min-w-10 rounded-full px-2.5 py-1 text-center text-sm transition-colors;
-  }
-
-  .site-lang-button--active {
-    @apply font-semibold text-accent;
-  }
-
-  .site-lang-button--inactive {
-    @apply font-normal text-subtle hover:text-foreground;
+  @media (prefers-reduced-motion: reduce) {
+    .site-island .site-lang-button {
+      transition: none;
+    }
   }
 }

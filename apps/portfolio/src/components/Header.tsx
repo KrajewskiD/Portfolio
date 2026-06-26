@@ -59,7 +59,7 @@ function Header({
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  useAnimatedWidth(islandRef);
+  useAnimatedWidth(islandRef, language);
 
   return (
     <header className="site-chrome max-sm:w-full">
