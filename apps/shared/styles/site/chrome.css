@@ -1,9 +1,25 @@
 @layer components {
   .site-nav-link {
-    @apply relative px-3 py-1.5 text-xl text-subtle transition-colors hover:text-accent;
+    @apply relative px-3 py-1.5 text-subtle hover:text-accent;
     display: inline-flex;
     align-items: center;
     font-family: var(--font-display);
+    font-size: 1.375rem;
+    -webkit-text-stroke: 0.16em var(--island-bg);
+    paint-order: stroke fill;
+    text-shadow:
+      0 1px 0 rgb(255 255 255 / 0.06),
+      0 -1px 2px rgb(0 0 0 / 0.52);
+    transition:
+      color 0.2s ease,
+      text-shadow 0.2s ease;
+  }
+
+  .site-nav-link:hover,
+  .site-nav-link:focus-visible {
+    text-shadow:
+      0 1px 0 rgb(255 255 255 / 0.08),
+      0 -1px 2px rgb(0 0 0 / 0.4);
   }
 
   .site-nav-link::after {
@@ -39,8 +55,24 @@
   }
 
   .site-nav-link--mobile {
-    @apply relative block px-3 py-2 text-xl text-foreground transition-colors hover:text-accent;
+    @apply relative block px-3 py-2 text-foreground hover:text-accent;
     font-family: var(--font-display);
+    font-size: 1.375rem;
+    -webkit-text-stroke: 0.16em var(--island-bg);
+    paint-order: stroke fill;
+    text-shadow:
+      0 1px 0 rgb(255 255 255 / 0.06),
+      0 -1px 2px rgb(0 0 0 / 0.52);
+    transition:
+      color 0.2s ease,
+      text-shadow 0.2s ease;
+  }
+
+  .site-nav-link--mobile:hover,
+  .site-nav-link--mobile:focus-visible {
+    text-shadow:
+      0 1px 0 rgb(255 255 255 / 0.08),
+      0 -1px 2px rgb(0 0 0 / 0.4);
   }
 
   .site-nav-link--mobile::after {
@@ -103,7 +135,7 @@
     letter-spacing: 0;
     color: var(--color-accent);
     text-decoration: none;
-    -webkit-text-stroke: 0.12em var(--island-bg);
+    -webkit-text-stroke: 0.16em var(--island-bg);
     paint-order: stroke fill;
     text-shadow:
       0 1px 0 rgb(255 255 255 / 0.06),
@@ -119,7 +151,7 @@
     background-color: transparent;
     color: var(--color-accent);
     box-shadow: none;
-    -webkit-text-stroke: 0.12em var(--island-bg);
+    -webkit-text-stroke: 0.16em var(--island-bg);
     text-shadow:
       0 1px 0 rgb(255 255 255 / 0.08),
       0 -1px 2px rgb(0 0 0 / 0.4);
@@ -392,7 +424,7 @@
       color: var(--color-accent);
       text-decoration: none;
       white-space: nowrap;
-      -webkit-text-stroke: 0.12em var(--island-bg);
+      -webkit-text-stroke: 0.16em var(--island-bg);
       paint-order: stroke fill;
       text-shadow:
         0 1px 0 rgb(255 255 255 / 0.06),
@@ -405,7 +437,7 @@
     .site-island__mobile-wordmark:hover,
     .site-island__mobile-wordmark:focus-visible {
       color: var(--color-accent);
-      -webkit-text-stroke: 0.12em var(--island-bg);
+      -webkit-text-stroke: 0.16em var(--island-bg);
       text-shadow:
         0 1px 0 rgb(255 255 255 / 0.08),
         0 -1px 2px rgb(0 0 0 / 0.4);
@@ -520,7 +552,21 @@
     line-height: 1;
     text-align: center;
     background-color: transparent;
-    transition: color 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    -webkit-text-stroke: 0.16em var(--island-bg);
+    paint-order: stroke fill;
+    text-shadow:
+      0 1px 0 rgb(255 255 255 / 0.06),
+      0 -1px 2px rgb(0 0 0 / 0.52);
+    transition:
+      color 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+      text-shadow 0.2s ease;
+  }
+
+  .site-island .site-lang-button:hover,
+  .site-island .site-lang-button:focus-visible {
+    text-shadow:
+      0 1px 0 rgb(255 255 255 / 0.08),
+      0 -1px 2px rgb(0 0 0 / 0.4);
   }
 
   @media (max-width: 639px) {
