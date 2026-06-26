@@ -1,7 +1,8 @@
 import { useLayoutEffect, useRef, type RefObject } from "react";
 
-const WIDTH_TRANSITION = "width 0.35s cubic-bezier(0.4, 0, 0.2, 1)";
+const WIDTH_TRANSITION = "width 0.32s cubic-bezier(0.4, 0, 0.2, 1)";
 const MOBILE_MEDIA_QUERY = "(max-width: 639px)";
+const REDUCED_MOTION_MEDIA_QUERY = "(prefers-reduced-motion: reduce)";
 
 function clearInlineWidth(element: HTMLElement) {
   element.style.width = "";
@@ -23,8 +24,9 @@ function useAnimatedWidth(
     }
 
     const mediaQuery = window.matchMedia(MOBILE_MEDIA_QUERY);
+    const reducedMotionQuery = window.matchMedia(REDUCED_MOTION_MEDIA_QUERY);
 
-    if (mediaQuery.matches) {
+    if (mediaQuery.matches || reducedMotionQuery.matches) {
       clearInlineWidth(element);
       committedWidthRef.current = null;
       return;
@@ -36,12 +38,19 @@ function useAnimatedWidth(
       removeTransitionListener?.();
       removeTransitionListener = undefined;
 
-      if (mediaQuery.matches) {
+      if (mediaQuery.matches || reducedMotionQuery.matches) {
         clearInlineWidth(element);
         committedWidthRef.current = null;
         return;
       }
 
+      const currentAnimatedWidth = element.classList.contains(
+        "site-island--resizing",
+      )
+        ? element.getBoundingClientRect().width
+        : null;
+
+      element.style.transition = "none";
       element.style.width = "auto";
       const nextWidth = element.getBoundingClientRect().width;
 
@@ -51,7 +60,8 @@ function useAnimatedWidth(
         return;
       }
 
-      const previousWidth = committedWidthRef.current ?? nextWidth;
+      const previousWidth =
+        currentAnimatedWidth ?? committedWidthRef.current ?? nextWidth;
 
       if (Math.abs(previousWidth - nextWidth) < 0.5) {
         committedWidthRef.current = nextWidth;
@@ -60,11 +70,9 @@ function useAnimatedWidth(
 
       element.classList.add("site-island--resizing");
       element.style.width = `${previousWidth}px`;
+      element.getBoundingClientRect();
       element.style.transition = WIDTH_TRANSITION;
-
-      requestAnimationFrame(() => {
-        element.style.width = `${nextWidth}px`;
-      });
+      element.style.width = `${nextWidth}px`;
 
       const finish = () => {
         clearInlineWidth(element);
@@ -89,10 +97,12 @@ function useAnimatedWidth(
 
     syncWidth();
     mediaQuery.addEventListener("change", syncWidth);
+    reducedMotionQuery.addEventListener("change", syncWidth);
 
     return () => {
       removeTransitionListener?.();
       mediaQuery.removeEventListener("change", syncWidth);
+      reducedMotionQuery.removeEventListener("change", syncWidth);
     };
   }, [ref, syncKey]);
 }

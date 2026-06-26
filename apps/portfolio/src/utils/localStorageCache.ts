@@ -72,10 +72,10 @@ function readLocalStorageCacheEntry<T>(
 }
 
 function isValidCachedData<T>(
-  data: T,
-  validate?: (value: unknown) => data is T,
-): boolean {
-  return validate ? validate(data) : true;
+  value: unknown,
+  validate?: (value: unknown) => value is T,
+): value is T {
+  return validate ? validate(value) : true;
 }
 
 export function readLocalStorageCache<T>(key: string): T | undefined {
