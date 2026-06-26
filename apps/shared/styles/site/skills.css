@@ -2,11 +2,17 @@
   .site-card--skill {
     --card-gradient-angle: 160deg;
     @apply self-start rounded-2xl border border-accent px-5 py-4 shadow-card-sm;
-    background-image: linear-gradient(
-      var(--card-gradient-angle),
-      color-mix(in srgb, var(--color-surface) 84%, var(--color-muted)) 0%,
-      color-mix(in srgb, var(--color-surface) 90%, var(--color-background)) 100%
-    );
+    background-image:
+      var(--card-surface-noise),
+      linear-gradient(
+        var(--card-gradient-angle),
+        color-mix(in srgb, var(--color-surface) 84%, var(--color-muted)) 0%,
+        color-mix(in srgb, var(--color-surface) 87%, var(--color-muted)) 24%,
+        color-mix(in srgb, var(--color-surface) 90%, var(--color-background)) 100%
+      );
+    background-repeat: repeat, no-repeat;
+    background-size: 180px 180px, auto;
+    background-blend-mode: overlay, normal;
   }
 
   .site-card--skill .site-title--skill-group {

@@ -247,6 +247,7 @@
 
   .site-island {
     --island-notch: 1.125rem;
+    --island-notch-overlap: 1px;
     position: relative;
     pointer-events: auto;
     width: fit-content;
@@ -257,35 +258,46 @@
     box-shadow: var(--shadow-card);
   }
 
-  .site-island--resizing {
-    overflow-x: clip;
-  }
-
   .site-island::before,
   .site-island::after {
     content: "";
     position: absolute;
     top: 0;
-    width: var(--island-notch);
-    height: var(--island-notch);
+    width: calc(var(--island-notch) + var(--island-notch-overlap));
+    height: calc(var(--island-notch) + var(--island-notch-overlap));
     pointer-events: none;
+    background-color: var(--color-surface);
+    background-image: var(--island-surface);
+    background-repeat: no-repeat;
+    background-size: auto;
+    background-attachment: fixed;
   }
 
   .site-island::before {
     left: calc(-1 * var(--island-notch));
-    background: radial-gradient(
+    -webkit-mask-image: radial-gradient(
       circle at 0 100%,
-      transparent var(--island-notch),
-      var(--color-surface) var(--island-notch)
+      transparent calc(var(--island-notch) - 0.5px),
+      #000 var(--island-notch)
+    );
+    mask-image: radial-gradient(
+      circle at 0 100%,
+      transparent calc(var(--island-notch) - 0.5px),
+      #000 var(--island-notch)
     );
   }
 
   .site-island::after {
     right: calc(-1 * var(--island-notch));
-    background: radial-gradient(
+    -webkit-mask-image: radial-gradient(
       circle at 100% 100%,
-      transparent var(--island-notch),
-      var(--color-surface) var(--island-notch)
+      transparent calc(var(--island-notch) - 0.5px),
+      #000 var(--island-notch)
+    );
+    mask-image: radial-gradient(
+      circle at 100% 100%,
+      transparent calc(var(--island-notch) - 0.5px),
+      #000 var(--island-notch)
     );
   }
 
@@ -418,13 +430,14 @@
     align-items: center;
     gap: 0.125rem;
     border-radius: 9999px;
-    border: 1px solid var(--color-border);
-    background-color: color-mix(
-      in srgb,
-      var(--color-foreground) 4%,
-      transparent
-    );
+    border: 1px solid
+      color-mix(in srgb, var(--color-border) 88%, var(--color-foreground) 12%);
+    background-color: var(--island-bg);
     padding: 0.25rem;
+    box-shadow:
+      inset 0 3px 14px rgb(0 0 0 / 0.48),
+      inset 0 -2px 8px rgb(0 0 0 / 0.22),
+      inset 0 1px 0 rgb(255 255 255 / 0.05);
   }
 
   @media (max-width: 639px) {

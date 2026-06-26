@@ -6,13 +6,13 @@
   .site-panel--empty-lg,
   .site-chrome__wordmark,
   .site-chrome-info__trigger,
-  .site-island,
   .site-island__menu-panel {
     --card-gradient-angle: 145deg;
     --card-accent-x: 100%;
     --card-accent-y: 0%;
     --card-gradient-mid: 46%;
     background-image:
+      var(--card-surface-noise),
       radial-gradient(
         ellipse 90% 70% at var(--card-accent-x) var(--card-accent-y),
         rgb(255 107 74 / 0.1),
@@ -21,10 +21,41 @@
       linear-gradient(
         var(--card-gradient-angle),
         color-mix(in srgb, var(--color-surface) 78%, var(--color-muted)) 0%,
+        color-mix(in srgb, var(--color-surface) 88%, var(--color-muted)) 18%,
+        color-mix(in srgb, var(--color-surface) 95%, var(--color-muted)) 30%,
         var(--color-surface) var(--card-gradient-mid),
+        color-mix(in srgb, var(--color-surface) 94%, var(--color-background))
+          calc(var(--card-gradient-mid) + 16%),
         color-mix(in srgb, var(--color-surface) 86%, var(--color-background))
           100%
       );
+    background-repeat: repeat, no-repeat, no-repeat;
+    background-size: 180px 180px, auto, auto;
+    background-blend-mode: overlay, normal, normal;
+  }
+
+  .site-island {
+    --card-gradient-angle: 152deg;
+    --card-accent-x: 72%;
+    --card-accent-y: 0%;
+    --card-gradient-mid: 50%;
+    --island-surface:
+      radial-gradient(
+        ellipse 90% 70% at var(--card-accent-x) var(--card-accent-y),
+        rgb(255 107 74 / 0.1),
+        transparent 58%
+      ),
+      linear-gradient(
+        var(--card-gradient-angle),
+        color-mix(in srgb, var(--color-surface) 82%, var(--color-muted)) 0%,
+        var(--color-surface) var(--card-gradient-mid),
+        color-mix(in srgb, var(--color-surface) 90%, var(--color-background)) 100%
+      );
+    background-color: var(--color-surface);
+    background-image: var(--island-surface);
+    background-repeat: no-repeat;
+    background-size: auto;
+    background-attachment: fixed;
   }
 
   .site-card--project {

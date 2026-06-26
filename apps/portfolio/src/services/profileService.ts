@@ -7,13 +7,19 @@ import { hydrateProfileImage } from "@shared/database/profile/hydrateProfileImag
 import type { Profile } from "@shared/database/types/profile";
 
 import { supabase } from "../lib/supabase";
+import { getWithLocalStorageCache } from "../utils/localStorageCache";
+import {
+  PUBLIC_CONTENT_CACHE_TTL_MS,
+  publicContentCacheKeys,
+} from "../utils/publicContentCache";
+import { isValidProfile } from "../utils/publicContentCacheValidators";
 
 const getProfileImagePublicUrl = createBucketUrlResolver(
   supabase,
   PROFILE_IMAGES_BUCKET,
 );
 
-export async function getProfile(): Promise<Profile> {
+async function fetchProfile(): Promise<Profile> {
   const profile = await getProfileFromDatabase(
     supabase,
     getProfileImagePublicUrl,
@@ -22,4 +28,13 @@ export async function getProfile(): Promise<Profile> {
   return hydrateProfileImage(supabase, profile, {
     getProfileImagePublicUrl,
   });
+}
+
+export async function getProfile(): Promise<Profile> {
+  return getWithLocalStorageCache(
+    publicContentCacheKeys.profile,
+    PUBLIC_CONTENT_CACHE_TTL_MS,
+    fetchProfile,
+    { validate: isValidProfile },
+  );
 }
