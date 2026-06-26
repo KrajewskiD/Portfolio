@@ -1,4 +1,10 @@
-import { useEffect, useId, useRef } from "react";
+import {
+  useCallback,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 
 import {
   projectTopicIcons,
@@ -23,6 +29,9 @@ type ProjectTopicsGroupProps = {
   sectionLabel: string;
 };
 
+const SCROLLBAR_TRACK_INSET = 10;
+const SCROLLBAR_MIN_THUMB_HEIGHT = 44;
+
 function ProjectTopicsGroup({
   topics,
   activeId,
@@ -32,6 +41,12 @@ function ProjectTopicsGroup({
 }: ProjectTopicsGroupProps) {
   const groupId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
+  const panelContentRef = useRef<HTMLDivElement>(null);
+  const [scrollbar, setScrollbar] = useState({
+    isVisible: false,
+    thumbHeight: 0,
+    thumbTop: 0,
+  });
 
   const orderedTopics = projectTopicOrder
     .map((id) => topics.find((topic) => topic.id === id))
@@ -40,9 +55,99 @@ function ProjectTopicsGroup({
   const activeTopic =
     orderedTopics.find((topic) => topic.id === activeId) ?? orderedTopics[0];
 
-  useEffect(() => {
-    panelRef.current?.scrollTo({ top: 0 });
-  }, [activeId]);
+  const updateScrollbar = useCallback(() => {
+    const panel = panelRef.current;
+    const content = panelContentRef.current;
+
+    if (!panel || !content) {
+      return;
+    }
+
+    const contentBottom = content.offsetTop + content.scrollHeight;
+    const isScrollable = contentBottom > panel.clientHeight + 1;
+
+    if (!isScrollable) {
+      setScrollbar((current) =>
+        current.isVisible
+          ? { isVisible: false, thumbHeight: 0, thumbTop: 0 }
+          : current,
+      );
+      return;
+    }
+
+    const trackHeight = Math.max(
+      panel.clientHeight - SCROLLBAR_TRACK_INSET * 2,
+      SCROLLBAR_MIN_THUMB_HEIGHT,
+    );
+    const thumbHeight = Math.max(
+      SCROLLBAR_MIN_THUMB_HEIGHT,
+      (panel.clientHeight / panel.scrollHeight) * trackHeight,
+    );
+    const maxThumbTop = Math.max(trackHeight - thumbHeight, 0);
+    const maxScrollTop = Math.max(panel.scrollHeight - panel.clientHeight, 1);
+    const thumbTop = (panel.scrollTop / maxScrollTop) * maxThumbTop;
+
+    setScrollbar((current) => {
+      const next = {
+        isVisible: true,
+        thumbHeight,
+        thumbTop,
+      };
+
+      if (
+        current.isVisible === next.isVisible &&
+        Math.abs(current.thumbHeight - next.thumbHeight) < 0.5 &&
+        Math.abs(current.thumbTop - next.thumbTop) < 0.5
+      ) {
+        return current;
+      }
+
+      return next;
+    });
+  }, []);
+
+  useLayoutEffect(() => {
+    const panel = panelRef.current;
+
+    if (!panel) {
+      return;
+    }
+
+    panel.scrollTo({ top: 0 });
+    updateScrollbar();
+  }, [activeId, updateScrollbar]);
+
+  useLayoutEffect(() => {
+    updateScrollbar();
+
+    const panel = panelRef.current;
+    const content = panelContentRef.current;
+
+    if (!panel) {
+      return;
+    }
+
+    if (typeof ResizeObserver === "undefined") {
+      window.addEventListener("resize", updateScrollbar);
+      return () => {
+        window.removeEventListener("resize", updateScrollbar);
+      };
+    }
+
+    const resizeObserver = new ResizeObserver(updateScrollbar);
+    resizeObserver.observe(panel);
+
+    if (content) {
+      resizeObserver.observe(content);
+    }
+
+    window.addEventListener("resize", updateScrollbar);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", updateScrollbar);
+    };
+  }, [activeTopic, language, updateScrollbar]);
 
   if (!activeTopic) {
     return null;
@@ -63,20 +168,43 @@ function ProjectTopicsGroup({
         ))}
       </div>
 
-      <div ref={panelRef} className="site-topic-panel site-scrollbar">
-        <p className="site-label text-sm">
-          {projectTopicLabels[activeTopic.id][language]}
-        </p>
+      <div
+        className="site-topic-panel-shell"
+        data-scrollable={scrollbar.isVisible ? "true" : undefined}
+      >
+        <div
+          ref={panelRef}
+          className="site-topic-panel"
+          onScroll={updateScrollbar}
+        >
+          <div ref={panelContentRef} className="site-topic-panel__content">
+            <p className="site-label text-sm">
+              {projectTopicLabels[activeTopic.id][language]}
+            </p>
 
-        <RichTextContent
-          className="site-body--panel"
-          content={getLocalizedField(
-            activeTopic,
-            language,
-            "contentPl",
-            "contentEn",
-          )}
-        />
+            <RichTextContent
+              className="site-body--panel"
+              content={getLocalizedField(
+                activeTopic,
+                language,
+                "contentPl",
+                "contentEn",
+              )}
+            />
+          </div>
+        </div>
+
+        {scrollbar.isVisible ? (
+          <span aria-hidden className="site-topic-panel__scrollbar">
+            <span
+              className="site-topic-panel__scrollbar-thumb"
+              style={{
+                height: `${scrollbar.thumbHeight}px`,
+                transform: `translate3d(0, ${scrollbar.thumbTop}px, 0)`,
+              }}
+            />
+          </span>
+        ) : null}
       </div>
     </div>
   );
