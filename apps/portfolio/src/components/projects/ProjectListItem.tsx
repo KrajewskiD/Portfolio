@@ -60,7 +60,7 @@ function ProjectListItem({
         topicSectionLabel={topicSectionLabel}
         selectedTopicId={activeTopicId}
         onTopicChange={onTopicChange}
-        showTechnologies={false}
+        pinExternalLinkToTitle
       />
     </ProjectCard>
   );

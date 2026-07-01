@@ -40,16 +40,23 @@
     font-weight: 600;
   }
 
-  .site-rich-text p strong:only-child {
+  .site-rich-text p > strong:first-child {
     display: block;
+  }
+
+  .site-rich-text p > strong:first-child:last-child {
     margin-top: 1.125rem;
     margin-bottom: 0.5rem;
     font-size: 1.02em;
     letter-spacing: 0.01em;
   }
 
-  .site-rich-text > :first-child strong:only-child,
-  .site-rich-text > p:first-child strong:only-child {
+  .site-rich-text p > strong:first-child:not(:last-child) {
+    margin-bottom: 0.35rem;
+  }
+
+  .site-rich-text > :first-child > strong:first-child:last-child,
+  .site-rich-text > p:first-child > strong:first-child:last-child {
     margin-top: 0;
   }
 

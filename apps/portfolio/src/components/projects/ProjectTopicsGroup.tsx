@@ -154,7 +154,7 @@ function ProjectTopicsGroup({
   }
 
   return (
-    <div className="site-project-topics">
+    <div className="site-project-topics site-project-topics-scale">
       <div role="group" aria-label={sectionLabel} className="site-topic-list">
         {orderedTopics.map((topic) => (
           <ProjectTopic

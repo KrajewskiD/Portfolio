@@ -282,6 +282,16 @@
     flex: 0 0 auto;
   }
 
+  .site-hero-card__social.site-social-icon-scale {
+    font-size: 1.65rem;
+  }
+
+  @media (min-width: 640px) {
+    .site-hero-card__social.site-social-icon-scale {
+      font-size: 1.85rem;
+    }
+  }
+
   .site-hero-card__links {
     display: flex;
     flex-shrink: 0;
@@ -445,7 +455,7 @@
     }
 
     .site-hero-card__social.site-social-icon-scale {
-      font-size: 1.24rem;
+      font-size: 1.6rem;
     }
 
     .site-hero-card__social .site-icon-link {

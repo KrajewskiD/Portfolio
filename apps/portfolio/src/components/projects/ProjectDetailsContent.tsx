@@ -16,6 +16,7 @@ type ProjectDetailsContentProps = {
   selectedTopicId: ProjectTopicId;
   onTopicChange: (topicId: ProjectTopicId) => void;
   showTechnologies?: boolean;
+  pinExternalLinkToTitle?: boolean;
 };
 
 function ProjectDetailsContent({
@@ -26,6 +27,7 @@ function ProjectDetailsContent({
   selectedTopicId,
   onTopicChange,
   showTechnologies = true,
+  pinExternalLinkToTitle = false,
 }: ProjectDetailsContentProps) {
   const { activeTopicId } = useProjectTopic({
     topics: project.topics,
@@ -64,6 +66,7 @@ function ProjectDetailsContent({
           />
         ) : null
       }
+      pinExternalLinkToTitle={pinExternalLinkToTitle}
     />
   );
 }

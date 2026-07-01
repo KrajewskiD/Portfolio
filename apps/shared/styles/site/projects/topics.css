@@ -167,6 +167,12 @@
     overflow: hidden;
   }
 
+  @media (min-width: 1024px) {
+    .site-card--project:not(.site-card--project-info) .site-project-topics {
+      overflow: visible;
+    }
+  }
+
   .site-card--project .site-topic-list {
     min-width: 0;
     max-width: 100%;
@@ -187,7 +193,7 @@
     text-align: left;
   }
 
-  .site-card--project .site-rich-text p strong:only-child {
+  .site-card--project .site-rich-text p > strong:first-child {
     color: var(--color-accent);
     font-weight: 600;
   }
@@ -203,11 +209,36 @@
   }
 
   @media (max-width: 639px) {
+    .site-card--project:not(.site-card--project-info)
+      .site-project-topics.site-project-topics-scale {
+      font-size: clamp(0.9rem, 3.5vw, 1.05rem);
+      margin-top: 0.65rem;
+    }
+
     .site-project-topics {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
       align-items: stretch;
       gap: 1rem;
+    }
+
+    .site-card--project:not(.site-card--project-info)
+      .site-project-topics.site-project-topics-scale {
+      gap: 1em;
+    }
+
+    .site-card--project:not(.site-card--project-info)
+      .site-project-topics.site-project-topics-scale
+      .site-topic-tab {
+      padding: 0.75em;
+      font-size: 0.8em;
+    }
+
+    .site-card--project:not(.site-card--project-info)
+      .site-project-topics.site-project-topics-scale
+      .site-topic-tab__icon {
+      width: 1.25em;
+      height: 1.25em;
     }
 
     .site-project-topics .site-topic-list {
@@ -237,14 +268,46 @@
       max-height: clamp(11.5rem, 48vw, 15.5rem);
     }
 
+    .site-card--project:not(.site-card--project-info)
+      .site-project-topics.site-project-topics-scale
+      .site-topic-panel {
+      max-height: clamp(11.5em, 48vw, 15.5em);
+      padding: 0.9em 1em 1em;
+    }
+
     .site-card--project .site-topic-panel {
       padding: 0.9rem 1rem 1rem;
+    }
+
+    .site-card--project:not(.site-card--project-info)
+      .site-project-topics.site-project-topics-scale
+      .site-body--panel,
+    .site-card--project:not(.site-card--project-info)
+      .site-project-topics.site-project-topics-scale
+      .site-rich-text.site-body--panel {
+      font-size: 0.9em;
+      line-height: 1.65;
     }
 
     .site-card--project .site-body--panel,
     .site-card--project .site-rich-text.site-body--panel {
       font-size: 0.9rem;
       line-height: 1.65;
+    }
+
+    .site-card--project:not(.site-card--project-info)
+      .site-project-topics.site-project-topics-scale
+      .site-topic-panel-shell[data-scrollable="true"]
+      .site-topic-panel {
+      padding-right: 2.25em;
+    }
+
+    .site-card--project:not(.site-card--project-info)
+      .site-project-topics.site-project-topics-scale
+      .site-topic-panel__scrollbar {
+      top: 0.625em;
+      bottom: 0.625em;
+      width: 0.375em;
     }
 
     .site-card--project .site-topic-list {

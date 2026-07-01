@@ -6,6 +6,7 @@ type ProjectDetailsProps = {
   technologies?: ReactNode;
   topics: ReactNode;
   externalLink?: ReactNode;
+  pinExternalLinkToTitle?: boolean;
 };
 
 function ProjectDetails({
@@ -14,7 +15,14 @@ function ProjectDetails({
   technologies,
   topics,
   externalLink,
+  pinExternalLinkToTitle = false,
 }: ProjectDetailsProps) {
+  const externalLinkActions = externalLink ? (
+    <div className="site-project-details__actions site-social-icon-scale">
+      {externalLink}
+    </div>
+  ) : null;
+
   return (
     <div className="site-project-details">
       <div className="site-project-details__content">
@@ -22,7 +30,10 @@ function ProjectDetails({
           <div className="site-project-details__head-main">
             <p className="site-code">{code}</p>
 
-            <h3 className="site-title--project">{title}</h3>
+            <div className="site-project-details__title-row">
+              <h3 className="site-title--project">{title}</h3>
+              {pinExternalLinkToTitle ? externalLinkActions : null}
+            </div>
           </div>
 
           {technologies ? (
@@ -35,11 +46,7 @@ function ProjectDetails({
         {topics}
       </div>
 
-      {externalLink ? (
-        <div className="site-project-details__actions site-social-icon-scale">
-          {externalLink}
-        </div>
-      ) : null}
+      {!pinExternalLinkToTitle ? externalLinkActions : null}
     </div>
   );
 }
