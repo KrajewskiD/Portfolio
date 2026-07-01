@@ -14,7 +14,12 @@
   }
 
   .site-footer__links {
-    @apply flex flex-row flex-wrap items-center justify-center gap-4;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    max-width: 100%;
   }
 
   .site-footer__identity {
@@ -44,6 +49,18 @@
   @media (max-width: 639px) {
     .site-footer__description {
       text-align: left;
+    }
+
+    .site-footer__links {
+      gap: 0.5rem;
+    }
+
+    .site-footer .site-pill--link {
+      flex-shrink: 0;
+      padding-inline: 0.85rem;
+      padding-block: 0.55rem;
+      font-size: 0.8125rem;
+      white-space: nowrap;
     }
   }
 

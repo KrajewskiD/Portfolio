@@ -41,6 +41,22 @@
     -webkit-overflow-scrolling: touch;
   }
 
+  @media (max-width: 639px) {
+    .site-card--project .site-topic-panel-shell {
+      min-height: 0;
+      max-height: clamp(11.5rem, 48vw, 15.5rem);
+    }
+
+    .site-card--project .site-topic-panel {
+      max-height: clamp(11.5rem, 48vw, 15.5rem);
+      height: auto;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
+    }
+  }
+
   .site-card--project .site-topic-panel,
   .site-project-modal .site-topic-panel {
     scrollbar-width: none;

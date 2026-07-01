@@ -171,6 +171,7 @@
   }
 
   .site-chrome-info {
+    --site-info-button-size: clamp(2rem, 5.5vw, 2.35rem);
     position: fixed;
     top: 0.75rem;
     right: 1rem;
@@ -179,6 +180,11 @@
     flex-direction: column;
     align-items: flex-end;
     pointer-events: none;
+    font-size: var(--site-info-button-size);
+  }
+
+  .site-chrome-info.site-social-icon-scale {
+    font-size: var(--site-info-button-size);
   }
 
   .site-chrome-info .site-icon-link,
@@ -201,12 +207,20 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 1.28em;
-    height: 1.28em;
+    width: 1em;
+    height: 1em;
     gap: 0;
-    border: 1px solid var(--chrome-accent-border);
+    border: 1px solid
+      color-mix(in srgb, var(--color-accent) 38%, var(--chrome-accent-border));
     border-radius: 9999px;
-    background-color: var(--color-surface);
+    background: radial-gradient(
+      circle at 50% 50%,
+      color-mix(in srgb, var(--island-bg) 90%, var(--color-accent)) 0%,
+      color-mix(in srgb, var(--color-surface) 86%, var(--island-bg)) 42%,
+      color-mix(in srgb, var(--color-accent) 16%, var(--color-surface)) 88%,
+      color-mix(in srgb, var(--color-accent) 32%, var(--chrome-accent-border))
+        100%
+    );
     padding: 0;
     cursor: pointer;
     font: inherit;
@@ -254,12 +268,20 @@
   .site-chrome-info__trigger.site-icon-link:focus-visible {
     border-color: var(--color-accent);
     color: var(--color-accent);
-    background-color: color-mix(
-      in srgb,
-      var(--color-accent) 8%,
-      var(--island-bg)
+    background: radial-gradient(
+      circle at 50% 50%,
+      color-mix(in srgb, var(--color-accent) 14%, var(--island-bg)) 0%,
+      color-mix(in srgb, var(--color-accent) 10%, var(--color-surface)) 42%,
+      color-mix(in srgb, var(--color-accent) 24%, var(--color-surface)) 88%,
+      color-mix(in srgb, var(--color-accent) 48%, var(--chrome-accent-border))
+        100%
     );
     box-shadow: var(--shadow-card);
+  }
+
+  .site-chrome-info__trigger.site-icon-link .site-icon-link__icon {
+    width: 0.45em;
+    height: 0.45em;
   }
 
   .site-chrome-info__trigger.site-icon-link:hover .site-icon-link__icon,
@@ -373,39 +395,17 @@
     }
 
     .site-chrome-info__trigger.site-icon-link {
-      --site-info-halo-core: 24%;
-      --site-info-halo-mid: 12%;
-      --site-info-halo-peak-opacity: 0.24;
-      --site-info-halo-soft-opacity: 0.12;
-      --site-info-ring-soft: 7%;
-      --site-info-glow-soft: 10%;
-      --site-info-ring-strong: 8%;
-      --site-info-glow-strong: 12%;
-      width: 2.2rem;
-      height: 2.2rem;
-      border: 1px solid color-mix(in srgb, var(--color-accent) 42%, var(--chrome-accent-border));
-      background-color: var(--island-bg);
       box-shadow:
         inset 0 1px 6px rgb(0 0 0 / 0.24),
         inset 0 1px 0 rgb(255 255 255 / 0.03);
-    }
-
-    .site-chrome-info__trigger.site-icon-link .site-icon-link__icon {
-      width: 0.9rem;
-      height: 0.9rem;
     }
 
     .site-chrome-info__trigger.site-icon-link:hover,
     .site-chrome-info__trigger.site-icon-link:focus-visible {
-      border-color: var(--color-accent);
-      background-color: color-mix(
-        in srgb,
-        var(--color-accent) 8%,
-        var(--island-bg)
-      );
       box-shadow:
         inset 0 1px 6px rgb(0 0 0 / 0.24),
-        inset 0 1px 0 rgb(255 255 255 / 0.03);
+        inset 0 1px 0 rgb(255 255 255 / 0.03),
+        var(--shadow-card);
     }
   }
 

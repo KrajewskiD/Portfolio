@@ -239,16 +239,26 @@
 
     .site-project-modal .site-card--project {
       border-radius: 1.375rem;
+      min-height: 0;
     }
 
     .site-project-modal .site-project-details {
       padding: 1rem 1.125rem 1.125rem;
     }
 
+    .site-project-modal .site-project-details__content {
+      display: flex;
+      flex: 1 1 0;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+    }
+
     .site-project-modal .site-card--project-info .site-project-details__head {
       flex-direction: column;
       align-items: stretch;
       gap: 0.75rem;
+      flex-shrink: 0;
     }
 
     .site-project-modal .site-card--project-info .site-project-details__head-aside {
@@ -264,6 +274,7 @@
       display: flex;
       justify-content: center;
       min-width: 0;
+      flex-shrink: 0;
     }
 
     .site-project-modal
@@ -309,6 +320,35 @@
     .site-project-modal .site-tag__icon-image {
       width: 1.75rem;
       height: 1.75rem;
+    }
+
+    .site-project-modal .site-project-topics {
+      flex: 1 1 0;
+      min-height: 0;
+    }
+
+    .site-project-modal .site-topic-panel-shell {
+      display: flex;
+      flex: 1 1 0;
+      flex-direction: column;
+      min-height: 0;
+      max-height: none;
+    }
+
+    .site-project-modal .site-card--project .site-topic-panel-shell,
+    .site-project-modal .site-card--project .site-topic-panel {
+      max-height: none;
+    }
+
+    .site-project-modal .site-topic-panel {
+      flex: 1 1 0;
+      min-height: 0;
+      max-height: none;
+      height: 100%;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
     }
   }
 
