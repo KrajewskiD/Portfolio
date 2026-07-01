@@ -53,32 +53,45 @@
       display: block;
       width: 100%;
       height: auto;
-      max-height: 31rem;
+      max-height: 24rem;
       object-fit: cover;
-      object-position: center 18%;
+      object-position: center 14%;
       vertical-align: top;
     }
 
     .site-hero-card__panel {
       width: 100%;
       flex: 1 1 auto;
-      padding: 1.5rem 1.25rem 1.75rem;
+      display: flex;
+      flex-direction: column;
+      padding: 1.45rem 1.25rem 1.5rem;
       border-radius: 0 0 var(--site-hero-card-radius)
         var(--site-hero-card-radius);
     }
 
-    .site-hero-card__social {
-      top: 1.5rem;
-      right: 1.5rem;
-    }
-
-    .site-hero-card__label {
-      padding-right: clamp(4.5rem, 24vw, 7rem);
+    .site-hero-card__top-row {
+      order: 1;
     }
 
     .site-hero-card__name-row {
-      margin-top: 2.5rem;
+      order: 2;
+      margin-top: 0.95rem;
       padding-right: 0;
+    }
+
+    .site-hero-card__role-row {
+      order: 4;
+      margin-top: 0.9rem;
+    }
+
+    .site-hero-card__description {
+      order: 5;
+      margin-top: 1rem;
+    }
+
+    .site-hero-card__links {
+      justify-content: flex-end;
+      gap: 0.5rem;
     }
   }
 
@@ -154,11 +167,6 @@
       border-radius: 0 var(--site-hero-card-radius) var(--site-hero-card-radius)
         0;
     }
-
-    .site-hero-card__social {
-      top: 2rem;
-      right: 2rem;
-    }
     
     .site-hero-card__name-row {
       margin-top: 0;
@@ -172,11 +180,6 @@
 
     .site-hero-card__panel {
       padding: 2.5rem 3rem 2.35rem 2rem;
-    }
-
-    .site-hero-card__social {
-      top: 2.25rem;
-      right: 2.5rem;
     }
   }
 }

@@ -20,9 +20,10 @@ function ProfileContent({
 }: ProfileContentProps) {
   return (
     <div className="site-hero-card__panel">
-      <ProfileSocialLinks {...socialLinksProps} />
-
-      <p className="site-label site-hero-card__label">{label}</p>
+      <div className="site-hero-card__top-row">
+        <p className="site-label site-hero-card__label">{label}</p>
+        <ProfileSocialLinks {...socialLinksProps} />
+      </div>
 
       <div className="site-hero-card__name-row">
         <h1 className="site-hero-card__name">{name}</h1>

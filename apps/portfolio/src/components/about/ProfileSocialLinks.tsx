@@ -54,8 +54,8 @@ function ProfileSocialLinks({
           isMailLoading={isMailLoading}
           align="right"
           direction="bottom"
-          panelOffsetX="-64px"
-          panelOffsetY="-4px"
+          panelOffsetX="0px"
+          panelOffsetY="0px"
           size="1.28em"
           onMailClick={onMailClick}
           onCopyEmail={onCopyEmail}
