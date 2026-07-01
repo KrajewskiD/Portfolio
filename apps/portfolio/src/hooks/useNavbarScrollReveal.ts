@@ -30,21 +30,29 @@ export function useNavbarScrollReveal({
     }, IDLE_REVEAL_DELAY_MS);
   }, [clearIdleTimer]);
 
-  useEffect(() => {
+  const [prevIsDisabled, setPrevIsDisabled] = useState(isDisabled);
+  if (isDisabled !== prevIsDisabled) {
+    setPrevIsDisabled(isDisabled);
     if (isDisabled) {
       setIsHidden(false);
       setIsHovered(false);
-      clearIdleTimer();
-      return;
     }
+  }
+
+  useEffect(() => {
+    if (isDisabled) {
+      clearIdleTimer();
+    }
+  }, [isDisabled, clearIdleTimer]);
+
+  useEffect(() => {
+    if (isDisabled) return;
 
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
 
-    if (prefersReducedMotion) {
-      return;
-    }
+    if (prefersReducedMotion) return;
 
     lastScrollY.current = window.scrollY;
 
@@ -78,17 +86,19 @@ export function useNavbarScrollReveal({
   }, [clearIdleTimer, isDisabled, isHovered, scheduleIdleReveal]);
 
   const onMouseEnter = useCallback(() => {
+    if (isDisabled) return;
     setIsHovered(true);
     setIsHidden(false);
     clearIdleTimer();
-  }, [clearIdleTimer]);
+  }, [clearIdleTimer, isDisabled]);
 
   const onMouseLeave = useCallback(() => {
+    if (isDisabled) return;
     setIsHovered(false);
-  }, []);
+  }, [isDisabled]);
 
   return {
-    isHidden: isHidden && !isHovered,
+    isHidden: isDisabled ? false : isHidden && !isHovered,
     revealInstant: isHovered,
     onMouseEnter,
     onMouseLeave,

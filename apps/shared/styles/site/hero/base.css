@@ -1,6 +1,6 @@
 @layer components {
   .site-section--hero {
-    @apply scroll-mt-24 flex items-center py-16;
+    @apply scroll-mt-24 flex py-16 sm:py-20;
   }
 
   .site-hero-email-reveal {
@@ -157,13 +157,14 @@
   }
 
   .site-hero-card {
-    @apply relative w-full rounded-3xl border border-accent shadow-card;
+    @apply relative w-full rounded-3xl shadow-card;
     --site-hero-card-radius: 1.5rem;
     display: flex;
     flex-direction: column;
     min-height: 0;
     padding: 0;
     overflow: visible;
+    border: 1px solid color-mix(in srgb, var(--color-accent) 34%, var(--color-border));
     background-clip: padding-box;
   }
 
@@ -206,11 +207,11 @@
   }
 
   .site-hero-card__image {
-    height: 94%;
+    height: 100%;
     width: auto;
-    max-width: 118%;
+    max-width: 120%;
     object-fit: contain;
-    object-position: left bottom;
+    object-position: center bottom;
   }
 
   .site-hero-card__placeholder {
@@ -220,13 +221,13 @@
   }
 
   .site-hero-card__panel {
-    --hero-name-size: clamp(1.625rem, 3.5vw, 2.375rem);
+    --hero-name-size: clamp(2.15rem, 4vw, 3.55rem);
     position: relative;
     z-index: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    padding: 1.75rem 1.5rem 1.75rem 1rem;
+    justify-content: flex-start;
+    padding: 2rem 1.75rem 2rem 1.25rem;
     text-align: left;
     overflow: visible;
     background: transparent;
@@ -234,13 +235,14 @@
   }
 
   .site-hero-card__label {
-    padding-right: 10rem;
+    padding-right: min(8rem, 34%);
   }
 
   .site-hero-card__name-row {
     display: flex;
     align-items: center;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
+    padding-right: min(9rem, 34%);
     font-size: var(--hero-name-size);
   }
 
@@ -251,8 +253,8 @@
     margin: 0;
     font-size: inherit;
     font-weight: 700;
-    line-height: 1;
-    letter-spacing: 0.03em;
+    line-height: 0.92;
+    letter-spacing: -0.035em;
     text-transform: uppercase;
     color: var(--color-foreground);
   }
@@ -260,7 +262,7 @@
   .site-hero-card__social {
     position: absolute;
     top: 1.75rem;
-    right: 1.5rem;
+    right: 1.75rem;
     z-index: 3;
     display: flex;
     flex-direction: column;
@@ -275,7 +277,7 @@
     flex-wrap: nowrap;
     justify-content: flex-end;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.6rem;
     pointer-events: auto;
   }
 
@@ -322,8 +324,10 @@
   }
 
   .site-hero-card__description {
-    margin-top: 1.75rem;
-    max-width: 90%;
+    margin-top: 1.5rem;
+    max-width: 38rem;
+    font-size: 1.0625rem;
+    line-height: 1.8;
   }
 
   .site-hero-description {
@@ -337,8 +341,8 @@
     margin: 0;
     color: var(--color-reading);
     font-weight: 400;
-    line-height: 1.625;
-    text-align: justify;
+    line-height: 1.7;
+    text-align: left;
     text-wrap: pretty;
   }
 
@@ -361,6 +365,10 @@
       max-height: none;
       overflow: visible;
       -webkit-line-clamp: initial;
+    }
+
+    .site-hero-card__description {
+      max-width: 100%;
     }
   }
 

@@ -61,7 +61,8 @@
   }
 
   .site-card--project {
-    @apply relative isolate grid w-full min-w-0 overflow-hidden rounded-3xl border border-accent shadow-card lg:min-h-[60vh] lg:grid-cols-2;
+    @apply relative isolate grid w-full min-w-0 overflow-hidden rounded-3xl shadow-card lg:min-h-[52vh] lg:grid-cols-2;
+    border: 1px solid color-mix(in srgb, var(--color-accent) 28%, var(--color-border));
   }
 
   .site-card--project.site-card--project-info {

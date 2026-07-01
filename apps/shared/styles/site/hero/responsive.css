@@ -1,5 +1,5 @@
 @layer components {
-  @media (max-width: 63.99rem) {
+  @media (max-width: 47.99rem) {
     .site-hero-card {
       display: flex;
       flex-direction: column;
@@ -53,13 +53,16 @@
       display: block;
       width: 100%;
       height: auto;
+      max-height: 31rem;
+      object-fit: cover;
+      object-position: center 18%;
       vertical-align: top;
     }
 
     .site-hero-card__panel {
       width: 100%;
       flex: 1 1 auto;
-      padding: 1.5rem;
+      padding: 1.5rem 1.25rem 1.75rem;
       border-radius: 0 0 var(--site-hero-card-radius)
         var(--site-hero-card-radius);
     }
@@ -68,29 +71,24 @@
       top: 1.5rem;
       right: 1.5rem;
     }
-  }
 
-  @media (min-width: 40rem) and (max-width: 63.99rem) {
-    .site-hero-card__panel {
-      padding: 2rem;
-    }
-
-    .site-hero-card__social {
-      top: 2rem;
-      right: 2rem;
+    .site-hero-card__label {
+      padding-right: clamp(4.5rem, 24vw, 7rem);
     }
 
     .site-hero-card__name-row {
-      margin-top: 0;
+      margin-top: 2.5rem;
+      padding-right: 0;
     }
   }
 
-  @media (min-width: 64rem) {
+  @media (min-width: 48rem) {
     .site-hero-card {
       display: grid;
-      grid-template-columns: minmax(12rem, 34%) minmax(0, 1fr);
+      grid-template-columns: minmax(18rem, 40%) minmax(0, 1fr);
       grid-template-rows: unset;
-      min-height: 26rem;
+      min-height: 27rem;
+      height: auto;
     }
 
     .site-hero-card__trapezoid {
@@ -113,7 +111,7 @@
       display: flex;
       flex: 1 1 auto;
       flex-direction: column;
-      min-height: 26rem;
+      min-height: 27rem;
       height: auto;
       overflow: visible;
       border-radius: var(--site-hero-card-radius) 0 0
@@ -142,42 +140,43 @@
 
     .site-hero-card__image {
       display: block;
-      width: auto;
-      height: 106%;
-      max-width: 108%;
+      width: 100%;
+      height: 100%;
+      max-width: none;
       max-height: none;
-      object-fit: contain;
-      object-position: left bottom;
+      object-fit: cover;
+      object-position: center 22%;
       vertical-align: unset;
     }
 
     .site-hero-card__panel {
-      padding: 2.5rem 3rem 2.5rem 1.5rem;
+      padding: 2.35rem 2.35rem 2.15rem 1.75rem;
       border-radius: 0 var(--site-hero-card-radius) var(--site-hero-card-radius)
         0;
     }
 
     .site-hero-card__social {
-      top: 2.5rem;
-      right: 3rem;
+      top: 2rem;
+      right: 2rem;
+    }
+    
+    .site-hero-card__name-row {
+      margin-top: 0;
     }
   }
 
-  @media (max-width: 639px) {
-    .site-hero-card__image {
-      max-height: 26.5rem;
-      width: 100%;
-      height: auto;
-      object-fit: contain;
-      object-position: bottom center;
+  @media (min-width: 64rem) {
+    .site-hero-card {
+      grid-template-columns: minmax(20rem, 37%) minmax(0, 1fr);
     }
 
-    .site-hero-card__label {
-      padding-right: 9rem;
+    .site-hero-card__panel {
+      padding: 2.5rem 3rem 2.35rem 2rem;
     }
 
-    .site-hero-card__name-row {
-      margin-top: 3rem;
+    .site-hero-card__social {
+      top: 2.25rem;
+      right: 2.5rem;
     }
   }
 }

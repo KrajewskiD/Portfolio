@@ -27,16 +27,27 @@
     padding-inline: 0;
   }
 
+  @media (min-width: 90rem) and (min-height: 56.25rem) {
+    .site-layout {
+      --site-content-gutter: clamp(10rem, 12.5vw, 16rem);
+      --site-content-max-width: 68rem;
+    }
+  }
+
   .site-section--default {
-    @apply scroll-mt-24 py-8 sm:py-10;
+    @apply scroll-mt-24 py-10 sm:py-14;
   }
 
   .site-section--projects {
-    @apply scroll-mt-0 pt-4 pb-8 sm:pt-6 sm:pb-10;
+    @apply scroll-mt-0 pt-8 pb-12 sm:pt-10 sm:pb-16;
   }
 
   .site-section-label {
-    @apply font-mono text-lg text-foreground;
+    font-size: 0.72rem;
+    line-height: 1;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--color-subtle) 84%, white 16%);
   }
 
   .site-label {
@@ -44,7 +55,10 @@
   }
 
   .site-title {
-    @apply font-display text-4xl font-bold sm:text-5xl;
+    font-size: clamp(2.5rem, 5.4vw, 4.5rem);
+    font-weight: 700;
+    line-height: 0.96;
+    letter-spacing: -0.035em;
   }
 
   .site-title--project {
@@ -100,6 +114,6 @@
   }
 
   .site-pill--link {
-    @apply rounded-full border border-border py-2 text-sm sm:px-5 sm:py-3 sm:text-base;
+    @apply rounded-full border border-border px-4 py-2 text-sm sm:px-5 sm:py-3 sm:text-base;
   }
 }

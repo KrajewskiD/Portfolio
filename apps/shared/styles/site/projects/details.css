@@ -50,11 +50,11 @@
   }
 
   .site-project-image {
-    @apply flex p-4 lg:border-r lg:border-border;
+    @apply flex p-5 lg:border-r lg:border-border;
   }
 
   .site-project-image__frame {
-    @apply relative flex h-56 w-full items-center justify-center overflow-hidden rounded-2xl border border-dashed border-border sm:h-72 lg:h-full;
+    @apply relative flex h-64 w-full items-center justify-center overflow-hidden rounded-2xl border border-border sm:h-80 lg:h-full;
   }
 
   .site-project-image__technologies {
@@ -76,7 +76,7 @@
   }
 
   .site-project-details {
-    @apply relative flex h-full min-h-0 min-w-0 flex-col overflow-hidden border-t border-border p-6 lg:border-t-0 lg:p-8;
+    @apply relative flex h-full min-h-0 min-w-0 flex-col overflow-hidden border-t border-border p-7 lg:border-t-0 lg:p-10;
   }
 
   .site-project-details__content {
@@ -87,8 +87,8 @@
 
   .site-project-details__actions {
     position: absolute;
-    right: calc(1.5rem + 11px);
-    bottom: calc(1.5rem + 8px);
+    right: calc(1.5rem + 0.6875rem);
+    bottom: calc(1.5rem + 0.5rem);
     z-index: 5;
     display: flex;
     justify-content: flex-end;
@@ -118,8 +118,9 @@
 
   @media (min-width: 1024px) {
     .site-card--project .site-title--project {
-      font-size: clamp(2.25rem, 3vw, 3rem);
-      line-height: 1.05;
+      font-size: clamp(2.6rem, 3.6vw, 4rem);
+      line-height: 0.98;
+      letter-spacing: -0.04em;
     }
 
     .site-card--project .site-topic-tab {
@@ -158,14 +159,14 @@
     }
 
     .site-card--project .site-topic-panel {
-      padding: 1.25rem 1.375rem 1.5rem;
+      padding: 1.35rem 1.5rem 1.7rem;
       padding-bottom: 4.75rem;
     }
 
     .site-card--project .site-body--panel,
     .site-card--project .site-rich-text.site-body--panel {
-      font-size: 1.125rem;
-      line-height: 1.625;
+      font-size: 1.04rem;
+      line-height: 1.75;
     }
 
     .site-card--project-info {
@@ -175,8 +176,8 @@
     }
 
     .site-card--project .site-project-details__actions {
-      right: calc(2rem + 11px);
-      bottom: calc(2rem + 8px);
+      right: calc(2rem + 0.6875rem);
+      bottom: calc(2rem + 0.5rem);
     }
 
     .site-card--project.site-card--project-info {
@@ -205,8 +206,8 @@
     }
 
     .site-project-details__actions {
-      right: calc(1.25rem + 11px);
-      bottom: calc(1.25rem + 8px);
+      right: calc(1.25rem + 0.6875rem);
+      bottom: calc(1.25rem + 0.5rem);
     }
 
     .site-title--project {
