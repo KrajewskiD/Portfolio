@@ -1,8 +1,7 @@
 @layer components {
   .site-section-label,
   .site-code,
-  .site-hero-card__label,
-  .site-chrome-info__label {
+  .site-hero-card__label {
     font-family: var(--font-mono);
     letter-spacing: 0.06em;
   }

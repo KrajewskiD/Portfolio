@@ -5,6 +5,12 @@
 
   .site-footer__inner {
     @apply mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:py-6;
+    width: min(
+      calc(100% - (var(--site-content-gutter) * 2)),
+      var(--site-content-max-width)
+    );
+    max-width: none;
+    padding-inline: 0;
   }
 
   .site-footer__links {
