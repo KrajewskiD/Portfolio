@@ -12,8 +12,6 @@ type ProfileLocalizedKey =
   | "roleEn"
   | "descriptionPl"
   | "descriptionEn"
-  | "footerDescriptionPl"
-  | "footerDescriptionEn"
   | "imageAltPl"
   | "imageAltEn";
 
@@ -25,11 +23,6 @@ const profileTranslatableFieldConfigs: LocalizedFieldConfig<ProfileLocalizedKey>
       id: "profile-description",
       plKey: "descriptionPl",
       enKey: "descriptionEn",
-    },
-    {
-      id: "profile-footer-description",
-      plKey: "footerDescriptionPl",
-      enKey: "footerDescriptionEn",
     },
   ];
 

@@ -111,7 +111,6 @@ function App() {
     <BrowserRouter>
       <MainLayout
         mainPage={mainPage}
-        profile={profile}
         footerLinks={footerLinks}
         isProfileLoading={isProfileLoading}
         isProfileError={isProfileError}

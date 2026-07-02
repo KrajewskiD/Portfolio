@@ -1,4 +1,4 @@
-import FooterIdentity from "./footer/FooterIdentity";
+import ProfileEmailAction from "@portfolio/components/about/ProfileEmailAction";
 import FooterLink from "./footer/FooterLink";
 import FooterLinksGroup from "./footer/FooterLinksGroup";
 import FooterSkeleton from "./footer/FooterSkeleton";
@@ -37,29 +37,28 @@ function Footer({
         <FooterSkeleton />
       ) : isError || !footer?.links.length ? null : (
         <div className="site-footer__inner">
-          {footer.name || footer.description ? (
-            <FooterIdentity
-              name={footer.name}
-              description={footer.description}
+          <FooterLinksGroup label={socialLinksLabel}>
+            {footer.links.map((link) => (
+              <FooterLink key={link.id} label={link.label} href={link.href} />
+            ))}
+
+            <ProfileEmailAction
+              className="site-footer__email-action"
               emailLabel={emailText.emailLabel}
               copyEmailLabel={emailText.copyEmailLabel}
               emailCopiedMessage={emailText.emailCopiedMessage}
               emailEmptyMessage={emailText.emailEmptyMessage}
               emailLoadErrorMessage={emailText.emailLoadErrorMessage}
-              email={email}
               panelState={panelState}
+              email={email}
               isCopied={isCopied}
               isMailExpanded={isMailExpanded}
               isMailLoading={isMailLoading}
+              direction="right"
+              size="2.625rem"
               onMailClick={() => void handleMailClick()}
               onCopyEmail={() => void handleCopyEmail()}
             />
-          ) : null}
-
-          <FooterLinksGroup label={socialLinksLabel}>
-            {footer.links.map((link) => (
-              <FooterLink key={link.id} label={link.label} href={link.href} />
-            ))}
           </FooterLinksGroup>
         </div>
       )}

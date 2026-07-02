@@ -7,6 +7,7 @@ import type { Project, ProjectTopicId } from "@shared/database/types/project";
 
 import ProjectInfoCard from "@portfolio/components/projects/ProjectInfoCard";
 import ProjectModal from "@portfolio/components/projects/ProjectModal";
+import { useFixedBottomAboveFooter } from "@portfolio/hooks/useFixedBottomAboveFooter";
 import type { Translations } from "@portfolio/locales/translations";
 
 const FAR_PULSE_SPEED_MS = 5000;
@@ -33,9 +34,12 @@ function HeaderInfoButton({
 }: HeaderInfoButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const infoRootRef = useRef<HTMLDivElement>(null);
   const [activeTopicId, setActiveTopicId] = useState<ProjectTopicId>(
     DEFAULT_PROJECT_TOPIC_ID,
   );
+
+  useFixedBottomAboveFooter(infoRootRef);
 
   useEffect(() => {
     const button = buttonRef.current;
@@ -127,7 +131,10 @@ function HeaderInfoButton({
 
   return (
     <>
-      <div className="site-chrome-info site-social-icon-scale">
+      <div
+        ref={infoRootRef}
+        className="site-chrome-info site-social-icon-scale"
+      >
         <button
           ref={buttonRef}
           type="button"

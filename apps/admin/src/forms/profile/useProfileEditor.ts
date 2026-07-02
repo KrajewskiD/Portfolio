@@ -13,8 +13,6 @@ export type ProfileTextField =
   | "roleEn"
   | "descriptionPl"
   | "descriptionEn"
-  | "footerDescriptionPl"
-  | "footerDescriptionEn"
   | "imageAltPl"
   | "imageAltEn";
 

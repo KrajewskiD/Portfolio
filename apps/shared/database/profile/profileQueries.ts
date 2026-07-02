@@ -10,8 +10,6 @@ const PROFILE_SELECT = `
   role_en,
   description_pl,
   description_en,
-  footer_description_pl,
-  footer_description_en,
   image_path,
   image_alt_pl,
   image_alt_en

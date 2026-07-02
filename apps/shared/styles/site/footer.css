@@ -4,7 +4,7 @@
   }
 
   .site-footer__inner {
-    @apply mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:py-6;
+    @apply mx-auto flex w-full max-w-7xl flex-row items-center justify-start px-4 py-5 sm:py-6;
     width: min(
       calc(100% - (var(--site-content-gutter) * 2)),
       var(--site-content-max-width)
@@ -13,46 +13,96 @@
     padding-inline: 0;
   }
 
-  .site-footer__links {
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    max-width: 100%;
-  }
-
-  .site-footer__identity {
-    min-width: 0;
-  }
-
-  .site-footer__name-row {
-    position: relative;
-    display: inline-flex;
-    max-width: 100%;
-    align-items: center;
-    gap: 0.625rem;
-  }
-
   .site-footer__email-action {
     flex-shrink: 0;
   }
 
-  .site-footer__description {
-    color: var(--color-reading);
-    font-weight: 400;
-    line-height: 1.625;
-    text-align: justify;
-    text-wrap: pretty;
+  .site-footer .site-profile-email-action__button.site-icon-link {
+    color: var(--color-foreground);
+    background: color-mix(in srgb, var(--color-foreground) 7%, transparent);
+    border-color: color-mix(in srgb, var(--color-foreground) 22%, transparent);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.06),
+      inset 0 -10px 18px rgb(0 0 0 / 0.18);
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .site-footer .site-profile-email-action__button.site-icon-link:hover {
+    color: var(--color-foreground);
+    background: color-mix(in srgb, var(--color-accent) 18%, transparent);
+    border-color: var(--color-accent);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.08),
+      inset 0 -10px 20px rgb(0 0 0 / 0.2);
+  }
+
+  .site-footer .site-hero-email-reveal__field {
+    height: var(--profile-email-action-size);
+    min-height: var(--profile-email-action-size);
+    padding-block: 0;
+    padding-inline: 0.75rem;
+    box-sizing: border-box;
+  }
+
+  .site-footer .site-hero-email-reveal__value,
+  .site-footer .site-hero-email-reveal__message {
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .site-footer .site-hero-email-reveal__value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .site-footer .site-hero-email-reveal__copy-icon {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  .site-footer__links {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
+    max-width: 100%;
   }
 
   @media (max-width: 639px) {
-    .site-footer__description {
-      text-align: left;
+    .site-footer__inner {
+      justify-content: center;
     }
 
     .site-footer__links {
+      position: relative;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
       gap: 0.5rem;
+    }
+
+    .site-footer .site-footer__email-action.site-profile-email-action {
+      position: static;
+    }
+
+    .site-footer
+      .site-footer__email-action.site-profile-email-action
+      .site-hero-email-reveal {
+      top: calc(100% + 0.5rem);
+      bottom: auto;
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%);
+      width: max-content;
+      max-width: min(100%, calc(100vw - 2rem));
+    }
+
+    .site-footer__links:has(.site-hero-email-reveal) {
+      padding-bottom: calc(var(--profile-email-action-size) + 0.75rem);
     }
 
     .site-footer .site-pill--link {

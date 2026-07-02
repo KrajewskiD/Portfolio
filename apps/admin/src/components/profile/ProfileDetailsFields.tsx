@@ -15,9 +15,7 @@ type ProfileDetailsFieldsProps = {
       | "rolePl"
       | "roleEn"
       | "descriptionPl"
-      | "descriptionEn"
-      | "footerDescriptionPl"
-      | "footerDescriptionEn",
+      | "descriptionEn",
     value: string,
   ) => void;
 };
@@ -67,19 +65,6 @@ function ProfileDetailsFields({
           source={profile}
           plKey="descriptionPl"
           enKey="descriptionEn"
-          onChange={onUpdate}
-        />
-      </div>
-
-      <div className="mt-auto">
-        <AdminLocalizedInput
-          id="profile-footer-description"
-          label="Opis w stopce"
-          language={language}
-          disabled={disabled}
-          source={profile}
-          plKey="footerDescriptionPl"
-          enKey="footerDescriptionEn"
           onChange={onUpdate}
         />
       </div>

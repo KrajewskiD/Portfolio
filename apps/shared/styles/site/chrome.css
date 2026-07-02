@@ -386,12 +386,15 @@
       top: auto;
       position: fixed;
       right: 1rem;
-      bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+      bottom: calc(
+        var(--site-chrome-info-bottom, 1rem) + env(safe-area-inset-bottom, 0px)
+      );
       z-index: 55;
       flex: 0 0 auto;
       flex-direction: row;
       align-items: center;
       pointer-events: auto;
+      transition: bottom 0.15s ease-out;
     }
 
     .site-chrome-info__trigger.site-icon-link {
@@ -843,6 +846,10 @@
     .site-chrome-info__halo {
       animation: none;
       transform: none;
+    }
+
+    .site-chrome-info {
+      transition: none;
     }
 
     .site-chrome-info__halo {

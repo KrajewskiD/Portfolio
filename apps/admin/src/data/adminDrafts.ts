@@ -13,8 +13,6 @@ export const profileDraft: Profile = {
   roleEn: "Frontend Developer EN",
   descriptionPl: "Lorem ipsum dolor sit amet. PL",
   descriptionEn: "Lorem ipsum dolor sit amet. EN",
-  footerDescriptionPl: "Lorem ipsum stopka PL",
-  footerDescriptionEn: "Lorem ipsum footer EN",
   imageAltPl: "Zdjęcie profilowe",
   imageAltEn: "Profile image",
 };

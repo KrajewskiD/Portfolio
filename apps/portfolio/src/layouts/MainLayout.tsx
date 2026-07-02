@@ -16,12 +16,10 @@ import type {
   NavigationLinkData,
 } from "@shared/database/types/link";
 import type { MainPage } from "@shared/database/types/mainPage";
-import type { Profile } from "@shared/database/types/profile";
 
 type MainLayoutProps = {
   children: ReactNode;
   mainPage?: MainPage;
-  profile?: Profile;
   footerLinks?: FooterLinkData[];
   isProfileLoading: boolean;
   isProfileError: boolean;
@@ -40,7 +38,6 @@ type MainLayoutProps = {
 function MainLayout({
   children,
   mainPage,
-  profile,
   footerLinks,
   isProfileLoading,
   isProfileError,
@@ -59,7 +56,7 @@ function MainLayout({
 
   useCardGradientVariation();
 
-  const footer = buildFooterData({ footerLinks, language, profile });
+  const footer = buildFooterData({ footerLinks });
   const featuredProject = buildFeaturedProject(mainPage);
 
   return (

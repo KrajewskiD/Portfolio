@@ -5,8 +5,6 @@ export type Profile = {
   roleEn: string;
   descriptionPl: string;
   descriptionEn: string;
-  footerDescriptionPl: string;
-  footerDescriptionEn: string;
   imagePath?: string;
   imageUrl?: string;
   imageAltPl: string;
